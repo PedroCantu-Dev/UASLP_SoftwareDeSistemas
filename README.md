@@ -12,9 +12,12 @@ El alumno instalará y configurará la herramienta de desarrollo necesaria para 
 
 ### Indroduccion:
 #### Gramaticas:
-<div style="text-align: right"> Una gramática de un Lenguaje de Programación es una descripción formal de la sintaxis o estructura de los programas y proposiciones individuales escritas en un determinado lenguaje. La gramática no describe la semántica o significado de la distintas proposiciones; ese conocimiento debe proporcionarse en las rutinas de generación de código.
+
+<div style="text-align: center"> 
+Una gramática de un Lenguaje de Programación es una descripción formal de la sintaxis o estructura de los programas y proposiciones individuales escritas en un determinado lenguaje. La gramática no describe la semántica o significado de la distintas proposiciones; ese conocimiento debe proporcionarse en las rutinas de generación de código.
 Una gramática consta de un conjunto de reglas que definen la sintaxis de alguna construcción del lenguaje de programación. Estas reglas contienen símbolos no terminales, es decir, los nombres de las construcciones definidas en la gramática; y símbolos terminales que se definen como los componentes léxicos.
-En muchos casos prácticos es conveniente mostrar el análisis de una proposición fuente en función de una gramática como un árbol. Este árbol se denomina árbol de sintaxis o árbol sintáctico de la proposición. </div>
+En muchos casos prácticos es conveniente mostrar el análisis de una proposición fuente en función de una gramática como un árbol. Este árbol se denomina árbol de sintaxis o árbol sintáctico de la proposición. 
+</div>
 
 #### Análisis léxico:
 El análisis léxico incluye la exploración del programa que se va a compilar y el reconocimiento de los componentes léxicos que forman las proposiciones fuente. Los analizadores léxicos suelen diseñarse para reconocer palabras clave, operadores e identificadores, además de enteros, números de puntos flotante, cadenas de caracteres y otros elementos similares escritos como parte del programa fuente.
