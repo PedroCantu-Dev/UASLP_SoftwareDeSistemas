@@ -1,13 +1,43 @@
 # SoftwareDeSistemas_UASLP
 
 Este repositorio contiene las practicas de laboratiorio de la materia de Software de Sistemas, culla finalidad es tener un compilador para la arquitectura de proposito academico SIC/XE. 
-El plan de la materia esta disponible aquí:---> [Software de Sistemas](https://infocomp.ingenieria.uaslp.mx/cominf/public/docs/temarios/2263.pdf)
+El plan de la materia esta disponible aquí:---> [Software de Sistemas(Rubrica)](https://infocomp.ingenieria.uaslp.mx/cominf/public/docs/temarios/2263.pdf)
 
 ## Practica 1(Calculadora de expresiones):
+
+### Objetivo:
+El alumno instalará y configurará la herramienta de desarrollo necesaria para el desarrollo del proyecto de Ensamblador para SIC/STD/XT; verificando su funcionamiento con una calculadora de expresiones aritméticas.
+### Indroduccion:
+#### Gramaticas:
+Una gramática de un Lenguaje de Programación es una descripción formal de la sintaxis o estructura de los programas y proposiciones individuales escritas en un determinado lenguaje. La gramática no describe la semántica o significado de la distintas proposiciones; ese conocimiento debe proporcionarse en las rutinas de generación de código.
+Una gramática consta de un conjunto de reglas que definen la sintaxis de alguna construcción del lenguaje de programación. Estas reglas contienen símbolos no terminales, es decir, los nombres de las construcciones definidas en la gramática; y símbolos terminales que se definen como los componentes léxicos.
+En muchos casos prácticos es conveniente mostrar el análisis de una proposición fuente en función de una gramática como un árbol. Este árbol se denomina árbol de sintaxis o árbol sintáctico de la proposición.
+#### Análisis léxico:
+El análisis léxico incluye la exploración del programa que se va a compilar y el reconocimiento de los componentes léxicos que forman las proposiciones fuente. Los analizadores léxicos suelen diseñarse para reconocer palabras clave, operadores e identificadores, además de enteros, números de puntos flotante, cadenas de caracteres y otros elementos similares escritos como parte del programa fuente.
+El conjunto exacto de componentes sintácticos a reconocer depende del lenguaje de programación que se está compilando y de la gramática utilizada para describirlo. La salida del analizador léxico consta de una secuencia de componentes léxicos. Para lograr una mayor eficiencia en el uso posterior, los componentes léxicos se suelen representar por algún código de longitud fija, como un entero, en vez de una cadena de caracteres de longitud variable. Algunos analizadores léxicos están diseñados para introducir identificadores directamente en una tabla de símbolos cuando se reconocen por primera vez.
+El analizador léxico también debe incorporar información sobre elementos dependientes del lenguaje, como los espacios en blanco, fin de línea, saltos de línea, etc.
+#### Análisis sintáctico:
+Durante el análisis sintáctico, las proposiciones del programa fuente se reconocen como construcciones del lenguaje descritas por la gramática utilizada. Este proceso se puede considerar como la construcción del árbol de sintaxis de las proposiciones que se están traduciendo.
+Existen dos clases generales de análisis sintáctico, ascendente y descendente, de acuerdo con la construcción del árbol sintáctico. Una técnica de análisis sintáctico ascendente que se denomina método de prioridad de operadores se base en el examen de parejas de operadores consecutivos en el programa fuente y en tomar la decisión de cuál operación se debe realizar primero.
+El primer paso de la construcción de un analizador sintáctico de prioridad de operadores es la determinación de las relaciones de la prioridad entre los operadores de la gramática. El operador puede ser cualquier componente léxico.
+#### Herramienta de reconocimiento del lenguaje:
+
+ANTLR (ANother Tool for Language Recognition) es un generador de analizadores para leer, procesar, ejecutar o traducir texto estructurado. Es ampliamente utilizado para construir lenguajes, herramientas y frameworks. A partir de una gramática, genera un analizador que puede construir y recorrer árboles de análisis.
+La búsqueda de Twitter utiliza ANTLR para el análisis de consultas, con más de 2 mil millones de consultas al día. Los lenguajes para Hive y Pig, el almacén de datos y los sistemas de análisis para Hadoop, usan ANTLR. Lex Machina utiliza ANTLR para la extracción de información de textos legales. Oracle usa ANTLR dentro de SQL Developer IDE y sus herramientas de migración.
+NetBeans IDE analiza C ++ con ANTLR. El lenguaje HQL en el marco de mapeo relacional de objetos de Hibernate está construido con ANTLR.
+Lenguaje C# como salida para ANTLR 4 La herramienta permite utilizar cualquier entorno de desarrollo de C#, incluido, por supuesto, Microsoft Visual Studio, pero también Xamarin Studio, que se ejecuta en MacOS X. La librería y
+la herramienta garantizan obtener el mismo comportamiento en muchos lenguajes: Java, C#,
+Python, JavaScript, Go, Swift y C++.
+
+
+
+
+
 
 ## Practica 2:
 
 Estas instrucciones especifican como empezar desde cero para tener una copia de este juego y que puedas jugarlo e incluso editarlo.
+
 
 ### Prerequisitos
 
