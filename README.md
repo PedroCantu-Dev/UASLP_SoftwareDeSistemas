@@ -6,7 +6,10 @@ El plan de la materia esta disponible aquí:---> [Software de Sistemas(Rubrica)]
 ## Practica 1(Calculadora de expresiones):
 
 ### Objetivo:
+
+<p style="text-align: justify"> 
 El alumno instalará y configurará la herramienta de desarrollo necesaria para el desarrollo del proyecto de Ensamblador para SIC/STD/XT; verificando su funcionamiento con una calculadora de expresiones aritméticas.
+</p>
 
 
 
@@ -14,7 +17,7 @@ El alumno instalará y configurará la herramienta de desarrollo necesaria para 
 #### Gramaticas:
 
 <p style="text-align: justify"> 
-Una gramática de un Lenguaje de Programación es una descripción formal de la sintaxis o estructura de los programas y proposiciones individuales escritas en un determinado lenguaje. La gramática no describe la semántica o significado de la distintas proposiciones; ese conocimiento debe proporcionarse en las rutinas de generación de código.
+Una gramática de un Lenguaje de Programación es una descripción formal de la sintaxis o estructura de los programas y proposiciones individuales escritas en un determinado lenguaje. La gramática o describe la semántica o significado de la distintas proposiciones; ese conocimiento debe proporcionarse en las rutinas de generación de código.
 Una gramática consta de un conjunto de reglas que definen la sintaxis de alguna construcción del lenguaje de programación. Estas reglas contienen símbolos no terminales, es decir, los nombres de las construcciones definidas en la gramática; y símbolos terminales que se definen como los componentes léxicos.
 En muchos casos prácticos es conveniente mostrar el análisis de una proposición fuente en función de una gramática como un árbol. Este árbol se denomina árbol de sintaxis o árbol sintáctico de la proposición. 
 </p>
