@@ -1,15 +1,11 @@
 # SoftwareDeSistemas_UASLP
 
-Videojuego de [Gigamesh II](https://www.youtube.com/watch?v=VQLY8PowzbU) (second Release).
-Este es un videojuego hecho en Greenfot para la materia de Progamación Orientada a Objetos(usando JAVA) en el [Área de Ciencias de la Computación](https://infocomp.ingenieria.uaslp.mx/cominf/public/) de la [UASLP](http://www.uaslp.mx/).
+Este repositorio contiene las practicas de laboratiorio de la materia de Software de Sistemas, culla finalidad es tener un compilador para la arquitectura de proposito academico SIC/XE. 
+El plan de la materia esta disponible aquí:---> [Software de Sistemas](https://infocomp.ingenieria.uaslp.mx/cominf/public/docs/temarios/2263.pdf)
 
-Es una idea original de Pedro Cantú, que empezó a desarrollarse en la materia de Estructuras de Datos II(usando C).
-En dicha materia se llevo a cabo el proyecto de "Las aventuras de Gigamesh I" usando programacion estructurada.
-La historia está basada en la fascinante epopeya de Gilgamesh con grandes cambios en la trama.
+## Practica 1(Calculadora de expresiones):
 
-El objetivo del juego en un principio es claro, cumplir con los requisitos para la acreditacion de las materias antes mencionadas, pero se tiene pensado hacer la mejor versión de cada lanzamiento usando las herramientas que se sugirieron en las materias, sin importar las limitantes que ello pueda significar. En un futuro se tiene como proyecto personal hacer una version 3D en un motor de juego serio como lo es [Unreal Engine](https://www.unrealengine.com/en-US/) , con una historia mas solida y desde el principio. Por lo que si estás interesado en trabajar en dicho proyecto o crees que tienes ideas que puedan aportar, puedes contactar al correo en la sección de contacto.
-
-## Empecemos
+## Practica 2:
 
 Estas instrucciones especifican como empezar desde cero para tener una copia de este juego y que puedas jugarlo e incluso editarlo.
 
