@@ -1,0 +1,1397 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    UMINUS
+
+Grammar
+
+Rule 0     S' -> calc
+Rule 1     calc -> expression
+Rule 2     calc -> bool_expression
+Rule 3     calc -> empty
+Rule 4     bool_expression -> <empty>
+Rule 5     expression -> MINUS expression
+Rule 6     expression -> FACTORIAL expression
+Rule 7     expression -> expression PLUS expression
+Rule 8     expression -> expression MINUS expression
+Rule 9     expression -> expression MULTIPLY expression
+Rule 10    expression -> expression DIVIDE expression
+Rule 11    expression -> expression MOD expression
+Rule 12    expression -> expression LESST expression
+Rule 13    expression -> expression MORET expression
+Rule 14    expression -> expression LESSEQ expression
+Rule 15    expression -> expression MOREEQ expression
+Rule 16    expression -> expression OR expression
+Rule 17    expression -> expression AND expression
+Rule 18    expression -> NAME EQUALS expression
+Rule 19    var -> NAME
+Rule 20    expression -> INT
+Rule 21    expression -> FLOAT
+Rule 22    expression -> var
+Rule 23    expression -> LPARENT expression RPARENT
+Rule 24    empty -> <empty>
+
+Terminals, with rules where they appear
+
+AND                  : 17
+DIVIDE               : 10
+EQUALS               : 18
+FACTORIAL            : 6
+FLOAT                : 21
+INT                  : 20
+LESSEQ               : 14
+LESST                : 12
+LPARENT              : 23
+MINUS                : 5 8
+MOD                  : 11
+MOREEQ               : 15
+MORET                : 13
+MULTIPLY             : 9
+NAME                 : 18 19
+OR                   : 16
+PLUS                 : 7
+RPARENT              : 23
+UMINUS               : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+bool_expression      : 2
+calc                 : 0
+empty                : 3
+expression           : 1 5 6 7 7 8 8 9 9 10 10 11 11 12 12 13 13 14 14 15 15 16 16 17 17 18 23
+var                  : 22
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . calc
+    (1) calc -> . expression
+    (2) calc -> . bool_expression
+    (3) calc -> . empty
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (4) bool_expression -> .
+    (24) empty -> .
+    (19) var -> . NAME
+
+  ! reduce/reduce conflict for $end resolved using rule 4 (bool_expression -> .)
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+    $end            reduce using rule 4 (bool_expression -> .)
+
+  ! $end            [ reduce using rule 24 (empty -> .) ]
+
+    calc                           shift and go to state 1
+    expression                     shift and go to state 2
+    bool_expression                shift and go to state 3
+    empty                          shift and go to state 4
+    var                            shift and go to state 10
+
+state 1
+
+    (0) S' -> calc .
+
+
+
+state 2
+
+    (1) calc -> expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    $end            reduce using rule 1 (calc -> expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+    LESST           shift and go to state 17
+    MORET           shift and go to state 18
+    LESSEQ          shift and go to state 19
+    MOREEQ          shift and go to state 20
+    OR              shift and go to state 21
+    AND             shift and go to state 22
+
+
+state 3
+
+    (2) calc -> bool_expression .
+
+    $end            reduce using rule 2 (calc -> bool_expression .)
+
+
+state 4
+
+    (3) calc -> empty .
+
+    $end            reduce using rule 3 (calc -> empty .)
+
+
+state 5
+
+    (5) expression -> MINUS . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 23
+    var                            shift and go to state 10
+
+state 6
+
+    (6) expression -> FACTORIAL . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 24
+    var                            shift and go to state 10
+
+state 7
+
+    (18) expression -> NAME . EQUALS expression
+    (19) var -> NAME .
+
+    EQUALS          shift and go to state 25
+    PLUS            reduce using rule 19 (var -> NAME .)
+    MINUS           reduce using rule 19 (var -> NAME .)
+    MULTIPLY        reduce using rule 19 (var -> NAME .)
+    DIVIDE          reduce using rule 19 (var -> NAME .)
+    MOD             reduce using rule 19 (var -> NAME .)
+    LESST           reduce using rule 19 (var -> NAME .)
+    MORET           reduce using rule 19 (var -> NAME .)
+    LESSEQ          reduce using rule 19 (var -> NAME .)
+    MOREEQ          reduce using rule 19 (var -> NAME .)
+    OR              reduce using rule 19 (var -> NAME .)
+    AND             reduce using rule 19 (var -> NAME .)
+    $end            reduce using rule 19 (var -> NAME .)
+    RPARENT         reduce using rule 19 (var -> NAME .)
+
+
+state 8
+
+    (20) expression -> INT .
+
+    PLUS            reduce using rule 20 (expression -> INT .)
+    MINUS           reduce using rule 20 (expression -> INT .)
+    MULTIPLY        reduce using rule 20 (expression -> INT .)
+    DIVIDE          reduce using rule 20 (expression -> INT .)
+    MOD             reduce using rule 20 (expression -> INT .)
+    LESST           reduce using rule 20 (expression -> INT .)
+    MORET           reduce using rule 20 (expression -> INT .)
+    LESSEQ          reduce using rule 20 (expression -> INT .)
+    MOREEQ          reduce using rule 20 (expression -> INT .)
+    OR              reduce using rule 20 (expression -> INT .)
+    AND             reduce using rule 20 (expression -> INT .)
+    $end            reduce using rule 20 (expression -> INT .)
+    RPARENT         reduce using rule 20 (expression -> INT .)
+
+
+state 9
+
+    (21) expression -> FLOAT .
+
+    PLUS            reduce using rule 21 (expression -> FLOAT .)
+    MINUS           reduce using rule 21 (expression -> FLOAT .)
+    MULTIPLY        reduce using rule 21 (expression -> FLOAT .)
+    DIVIDE          reduce using rule 21 (expression -> FLOAT .)
+    MOD             reduce using rule 21 (expression -> FLOAT .)
+    LESST           reduce using rule 21 (expression -> FLOAT .)
+    MORET           reduce using rule 21 (expression -> FLOAT .)
+    LESSEQ          reduce using rule 21 (expression -> FLOAT .)
+    MOREEQ          reduce using rule 21 (expression -> FLOAT .)
+    OR              reduce using rule 21 (expression -> FLOAT .)
+    AND             reduce using rule 21 (expression -> FLOAT .)
+    $end            reduce using rule 21 (expression -> FLOAT .)
+    RPARENT         reduce using rule 21 (expression -> FLOAT .)
+
+
+state 10
+
+    (22) expression -> var .
+
+    PLUS            reduce using rule 22 (expression -> var .)
+    MINUS           reduce using rule 22 (expression -> var .)
+    MULTIPLY        reduce using rule 22 (expression -> var .)
+    DIVIDE          reduce using rule 22 (expression -> var .)
+    MOD             reduce using rule 22 (expression -> var .)
+    LESST           reduce using rule 22 (expression -> var .)
+    MORET           reduce using rule 22 (expression -> var .)
+    LESSEQ          reduce using rule 22 (expression -> var .)
+    MOREEQ          reduce using rule 22 (expression -> var .)
+    OR              reduce using rule 22 (expression -> var .)
+    AND             reduce using rule 22 (expression -> var .)
+    $end            reduce using rule 22 (expression -> var .)
+    RPARENT         reduce using rule 22 (expression -> var .)
+
+
+state 11
+
+    (23) expression -> LPARENT . expression RPARENT
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 26
+    var                            shift and go to state 10
+
+state 12
+
+    (7) expression -> expression PLUS . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 27
+    var                            shift and go to state 10
+
+state 13
+
+    (8) expression -> expression MINUS . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 28
+    var                            shift and go to state 10
+
+state 14
+
+    (9) expression -> expression MULTIPLY . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 29
+    var                            shift and go to state 10
+
+state 15
+
+    (10) expression -> expression DIVIDE . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 30
+    var                            shift and go to state 10
+
+state 16
+
+    (11) expression -> expression MOD . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 31
+    var                            shift and go to state 10
+
+state 17
+
+    (12) expression -> expression LESST . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 32
+    var                            shift and go to state 10
+
+state 18
+
+    (13) expression -> expression MORET . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 33
+    var                            shift and go to state 10
+
+state 19
+
+    (14) expression -> expression LESSEQ . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 34
+    var                            shift and go to state 10
+
+state 20
+
+    (15) expression -> expression MOREEQ . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 35
+    var                            shift and go to state 10
+
+state 21
+
+    (16) expression -> expression OR . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 36
+    var                            shift and go to state 10
+
+state 22
+
+    (17) expression -> expression AND . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 37
+    var                            shift and go to state 10
+
+state 23
+
+    (5) expression -> MINUS expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 5 (expression -> MINUS expression .)
+    MINUS           reduce using rule 5 (expression -> MINUS expression .)
+    MULTIPLY        reduce using rule 5 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 5 (expression -> MINUS expression .)
+    MOD             reduce using rule 5 (expression -> MINUS expression .)
+    LESST           reduce using rule 5 (expression -> MINUS expression .)
+    MORET           reduce using rule 5 (expression -> MINUS expression .)
+    LESSEQ          reduce using rule 5 (expression -> MINUS expression .)
+    MOREEQ          reduce using rule 5 (expression -> MINUS expression .)
+    OR              reduce using rule 5 (expression -> MINUS expression .)
+    AND             reduce using rule 5 (expression -> MINUS expression .)
+    $end            reduce using rule 5 (expression -> MINUS expression .)
+    RPARENT         reduce using rule 5 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! MULTIPLY        [ shift and go to state 14 ]
+  ! DIVIDE          [ shift and go to state 15 ]
+  ! MOD             [ shift and go to state 16 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 24
+
+    (6) expression -> FACTORIAL expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 6 (expression -> FACTORIAL expression .)
+    MINUS           reduce using rule 6 (expression -> FACTORIAL expression .)
+    MULTIPLY        reduce using rule 6 (expression -> FACTORIAL expression .)
+    DIVIDE          reduce using rule 6 (expression -> FACTORIAL expression .)
+    MOD             reduce using rule 6 (expression -> FACTORIAL expression .)
+    LESST           reduce using rule 6 (expression -> FACTORIAL expression .)
+    MORET           reduce using rule 6 (expression -> FACTORIAL expression .)
+    LESSEQ          reduce using rule 6 (expression -> FACTORIAL expression .)
+    MOREEQ          reduce using rule 6 (expression -> FACTORIAL expression .)
+    OR              reduce using rule 6 (expression -> FACTORIAL expression .)
+    AND             reduce using rule 6 (expression -> FACTORIAL expression .)
+    $end            reduce using rule 6 (expression -> FACTORIAL expression .)
+    RPARENT         reduce using rule 6 (expression -> FACTORIAL expression .)
+
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! MULTIPLY        [ shift and go to state 14 ]
+  ! DIVIDE          [ shift and go to state 15 ]
+  ! MOD             [ shift and go to state 16 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 25
+
+    (18) expression -> NAME EQUALS . expression
+    (5) expression -> . MINUS expression
+    (6) expression -> . FACTORIAL expression
+    (7) expression -> . expression PLUS expression
+    (8) expression -> . expression MINUS expression
+    (9) expression -> . expression MULTIPLY expression
+    (10) expression -> . expression DIVIDE expression
+    (11) expression -> . expression MOD expression
+    (12) expression -> . expression LESST expression
+    (13) expression -> . expression MORET expression
+    (14) expression -> . expression LESSEQ expression
+    (15) expression -> . expression MOREEQ expression
+    (16) expression -> . expression OR expression
+    (17) expression -> . expression AND expression
+    (18) expression -> . NAME EQUALS expression
+    (20) expression -> . INT
+    (21) expression -> . FLOAT
+    (22) expression -> . var
+    (23) expression -> . LPARENT expression RPARENT
+    (19) var -> . NAME
+
+    MINUS           shift and go to state 5
+    FACTORIAL       shift and go to state 6
+    NAME            shift and go to state 7
+    INT             shift and go to state 8
+    FLOAT           shift and go to state 9
+    LPARENT         shift and go to state 11
+
+    expression                     shift and go to state 38
+    var                            shift and go to state 10
+
+state 26
+
+    (23) expression -> LPARENT expression . RPARENT
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    RPARENT         shift and go to state 39
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+    LESST           shift and go to state 17
+    MORET           shift and go to state 18
+    LESSEQ          shift and go to state 19
+    MOREEQ          shift and go to state 20
+    OR              shift and go to state 21
+    AND             shift and go to state 22
+
+
+state 27
+
+    (7) expression -> expression PLUS expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 7 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 7 (expression -> expression PLUS expression .)
+    LESST           reduce using rule 7 (expression -> expression PLUS expression .)
+    MORET           reduce using rule 7 (expression -> expression PLUS expression .)
+    LESSEQ          reduce using rule 7 (expression -> expression PLUS expression .)
+    MOREEQ          reduce using rule 7 (expression -> expression PLUS expression .)
+    OR              reduce using rule 7 (expression -> expression PLUS expression .)
+    AND             reduce using rule 7 (expression -> expression PLUS expression .)
+    $end            reduce using rule 7 (expression -> expression PLUS expression .)
+    RPARENT         reduce using rule 7 (expression -> expression PLUS expression .)
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! MULTIPLY        [ reduce using rule 7 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 7 (expression -> expression PLUS expression .) ]
+  ! MOD             [ reduce using rule 7 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 28
+
+    (8) expression -> expression MINUS expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 8 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 8 (expression -> expression MINUS expression .)
+    LESST           reduce using rule 8 (expression -> expression MINUS expression .)
+    MORET           reduce using rule 8 (expression -> expression MINUS expression .)
+    LESSEQ          reduce using rule 8 (expression -> expression MINUS expression .)
+    MOREEQ          reduce using rule 8 (expression -> expression MINUS expression .)
+    OR              reduce using rule 8 (expression -> expression MINUS expression .)
+    AND             reduce using rule 8 (expression -> expression MINUS expression .)
+    $end            reduce using rule 8 (expression -> expression MINUS expression .)
+    RPARENT         reduce using rule 8 (expression -> expression MINUS expression .)
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! MULTIPLY        [ reduce using rule 8 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 8 (expression -> expression MINUS expression .) ]
+  ! MOD             [ reduce using rule 8 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 29
+
+    (9) expression -> expression MULTIPLY expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    MINUS           reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    MULTIPLY        reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    DIVIDE          reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    MOD             reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    LESST           reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    MORET           reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    LESSEQ          reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    MOREEQ          reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    OR              reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    AND             reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    $end            reduce using rule 9 (expression -> expression MULTIPLY expression .)
+    RPARENT         reduce using rule 9 (expression -> expression MULTIPLY expression .)
+
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! MULTIPLY        [ shift and go to state 14 ]
+  ! DIVIDE          [ shift and go to state 15 ]
+  ! MOD             [ shift and go to state 16 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 30
+
+    (10) expression -> expression DIVIDE expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 10 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 10 (expression -> expression DIVIDE expression .)
+    MULTIPLY        reduce using rule 10 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 10 (expression -> expression DIVIDE expression .)
+    MOD             reduce using rule 10 (expression -> expression DIVIDE expression .)
+    LESST           reduce using rule 10 (expression -> expression DIVIDE expression .)
+    MORET           reduce using rule 10 (expression -> expression DIVIDE expression .)
+    LESSEQ          reduce using rule 10 (expression -> expression DIVIDE expression .)
+    MOREEQ          reduce using rule 10 (expression -> expression DIVIDE expression .)
+    OR              reduce using rule 10 (expression -> expression DIVIDE expression .)
+    AND             reduce using rule 10 (expression -> expression DIVIDE expression .)
+    $end            reduce using rule 10 (expression -> expression DIVIDE expression .)
+    RPARENT         reduce using rule 10 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! MULTIPLY        [ shift and go to state 14 ]
+  ! DIVIDE          [ shift and go to state 15 ]
+  ! MOD             [ shift and go to state 16 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 31
+
+    (11) expression -> expression MOD expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    PLUS            reduce using rule 11 (expression -> expression MOD expression .)
+    MINUS           reduce using rule 11 (expression -> expression MOD expression .)
+    MULTIPLY        reduce using rule 11 (expression -> expression MOD expression .)
+    DIVIDE          reduce using rule 11 (expression -> expression MOD expression .)
+    MOD             reduce using rule 11 (expression -> expression MOD expression .)
+    LESST           reduce using rule 11 (expression -> expression MOD expression .)
+    MORET           reduce using rule 11 (expression -> expression MOD expression .)
+    LESSEQ          reduce using rule 11 (expression -> expression MOD expression .)
+    MOREEQ          reduce using rule 11 (expression -> expression MOD expression .)
+    OR              reduce using rule 11 (expression -> expression MOD expression .)
+    AND             reduce using rule 11 (expression -> expression MOD expression .)
+    $end            reduce using rule 11 (expression -> expression MOD expression .)
+    RPARENT         reduce using rule 11 (expression -> expression MOD expression .)
+
+  ! PLUS            [ shift and go to state 12 ]
+  ! MINUS           [ shift and go to state 13 ]
+  ! MULTIPLY        [ shift and go to state 14 ]
+  ! DIVIDE          [ shift and go to state 15 ]
+  ! MOD             [ shift and go to state 16 ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 32
+
+    (12) expression -> expression LESST expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    LESST           reduce using rule 12 (expression -> expression LESST expression .)
+    MORET           reduce using rule 12 (expression -> expression LESST expression .)
+    LESSEQ          reduce using rule 12 (expression -> expression LESST expression .)
+    MOREEQ          reduce using rule 12 (expression -> expression LESST expression .)
+    OR              reduce using rule 12 (expression -> expression LESST expression .)
+    AND             reduce using rule 12 (expression -> expression LESST expression .)
+    $end            reduce using rule 12 (expression -> expression LESST expression .)
+    RPARENT         reduce using rule 12 (expression -> expression LESST expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! PLUS            [ reduce using rule 12 (expression -> expression LESST expression .) ]
+  ! MINUS           [ reduce using rule 12 (expression -> expression LESST expression .) ]
+  ! MULTIPLY        [ reduce using rule 12 (expression -> expression LESST expression .) ]
+  ! DIVIDE          [ reduce using rule 12 (expression -> expression LESST expression .) ]
+  ! MOD             [ reduce using rule 12 (expression -> expression LESST expression .) ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 33
+
+    (13) expression -> expression MORET expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    LESST           reduce using rule 13 (expression -> expression MORET expression .)
+    MORET           reduce using rule 13 (expression -> expression MORET expression .)
+    LESSEQ          reduce using rule 13 (expression -> expression MORET expression .)
+    MOREEQ          reduce using rule 13 (expression -> expression MORET expression .)
+    OR              reduce using rule 13 (expression -> expression MORET expression .)
+    AND             reduce using rule 13 (expression -> expression MORET expression .)
+    $end            reduce using rule 13 (expression -> expression MORET expression .)
+    RPARENT         reduce using rule 13 (expression -> expression MORET expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! PLUS            [ reduce using rule 13 (expression -> expression MORET expression .) ]
+  ! MINUS           [ reduce using rule 13 (expression -> expression MORET expression .) ]
+  ! MULTIPLY        [ reduce using rule 13 (expression -> expression MORET expression .) ]
+  ! DIVIDE          [ reduce using rule 13 (expression -> expression MORET expression .) ]
+  ! MOD             [ reduce using rule 13 (expression -> expression MORET expression .) ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 34
+
+    (14) expression -> expression LESSEQ expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    LESST           reduce using rule 14 (expression -> expression LESSEQ expression .)
+    MORET           reduce using rule 14 (expression -> expression LESSEQ expression .)
+    LESSEQ          reduce using rule 14 (expression -> expression LESSEQ expression .)
+    MOREEQ          reduce using rule 14 (expression -> expression LESSEQ expression .)
+    OR              reduce using rule 14 (expression -> expression LESSEQ expression .)
+    AND             reduce using rule 14 (expression -> expression LESSEQ expression .)
+    $end            reduce using rule 14 (expression -> expression LESSEQ expression .)
+    RPARENT         reduce using rule 14 (expression -> expression LESSEQ expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! PLUS            [ reduce using rule 14 (expression -> expression LESSEQ expression .) ]
+  ! MINUS           [ reduce using rule 14 (expression -> expression LESSEQ expression .) ]
+  ! MULTIPLY        [ reduce using rule 14 (expression -> expression LESSEQ expression .) ]
+  ! DIVIDE          [ reduce using rule 14 (expression -> expression LESSEQ expression .) ]
+  ! MOD             [ reduce using rule 14 (expression -> expression LESSEQ expression .) ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 35
+
+    (15) expression -> expression MOREEQ expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    LESST           reduce using rule 15 (expression -> expression MOREEQ expression .)
+    MORET           reduce using rule 15 (expression -> expression MOREEQ expression .)
+    LESSEQ          reduce using rule 15 (expression -> expression MOREEQ expression .)
+    MOREEQ          reduce using rule 15 (expression -> expression MOREEQ expression .)
+    OR              reduce using rule 15 (expression -> expression MOREEQ expression .)
+    AND             reduce using rule 15 (expression -> expression MOREEQ expression .)
+    $end            reduce using rule 15 (expression -> expression MOREEQ expression .)
+    RPARENT         reduce using rule 15 (expression -> expression MOREEQ expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+
+  ! PLUS            [ reduce using rule 15 (expression -> expression MOREEQ expression .) ]
+  ! MINUS           [ reduce using rule 15 (expression -> expression MOREEQ expression .) ]
+  ! MULTIPLY        [ reduce using rule 15 (expression -> expression MOREEQ expression .) ]
+  ! DIVIDE          [ reduce using rule 15 (expression -> expression MOREEQ expression .) ]
+  ! MOD             [ reduce using rule 15 (expression -> expression MOREEQ expression .) ]
+  ! LESST           [ shift and go to state 17 ]
+  ! MORET           [ shift and go to state 18 ]
+  ! LESSEQ          [ shift and go to state 19 ]
+  ! MOREEQ          [ shift and go to state 20 ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 36
+
+    (16) expression -> expression OR expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    OR              reduce using rule 16 (expression -> expression OR expression .)
+    AND             reduce using rule 16 (expression -> expression OR expression .)
+    $end            reduce using rule 16 (expression -> expression OR expression .)
+    RPARENT         reduce using rule 16 (expression -> expression OR expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+    LESST           shift and go to state 17
+    MORET           shift and go to state 18
+    LESSEQ          shift and go to state 19
+    MOREEQ          shift and go to state 20
+
+  ! PLUS            [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! MINUS           [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! MULTIPLY        [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! DIVIDE          [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! MOD             [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! LESST           [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! MORET           [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! LESSEQ          [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! MOREEQ          [ reduce using rule 16 (expression -> expression OR expression .) ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 37
+
+    (17) expression -> expression AND expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+    OR              reduce using rule 17 (expression -> expression AND expression .)
+    AND             reduce using rule 17 (expression -> expression AND expression .)
+    $end            reduce using rule 17 (expression -> expression AND expression .)
+    RPARENT         reduce using rule 17 (expression -> expression AND expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+    LESST           shift and go to state 17
+    MORET           shift and go to state 18
+    LESSEQ          shift and go to state 19
+    MOREEQ          shift and go to state 20
+
+  ! PLUS            [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! MINUS           [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! MULTIPLY        [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! DIVIDE          [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! MOD             [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! LESST           [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! MORET           [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! LESSEQ          [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! MOREEQ          [ reduce using rule 17 (expression -> expression AND expression .) ]
+  ! OR              [ shift and go to state 21 ]
+  ! AND             [ shift and go to state 22 ]
+
+
+state 38
+
+    (18) expression -> NAME EQUALS expression .
+    (7) expression -> expression . PLUS expression
+    (8) expression -> expression . MINUS expression
+    (9) expression -> expression . MULTIPLY expression
+    (10) expression -> expression . DIVIDE expression
+    (11) expression -> expression . MOD expression
+    (12) expression -> expression . LESST expression
+    (13) expression -> expression . MORET expression
+    (14) expression -> expression . LESSEQ expression
+    (15) expression -> expression . MOREEQ expression
+    (16) expression -> expression . OR expression
+    (17) expression -> expression . AND expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for LESST resolved as shift
+  ! shift/reduce conflict for MORET resolved as shift
+  ! shift/reduce conflict for LESSEQ resolved as shift
+  ! shift/reduce conflict for MOREEQ resolved as shift
+  ! shift/reduce conflict for OR resolved as shift
+  ! shift/reduce conflict for AND resolved as shift
+    $end            reduce using rule 18 (expression -> NAME EQUALS expression .)
+    RPARENT         reduce using rule 18 (expression -> NAME EQUALS expression .)
+    PLUS            shift and go to state 12
+    MINUS           shift and go to state 13
+    MULTIPLY        shift and go to state 14
+    DIVIDE          shift and go to state 15
+    MOD             shift and go to state 16
+    LESST           shift and go to state 17
+    MORET           shift and go to state 18
+    LESSEQ          shift and go to state 19
+    MOREEQ          shift and go to state 20
+    OR              shift and go to state 21
+    AND             shift and go to state 22
+
+  ! PLUS            [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! MINUS           [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! MULTIPLY        [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! DIVIDE          [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! MOD             [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! LESST           [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! MORET           [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! LESSEQ          [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! MOREEQ          [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! OR              [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+  ! AND             [ reduce using rule 18 (expression -> NAME EQUALS expression .) ]
+
+
+state 39
+
+    (23) expression -> LPARENT expression RPARENT .
+
+    PLUS            reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    MINUS           reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    MULTIPLY        reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    DIVIDE          reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    MOD             reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    LESST           reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    MORET           reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    LESSEQ          reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    MOREEQ          reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    OR              reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    AND             reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    $end            reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+    RPARENT         reduce using rule 23 (expression -> LPARENT expression RPARENT .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for PLUS in state 38 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 38 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 38 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 38 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 38 resolved as shift
+WARNING: shift/reduce conflict for LESST in state 38 resolved as shift
+WARNING: shift/reduce conflict for MORET in state 38 resolved as shift
+WARNING: shift/reduce conflict for LESSEQ in state 38 resolved as shift
+WARNING: shift/reduce conflict for MOREEQ in state 38 resolved as shift
+WARNING: shift/reduce conflict for OR in state 38 resolved as shift
+WARNING: shift/reduce conflict for AND in state 38 resolved as shift
+WARNING: reduce/reduce conflict in state 0 resolved using rule (bool_expression -> <empty>)
+WARNING: rejected rule (empty -> <empty>) in state 0
+WARNING: Rule (empty -> <empty>) is never reduced
