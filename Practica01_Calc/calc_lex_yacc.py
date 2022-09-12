@@ -211,7 +211,11 @@ def run(p):
         elif p[0] == '*':
             return run(p[1]) * run(p[2])
         elif p[0] == '/':
-            return run(p[1]) / run(p[2])
+            divisor = run(p[2])
+            if(divisor > 0):
+                return run(p[1]) / run(p[2])
+            else:
+                return math.inf
         elif p[0] == '%':
             return run(p[1]) % run(p[2])
         elif p[0] == '||':
