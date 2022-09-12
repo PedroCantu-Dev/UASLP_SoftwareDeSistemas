@@ -1,3 +1,4 @@
+from cmd import IDENTCHARS
 import codecs
 import ply.lex as lex
 import re
@@ -92,7 +93,19 @@ tokens = [
     'CONSTANT_H',
     'C_TEXT',
     'X_HEX',
-    'SIMBOL'
+    'SIMBOL',
+    'CODOP',
+    'REG',
+    'INDICE',
+    'NUM',
+    'CONSTHEX',
+    'CONSTCAD'
+
+    END NUM FINL START
+    ID
+    BYTE WORD RESB RESW
+
+
 
 
 ] + list(reservadas.values())
