@@ -30,6 +30,44 @@ PC = 0
 
 B = 0
 
+# el diccionario retorna las expresiones regulares para cada token |
+# This dictionary return regex for each token
+# Descripcion de la notacion:
+# las letras mayusculas se refierena los registros especificos
+# 'm' indica una DIRECCION DE MEMORIA
+# 'n' indica un ENTERO ENTRE 1 Y 16
+# 'r1' 'r2' representan identificadores de registros
+# los parentesis se usan para indicar el contenido de un registro o de una localidad de memoria
+argumentTokens = {
+    # tokens para instrucciones|
+    # instructions tokens
+    'operand': '''(@|#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(,X)*''',
+    # can be a character constant or a hexadecimal
+    'm': '''([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)''',
+    'm,X': '''([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*),X''',
+    'n': '''[0-9]+$''',  # "[0-9]|1[0-6]",
+    'r': '''(A|X|L|B|S|T|F|PC|SW)''',
+
+    # tokens para directivas|
+    # addressing tokens
+    'simbol': '''[a-zA-Z]+[a-zA-Z0-9]*''',
+    '[simbol]': '''([a-zA-Z]+[a-zA-Z0-9]*)*''',  # con lo mismo que labels
+    "C'TEXT'": '''(C|c)'[a-zA-Z0-9]*\'''',
+    "X'HEX'": '''(X|x)'[0-9a-fA-F]+\'''',
+    "dir": '''[0-9]+|[0-9a-fA-F]+H''',
+    "val": '''[0-9]+|[0-9a-fA-F]+H''',
+    "num": '''[0-9]+|[0-9a-fA-F]+H''',
+
+    # tokens for operants
+    'c': '''[0-9]+|[0-9a-fA-F]+H''',  # int or a hexadecimal
+    'c,X': '''([0-9]+|[0-9a-fA-F]+H),X''',
+
+    # tokens for new included expresions
+    'EXP': '''[a-zA-Z]+[a-zA-Z0-9]*''',
+
+}
+
+
 # Registros SICXE |
 # SICXE Registers
 SIXE_Registers = {'A': 0,  # Acumulador para operaciones aritmeticas |
@@ -42,75 +80,6 @@ SIXE_Registers = {'A': 0,  # Acumulador para operaciones aritmeticas |
                   'PC': 8,  # Contador de programa. Contiene la dirección de la siguiente instrucciona ejecutar |
                   'SW': 9}  # Palabra de estado, diversa información de banderas |
 
-
-# reservadas = {
-#     'START': 'START',
-#     'END': 'END',
-#     'BYTE': 'BYTE',
-#     'WORD': 'WORD',
-#     'RESB': 'RESB',
-#     'RESW': 'RESW',
-#     'BASE': 'BASE',
-#     'ADD': 'ADD',
-#     'ADDF': 'ADDF',
-#     'ADDR': 'ADDR',
-#     'AND': 'AND',
-#     'CLEAR': 'CLEAR',
-#     'COMP': 'COMP',
-#     'COMF': 'COMF',
-#     'COMPR': 'COMPR',
-#     'DIV': 'DIV',
-#     'DIVF': 'DIVF',
-#     'DIVR': 'DIVR',
-#     'FIX': 'FIX',
-#     'FLOAT': 'FLOAT',
-#     'HIO': 'HIO',
-#     'J': 'J',
-#     'JEQ': 'JEQ',
-#     'JGT': 'JGT',
-#     'JLT': 'JLT',
-#     'JSUB': 'JSUB',
-#     'LDA': 'LDA',
-#     'LDB': 'LDB',
-#     'LDCH': 'LDCH',
-#     'LDF': 'LDF',
-#     'LDL': 'LDL',
-#     'LDS': 'LDS',
-#     'LDT': 'LDT',
-#     'LDX': 'LDX',
-#     'LPS': 'LPS',
-#     'MUL': 'MUL',
-#     'MULF': 'MULF',
-#     'MULR': 'MULR',
-#     'NORM': 'NORM',
-#     'OR': 'OR',
-#     'RD': 'RD',
-#     'RMO': 'RMO',
-#     'RSUB': 'RSUB',
-#     'SHIFTL': 'SHIFTL',
-#     'SHIFTR': 'SHIFTR',
-#     'SIO': 'SIO',
-#     'SSK': 'SSK',
-#     'STA': 'STA',
-#     'STB': 'STB',
-#     'STCH': 'STCH',
-#     'STF': 'STF',
-#     'STI': 'STI',
-#     'STL': 'STL',
-#     'STS': 'STS',
-#     'STSW': 'STSW',
-#     'STT': 'STT',
-#     'STX': 'STX',
-#     'SUB': 'SUB',
-#     'SUBF': 'SUBF',
-#     'SUBR': 'SUBR',
-#     'SVC': 'SVC',
-#     'TD': 'TD',
-#     'TIO': 'TIO',
-#     'TIX': 'TIX',
-#     'TIXR': 'TIXR',
-#     'WD': 'WD',
-# }
 
 SICXE_Dictionary_Directives = {
     'START': ['D', 'START', 0],
@@ -190,14 +159,37 @@ tokens = [
     # 'ID',
     'NUM',
     'FINL',
+    'COMA',
     'MODIF',
     'REGISTER',
     'COMMENT_IL',
+    'COMMENT_ML',
     'CODOP',
-    'ID',
+    # 'ID',
+    'NAME',
+    'DIRECTIV',
+    'PLUS',
+    'MINUS',
     'INT',
     'FLOAT',
-    'NAME'
+    'HEX_INT',
+    'DIVIDE',
+    'MULTIPLY',
+    'EQUALS',
+    'LPARENT',
+    'RPARENT',
+    'LESST',
+    'MORET',
+    'LESSEQ',
+    'MOREEQ',
+    'MOD',
+    'OR',
+    'AND',
+    'FACTORIAL',
+    'UMINUS',
+    'OPERANDO',
+    'C_TEXT',
+    'X_HEX',
 
 ]
 # ] + list(SICXE_Dictionary.keys())
@@ -205,84 +197,141 @@ tokens = [
 
 # t_ID = r'''[_]*[a-zA-Z]+[a-zA-Z0-9]*'''
 # t_NUM = r'''[0-9]+|[0-9a-fA-F]+H'''
-t_FINL = r'''\n'''
-# t_MODIF = r'''(\@|\#)'''
+t_LPARENT = r'''\('''
+t_RPARENT = r'''\)'''
+t_PLUS = r'\+'
+t_MINUS = r'\-'
+t_UMINUS = r'\-'
+t_FACTORIAL = r'\!'
+t_MULTIPLY = r'\*'
+t_DIVIDE = r'\/'
+t_MOD = r'\%'
+t_LESST = r'\<'
+t_MORET = r'\>'
+t_LESSEQ = r'\<\='
+t_MOREEQ = r'\>\='
+t_OR = r'\|\|'
+t_AND = r'\&\&'
+t_EQUALS = r'\='
+t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
+t_COMA = r'''\,'''
+t_MODIF = r'''(\@|\#|\+)'''
 t_COMMENT_IL = r'''[a-zA-Z0-9]+\n'''
+t_COMMENT_ML = r'''\/\*[a-zA-Z0-9]+\*\/'''
+t_FINL = r'''\n'''
+
+
+def t_C_TEXT(t):
+    r"(C|c)\'[a-zA-Z0-9]*\'"
+    t.type = 'C_TEXT'
+    return t
+
+
+def t_X_HEX(t):
+    r"(X|x)\'[0-9a-fA-F]+\'"
+    t.type = 'X_HEX'
+    return t
 
 
 def t_REGISTER(t):
-    r'''( \sA\s |\sX\s | \sL\s | \sB\s | \sS\s | \sT\s | \sF\s | \sPC\s | \sSW\s )'''
+    r'''( A\s |X\s | L\s | B\s | S\s | T\s | F\s | PC\s | SW\s )'''
     t.type = 'REGISTER'
     return t
 
 
+def t_DIRECTIV(t):
+    r'''
+    START |END |BASE | BYTE | WORD | RESB | RESW
+    '''
+    t.type = 'DIRECTIV'
+    return t
+
+
 def t_CODOP(t):
-    r'''ADD |
-      ADDF |
-      ADDR |
-      AND |
-      CLEAR |
-      COMP |
-      COMF |
-      COMPR |
-     DIV |
-      DIVF |
-      DIVR |
-      FIX |
-      FLOAT |
-     HIO |
-      J |
-      JEQ |
-      JGT |
-      JLT |
-      JSUB |
-      LDA |
-      LDB |
-      LDCH |
-      LDF |
-      LDL |
-      LDS |
-      LDT |
-      LDX |
-      LPS |
-      MUL |
-      MULF |
-      MULR |
-      NORM |
-      OR |
-      RD |
-      RMO |
-      RSUB |
-      SHIFTL |
-      SHIFTR |
-      SIO |
-      SSK |
-      STA |
-      STB |
-      STCH |
-      STF |
-      STI |
-      STL |
-      STS |
-      STSW |
-      STT |
-      STX |
-      SUB |
-      SUBF |
-      SUBR |
-      SVC |
-      TD |
-      TIO |
-      TIX |
-      TIXR |
-      WD'''
+    r'''ADD\s|
+    ADDF\s |
+ADDR\s|
+AND\s|
+CLEAR|
+COMP\s|
+COMF\s|
+COMPR\s|
+DIV\s |
+DIVF\s|
+DIVR\s|
+FIX\s|
+      FLOAT\s |
+     HIO\s |
+      J\s |
+      JEQ\s |
+      JGT\s |
+      JLT\s |
+      JSUB\s |
+      LDA\s |
+      LDB\s |
+      LDCH\s |
+      LDF\s |
+      LDL\s |
+      LDS\s |
+      LDT\s |
+      LDX\s |
+      LPS\s |
+      MUL\s |
+      MULF\s |
+      MULR\s |
+      NORM\s |
+      OR\s |
+      RD\s |
+      RMO\s |
+      RSUB\s |
+      SHIFTL\s |
+      SHIFTR\s |
+      SIO\s |
+      SSK\s |
+      STA\s |
+      STB\s |
+      STCH\s |
+      STF\s |
+      STI\s |
+      STL\s |
+      STS\s |
+      STSW\s |
+      STT\s |
+      STX\s |
+      SUB\s |
+      SUBF\s |
+      SUBR\s |
+      SVC\s |
+      TD\s |
+      TIO\s |
+      TIX\s |
+      TIXR\s |
+      WD\s'''
+    t.value = t.value[:-1]
     t.type = 'CODOP'
+    return t
+
+
+# A NAME is a variable name. A variable can be 1 or more characters in length.
+# The first character must be in the ranges a-z A-Z or be an underscore.
+# Any character following the first character can be a-z A-Z 0-9 or an underscore.
+
+
+def t_NAME(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = 'NAME'
     return t
 
 
 # Ply's special t_ignore variable allows us to define characters the lexer will ignore.
 # We're ignoring spaces.
 t_ignore = ' \t\n'
+
+
+def t_HEX_INT(t):
+    r'\d+H'
+    t.type = 'HEX_INT'
+    return t
 
 
 # More complicated tokens, such as tokens that are more than 1 character in length
@@ -303,15 +352,6 @@ def t_INT(t):
     t.value = int(t.value)
     return t
 
-# A NAME is a variable name. A variable can be 1 or more characters in length.
-# The first character must be in the ranges a-z A-Z or be an underscore.
-# Any character following the first character can be a-z A-Z 0-9 or an underscore.
-
-
-def t_NAME(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = 'NAME'
-    return t
 
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
 
@@ -321,51 +361,13 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-# el diccionario retorna las expresiones regulares para cada token |
-# This dictionary return regex for each token
-# Descripcion de la notacion:
-# las letras mayusculas se refierena los registros especificos
-# 'm' indica una DIRECCION DE MEMORIA
-# 'n' indica un ENTERO ENTRE 1 Y 16
-# 'r1' 'r2' representan identificadores de registros
-# los parentesis se usan para indicar el contenido de un registro o de una localidad de memoria
-argumentTokens = {
-    # tokens para instrucciones|
-    # instructions tokens
-    'operand': '''(@|#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(,X)*''',
-    # can be a character constant or a hexadecimal
-    'm': '''([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)''',
-    'm,X': '''([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*),X''',
-    'n': '''[0-9]+$''',  # "[0-9]|1[0-6]",
-    'r': '''(A|X|L|B|S|T|F|PC|SW)''',
-
-    # tokens para directivas|
-    # addressing tokens
-    'simbol': '''[a-zA-Z]+[a-zA-Z0-9]*''',
-    '[simbol]': '''([a-zA-Z]+[a-zA-Z0-9]*)*''',  # con lo mismo que labels
-    "C'TEXT'": '''(C|c)'[a-zA-Z0-9]*\'''',
-    "X'HEX'": '''(X|x)'[0-9a-fA-F]+\'''',
-    "dir": '''[0-9]+|[0-9a-fA-F]+H''',
-    "val": '''[0-9]+|[0-9a-fA-F]+H''',
-    "num": '''[0-9]+|[0-9a-fA-F]+H''',
-
-    # tokens for operants
-    'c': '''[0-9]+|[0-9a-fA-F]+H''',  # int or a hexadecimal
-    'c,X': '''([0-9]+|[0-9a-fA-F]+H),X''',
-
-    # tokens for new included expresions
-    'EXP': '''[a-zA-Z]+[a-zA-Z0-9]*''',
-
-}
-
-
 def p_programa():
     """programa : inicio proposiciones fin"""
 
 
 def p_inicio():
     """inicio :
-    etiqueta START NUM | proposicion"""
+    etiqueta START NUM"""
 
 
 def p_fin():
@@ -574,8 +576,81 @@ def p_inmediato3():
 #     'EXP': '[a-zA-Z]+[a-zA-Z0-9]*',
 
 # }
+# lexer = lex.lex()
+# data = '''SUM ADD 0 INICIO START 0H
+# ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
+# ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
+# DIVIDENDO DIVF DIVR FIX FLOAT HIO J
+# FeniX
+# SEGPARC START		0H
+# 	RESB	12
+# ETIQ	+ADD	@ENTRADA,X
+# 	BASE	ARREG
+# CICLO	LDB	#(ENTRADA+32)
+# VALOR	EQU	(CICLO-PRUEBA)*2
+# ARREG 	RESW	20
+# DATO	EQU	20
+# MAYOR	WORD	(ENTRADA-CICLO)+ARREG
+# 	LDA 	#(DATO*2)
+# 	TIXR	T
+# 	WORD	CICLO-ENTRADA
+# 	LDA	MAYOR+CICLO-15
+# ENTRADA BYTE 		X'3E0'
+# 	END
+# '''
+
 lexer = lex.lex()
-data = '''SUM ADD 0 INICIO START 0H'''
+data = '''
+/*sdfsdflkjdsfASDFAFSD*/
+SUM ADD 0 INICIO START 0H
+EJERCFINAL  START   0H
+            SIO
+            +LDX    @TABLA	  	   
+VALOR	    WORD    140	   
+	   	    BASE    CAD	   
+TABLA  	    RESW	20
+    	    +LDS	VALOR, X 	   
+	   	    SHIFTL	S,6	   
+SIMBOLO     LDD		#VALOR	       
+	        +LDA	1010H ,X	   
+CAD	        BYTE	C'FINAL'	   
+	        LDA		#TABLA	   
+    	    SUBR	S, X	       
+	   	    RESW	2500H
+SALTO       ADD		VALOR,X	       
+	        STCH	@TABLA
+	        JGT	    SALTO , X	   
+AREA        RESB	64	   
+	        STA		SALTO       
+	        +SUB	350
+	        J		CADENA, X 	   
+	        +TIX	TABLA,X	   
+            END     INICIO
+
+
+
+ ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
+ ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
+ DIVIDENDO DIVF DIVR FIX FLOAT HIO J
+ FeniX
+ SEGPARC START		0H
+ 	RESB	12
+ ETIQ	+ADD	@ENTRADA,X
+ 	BASE	ARREG
+# CICLO	LDB	(ENTRADA+32)\n
+ VALOR	EQU	(CICLO-PRUEBA)*2
+ ARREG 	RESW	20
+ DATO	EQU	20
+ MAYOR	WORD	(ENTRADA-CICLO)+ARREG
+ 	LDA 	#(DATO*2)
+ 	TIXR	T
+ 	WORD	CICLO-ENTRADA
+ 	LDA	MAYOR+CICLO-15
+ ENTRADA BYTE 		X'3E0'
+ 	END
+    
+ '''
+
 lexer.input(data)
 
 while True:

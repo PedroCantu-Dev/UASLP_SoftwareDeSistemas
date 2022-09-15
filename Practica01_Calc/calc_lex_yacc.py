@@ -98,7 +98,6 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
     ('right', 'UMINUS', 'FACTORIAL')
-
 )
 
 
