@@ -1,6 +1,7 @@
 from cmd import IDENTCHARS
 import codecs
 import ply.lex as lex
+import ply.yacc as yacc
 import re
 import os
 import sys
@@ -186,25 +187,37 @@ SICXE_Dictionary_CodOp = {
 SICXE_Dictionary = SICXE_Dictionary_CodOp | SICXE_Dictionary_Directives
 
 tokens = [
-    'ID',
+    # 'ID',
     'NUM',
     'FINL',
     'MODIF',
     'REGISTER',
-    'COMENTARIO',
-    'CODOP'
+    'COMMENT_IL',
+    'CODOP',
+    'ID',
+    'INT',
+    'FLOAT',
+    'NAME'
+
 ]
 # ] + list(SICXE_Dictionary.keys())
 # ] + list(reservadas.values()) + list(SIXE_Registers.keys())
 
-t_ID = r'''[_]*[a-zA-Z]+[a-zA-Z0-9]*'''
-t_NUM = r'''[0-9]+|[0-9a-fA-F]+H'''
+# t_ID = r'''[_]*[a-zA-Z]+[a-zA-Z0-9]*'''
+# t_NUM = r'''[0-9]+|[0-9a-fA-F]+H'''
 t_FINL = r'''\n'''
-t_MODIF = r'''(\@|\#)'''
-t_REGISTER = r'''(A|X|L|B|S|T|F|PC|SW)'''
+# t_MODIF = r'''(\@|\#)'''
 t_COMMENT_IL = r'''[a-zA-Z0-9]+\n'''
-t_COMMENT_ML = r'''\/\*[a-zA-Z0-9]*\*\/'''
-t_CODOP = r'''ADD |
+
+
+def t_REGISTER(t):
+    r'''( \sA\s |\sX\s | \sL\s | \sB\s | \sS\s | \sT\s | \sF\s | \sPC\s | \sSW\s )'''
+    t.type = 'REGISTER'
+    return t
+
+
+def t_CODOP(t):
+    r'''ADD |
       ADDF |
       ADDR |
       AND |
@@ -263,6 +276,50 @@ t_CODOP = r'''ADD |
       TIX |
       TIXR |
       WD'''
+    t.type = 'CODOP'
+    return t
+
+
+# Ply's special t_ignore variable allows us to define characters the lexer will ignore.
+# We're ignoring spaces.
+t_ignore = ' \t\n'
+
+
+# More complicated tokens, such as tokens that are more than 1 character in length
+# are defined using functions.
+# A float is 1 or more numbers followed by a dot (.) followed by 1 or more numbers again.
+
+
+def t_FLOAT(t):
+    r'\d+\.\d+'
+    t.value = float(t.value)
+    return t
+
+# An int is 1 or more numbers.
+
+
+def t_INT(t):
+    r'\d+'
+    t.value = int(t.value)
+    return t
+
+# A NAME is a variable name. A variable can be 1 or more characters in length.
+# The first character must be in the ranges a-z A-Z or be an underscore.
+# Any character following the first character can be a-z A-Z 0-9 or an underscore.
+
+
+def t_NAME(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = 'NAME'
+    return t
+
+# Skip the current token and output 'Illegal characters' using the special Ply t_error function.
+
+
+def t_error(t):
+    print("Illegal characters:"+t.value+":")
+    t.lexer.skip(1)
+
 
 # el diccionario retorna las expresiones regulares para cada token |
 # This dictionary return regex for each token
@@ -518,12 +575,41 @@ def p_inmediato3():
 
 # }
 lexer = lex.lex()
+data = '''SUM ADD 0 INICIO START 0H'''
+lexer.input(data)
+
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
+
 
 # lexer.input(data)
 
-while True:
-    try:
-        s = input('lex-SICXE>>')
-    except EOFError:
-        break
-    lexer.lex(s)
+# while True:
+#     try:
+#         s = input('lex-SICXE>>')
+#         lexer.input(s)
+#         while True:
+#             try:
+#                 tok = lexer.token()
+#                 if not tok:
+#                     break
+#                 print(tok)
+#             except:
+#                 print("en corto")
+#                 break
+#     except EOFError:
+#         break
+
+
+#  # Give the lexer some input
+#  lexer.input(data)
+
+#  # Tokenize
+#  while True:
+#      tok = lexer.token()
+#      if not tok:
+#          break      # No more input
+#      print(tok)
