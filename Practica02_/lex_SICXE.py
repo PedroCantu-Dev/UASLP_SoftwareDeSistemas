@@ -248,83 +248,83 @@ def t_X_HEX(t):
     return t
 
 
-def t_REG(t):
-    r'''( A\s |X\s | L\s | B\s | S\s | T\s | F\s | PC\s | SW\s )'''
-    t.type = 'REG'
-    return t
+# def t_REG(t):
+#     r'''( A\s |X\s | L\s | B\s | S\s | T\s | F\s | PC\s | SW\s )'''
+#     t.type = 'REG'
+#     return t
 
 
-def t_DIRECTIV(t):
-    r'''
-    BYTE | WORD | RESB | RESW | START | BASE
-    '''
-    t.type = 'DIRECTIV'
-    return t
+# def t_DIRECTIV(t):
+#     r'''
+#     BYTE | WORD | RESB | RESW | START | BASE
+#     '''
+#     t.type = 'DIRECTIV'
+#     return t
 
 
-def t_CODOP(t):
-    r'''ADD\s|
-    ADDF\s |
-    ADDR\s|
-    AND\s|
-    CLEAR\s|
-    COMP\s|
-    COMF\s|
-    COMPR\s|
-    DIV\s |
-    DIVF\s|
-    DIVR\s|
-    FIX\s|
-    FLOAT\s |
-    HIO\s |
-    J\s |
-    JEQ\s |
-    JGT\s |
-    JLT\s |
-    JSUB\s |
-    LDA\s |
-    LDB\s |
-    LDCH\s |
-    LDF\s |
-    LDL\s |
-    LDS\s |
-    LDT\s |
-    LDX\s |
-    LPS\s |
-    MUL\s |
-    MULF\s |
-    MULR\s |
-    NORM\s |
-    OR\s |
-    RD\s |
-    RMO\s |
-    RSUB\s |
-    SHIFTL\s |
-    SHIFTR\s |
-    SIO\s |
-    SSK\s |
-    STA\s |
-    STB\s |
-    STCH\s |
-    STF\s |
-    STI\s |
-    STL\s |
-    STS\s |
-    STSW\s |
-    STT\s |
-    STX\s |
-    SUB\s |
-    SUBF\s |
-    SUBR\s |
-    SVC\s |
-    TD\s |
-    TIO\s |
-    TIX\s |
-    TIXR\s |
-    WD\s'''
-    t.value = t.value[:-1]
-    t.type = 'CODOP'
-    return t
+# def t_CODOP(t):
+#     r'''ADD\s|
+#     ADDF\s |
+#     ADDR\s|
+#     AND\s|
+#     CLEAR\s|
+#     COMP\s|
+#     COMF\s|
+#     COMPR\s|
+#     DIV\s |
+#     DIVF\s|
+#     DIVR\s|
+#     FIX\s|
+#     FLOAT\s |
+#     HIO\s |
+#     J\s |
+#     JEQ\s |
+#     JGT\s |
+#     JLT\s |
+#     JSUB\s |
+#     LDA\s |
+#     LDB\s |
+#     LDCH\s |
+#     LDF\s |
+#     LDL\s |
+#     LDS\s |
+#     LDT\s |
+#     LDX\s |
+#     LPS\s |
+#     MUL\s |
+#     MULF\s |
+#     MULR\s |
+#     NORM\s |
+#     OR\s |
+#     RD\s |
+#     RMO\s |
+#     RSUB\s |
+#     SHIFTL\s |
+#     SHIFTR\s |
+#     SIO\s |
+#     SSK\s |
+#     STA\s |
+#     STB\s |
+#     STCH\s |
+#     STF\s |
+#     STI\s |
+#     STL\s |
+#     STS\s |
+#     STSW\s |
+#     STT\s |
+#     STX\s |
+#     SUB\s |
+#     SUBF\s |
+#     SUBR\s |
+#     SVC\s |
+#     TD\s |
+#     TIO\s |
+#     TIX\s |
+#     TIXR\s |
+#     WD\s'''
+#     t.value = t.value[:-1]
+#     t.type = 'CODOP'
+#     return t
 
 
 # def t_CODOP(t):
@@ -399,7 +399,14 @@ def t_CODOP(t):
 
 def t_NAME(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = 'NAME'
+    if(t.value in SICXE_Dictionary_CodOp):
+        t.type = 'CODOP'
+    elif(t.value in SICXE_Dictionary_Directives):
+        t.type = 'DIRECTIV'
+    elif(t.value in SIXE_Registers):
+        t.type = 'REG'
+    else:
+        t.type = 'NAME'
     return t
 
 
