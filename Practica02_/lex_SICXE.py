@@ -190,16 +190,11 @@ tokens = [
     'X_HEX',
     'NEWLINE'
 ]
-#+ list(SICXE_Dictionary.keys())
-# ] + list(reservadas.values()) + list(SIXE_Registers.keys())
 
-# t_ID = r'''[_]*[a-zA-Z]+[a-zA-Z0-9]*'''
-# t_NUM = r'''[0-9]+|[0-9a-fA-F]+H'''
 t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
 t_MODIF = r'''(\@|\#|\+)'''
 t_LPARENT = r'''\('''
 t_RPARENT = r'''\)'''
-# t_COMMENT_ML = r'''\/\*[a-zA-Z0-9]+\*\/'''
 t_PLUS = r'\+'
 t_MINUS = r'\-'
 t_UMINUS = r'\-'
@@ -227,12 +222,6 @@ def t_COMMENT_ML(t):
 def t_NEWLINE(t):
     r'''\n+'''
     t.type = 'NEWLINE'
-    return t
-
-
-def t_FINL(t):
-    r"\s\S"
-    t.type = 'FINL'
     return t
 
 
@@ -317,8 +306,6 @@ def t_COMMENT_IL(t):
     r'''[a-zA-Z0-9]+\n'''
     t.type = 'COMMENT_IL'
     return t
-# t_COMMENT_IL = r'''[a-zA-Z0-9]+'''
-
 
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
 
