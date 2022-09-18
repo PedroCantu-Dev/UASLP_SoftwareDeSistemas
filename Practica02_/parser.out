@@ -1,0 +1,142 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    AND_G
+    COMMENT_ML
+    C_TEXT
+    DIRECTIV
+    DIVIDE
+    EQUALS
+    FACTORIAL
+    FINL
+    FLOAT_NUM
+    HEX_INT
+    INT
+    LESSEQ
+    LESST
+    LPARENT
+    MINUS
+    MOD
+    MODIF
+    MOREEQ
+    MORET
+    MULTIPLY
+    NEWLINE
+    OPERANDO
+    OR_G
+    RPARENT
+    UMINUS
+    X_HEX
+
+Grammar
+
+Rule 0     S' -> programa
+Rule 1     programa -> inicio proposiciones fin
+Rule 2     inicio -> etiqueta START NUM
+Rule 3     fin -> END entrada
+Rule 4     entrada -> NAME
+Rule 5     proposiciones -> proposiciones proposicion
+Rule 6     proposiciones -> proposicion
+Rule 7     proposicion -> instruccion COMMENT_IL
+Rule 8     proposicion -> directiva COMMENT_IL
+Rule 9     proposicion -> COMMENT_IL
+Rule 10    instruccion -> etiqueta opformato
+Rule 11    directiva -> etiqueta tipodirectiva opdirectiva
+Rule 12    opdirectiva -> NUM
+Rule 13    opdirectiva -> NAME
+Rule 14    tipodirectiva -> BYTE
+Rule 15    tipodirectiva -> WORD
+Rule 16    tipodirectiva -> RESB
+Rule 17    tipodirectiva -> RESW
+Rule 18    etiqueta -> NAME
+Rule 19    opformato -> f1
+Rule 20    opformato -> f2
+Rule 21    opformato -> f3
+Rule 22    opformato -> f4
+Rule 23    f1 -> CODOP
+Rule 24    f2 -> CODOP NUM
+Rule 25    f2 -> CODOP REG
+Rule 26    f2 -> CODOP REG COMA REG
+Rule 27    f2 -> CODOP REG COMA NUM
+Rule 28    f3 -> simple3
+Rule 29    f3 -> indirecto3
+Rule 30    f3 -> inmediato3
+Rule 31    f4 -> PLUS f3
+Rule 32    simple3 -> CODOP NAME
+Rule 33    simple3 -> CODOP NUM
+Rule 34    simple3 -> CODOP NUM COMA X
+Rule 35    simple3 -> CODOP NAME COMA X
+Rule 36    indirecto3 -> CODOP @ NUM
+Rule 37    indirecto3 -> CODOP @ NAME
+Rule 38    inmediato3 -> CODOP # NUM
+Rule 39    inmediato3 -> CODOP # NAME
+
+Terminals, with rules where they appear
+
+#                    : 38 39
+@                    : 36 37
+AND_G                : 
+CODOP                : 23 24 25 26 27 32 33 34 35 36 37 38 39
+COMA                 : 26 27 34 35
+COMMENT_IL           : 7 8 9
+COMMENT_ML           : 
+C_TEXT               : 
+DIRECTIV             : 
+DIVIDE               : 
+EQUALS               : 
+FACTORIAL            : 
+FINL                 : 
+FLOAT_NUM            : 
+HEX_INT              : 
+INT                  : 
+LESSEQ               : 
+LESST                : 
+LPARENT              : 
+MINUS                : 
+MOD                  : 
+MODIF                : 
+MOREEQ               : 
+MORET                : 
+MULTIPLY             : 
+NAME                 : 4 13 18 32 35 37 39
+NEWLINE              : 
+NUM                  : 2 12 24 27 33 34 36 38
+OPERANDO             : 
+OR_G                 : 
+PLUS                 : 31
+REG                  : 25 26 26 27
+RPARENT              : 
+UMINUS               : 
+X                    : 34 35
+X_HEX                : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+BYTE                 : 14
+END                  : 3
+RESB                 : 16
+RESW                 : 17
+START                : 2
+WORD                 : 15
+directiva            : 8
+entrada              : 3
+etiqueta             : 2 10 11
+f1                   : 19
+f2                   : 20
+f3                   : 21 31
+f4                   : 22
+fin                  : 1
+indirecto3           : 29
+inicio               : 1
+inmediato3           : 30
+instruccion          : 7
+opdirectiva          : 11
+opformato            : 10
+programa             : 0
+proposicion          : 5 6
+proposiciones        : 1 5
+simple3              : 28
+tipodirectiva        : 11
+
