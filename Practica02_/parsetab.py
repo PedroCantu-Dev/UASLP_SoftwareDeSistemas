@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = "leftOR_GAND_GleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALADD ADDF ADDR AND AND_G BASE BYTE CLEAR CODOP COMA COMF COMMENT_IL COMMENT_ML COMP COMPR C_TEXT DIRECTIV DIV DIVF DIVIDE DIVR END EQUALS FACTORIAL FINL FIX FLOAT FLOAT_NUM HEX_INT HIO INT J JEQ JGT JLT JSUB LDA LDB LDCH LDF LDL LDS LDT LDX LESSEQ LESST LPARENT LPS MINUS MOD MODIF MOREEQ MORET MUL MULF MULR MULTIPLY NAME NORM NUM OPERANDO OR OR_G PLUS RD REG RESB RESW RMO RPARENT RSUB SHIFTL SHIFTR SIO SSK STA START STB STCH STF STI STL STS STSW STT STX SUB SUBF SUBR SVC TD TIO TIX TIXR UMINUS WD WORD X_HEXprograma : inicio proposiciones fininicio : etiqueta START NUMfin : END entrada entrada : NAMEproposiciones : proposiciones proposicion \n    | proposicionproposicion : instruccion COMMENT_IL \n    | directiva COMMENT_IL \n    | COMMENT_IL\n    instruccion : etiqueta opformato\n    \n    directiva : etiqueta tipodirectiva opdirectivaopdirectiva : NUM \n    | NAME tipodirectiva : BYTE \n    | WORD \n    | RESB \n    | RESWetiqueta : NAME opformato : f1 \n    | f2  \n    | f3 \n    | f4 f1 : CODOPf2 : CODOP NUM \n    | CODOP REG \n    | CODOP REG COMA REG \n    | CODOP REG COMA NUMf3 : simple3 \n    | indirecto3 \n    | inmediato3f4 : PLUS f3simple3 : CODOP NAME\n    | CODOP NUM \n    | CODOP NUM COMA 'X'\n    | CODOP NAME COMA 'X'indirecto3 : CODOP '@' NUM \n    | CODOP '@' NAMEinmediato3 : CODOP '#' NUM \n    | CODOP '#' NAME"
+_lr_signature = "leftNAMEleftCODOPleftREGleft@#leftOR_GAND_GleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALADD ADDF ADDR AND AND_G ARROBA BASE BYTE CLEAR CODOP COMA COMF COMMENT_IL COMMENT_ML COMP COMPR C_TEXT DIRECTIV DIV DIVF DIVIDE DIVR END EQUALS FACTORIAL FINL FIX FLOAT FLOAT_NUM HEX_INT HIO INT J JEQ JGT JLT JSUB LDA LDB LDCH LDF LDL LDS LDT LDX LESSEQ LESST LPARENT LPS MINUS MOD MODIF MOREEQ MORET MUL MULF MULR MULTIPLY NAME NEWLINE NORM NUM OPERANDO OR OR_G PLUS RD REG RESB RESW RMO RPARENT RSUB SHIFTL SHIFTR SIO SSK STA START STB STCH STF STI STL STS STSW STT STX SUB SUBF SUBR SVC TD TIO TIX TIXR UMINUS WD WORD X_HEXprograma : inicio proposiciones fininicio : etiqueta START numero COMMENT_IL NEWLINE\n    | etiqueta START numero NEWLINEnumero : INT\n    | HEX_INTfin : END entrada entrada : NAMEproposiciones : proposiciones proposicion\n    | proposicionproposicion : directiva COMMENT_IL NEWLINE\n    | instruccion COMMENT_IL NEWLINE\n    | directiva NEWLINE\n    | instruccion NEWLINE\n    instruccion : etiqueta opformato\n    | opformato\n    \n    directiva : etiqueta tipodirectiva opdirectivaopdirectiva : NUM\n    | NAME tipodirectiva : BYTE\n    | WORD\n    | RESB\n    | RESWetiqueta : NAME opformato : f1\n    | f2\n    | f3\n    | f4 f3 : simple3\n    | indirecto3\n    | inmediato3\n    | SIO\n    | TIOf3 : simple3 COMA 'X'\n    | indirecto3 COMA 'X'\n    | inmediato3 COMA 'X'f4 : PLUS f3simple3 : CODOP NAME\n    | CODOP NUMindirecto3 : CODOP '@' NUM\n    | CODOP '@' NAMEinmediato3 : CODOP '#' NUM\n    | CODOP '#' NAMEf2 : CODOP NUM\n    | CODOP REG\n    | CODOP REG COMA REG\n    | CODOP REG COMA NUMf1 : CODOP NEWLINE\n    empty : NEWLINE\n    "
     
-_lr_action_items = {'NAME':([0,2,5,6,8,13,14,15,16,18,23,24,25,26,27,32,41,42,44,],[4,4,4,-6,-9,-5,34,-7,-8,37,-14,-15,-16,-17,40,-2,49,51,40,]),'$end':([1,12,33,34,],[0,-1,-3,-4,]),'COMMENT_IL':([2,5,6,7,8,9,13,15,16,17,19,20,21,22,27,28,29,30,32,35,36,37,38,39,40,43,48,49,50,51,52,53,54,55,56,],[8,8,-6,15,-9,16,-5,-7,-8,-10,-19,-20,-21,-22,-23,-28,-29,-30,-2,-11,-12,-13,-24,-25,-32,-31,-36,-37,-38,-39,-33,-34,-26,-27,-35,]),'START':([3,4,],[11,-18,]),'BYTE':([4,10,],[-18,23,]),'WORD':([4,10,],[-18,24,]),'RESB':([4,10,],[-18,25,]),'RESW':([4,10,],[-18,26,]),'CODOP':([4,10,31,],[-18,27,44,]),'PLUS':([4,10,],[-18,31,]),'END':([5,6,8,13,15,16,],[14,-6,-9,-5,-7,-8,]),'NUM':([11,18,23,24,25,26,27,41,42,44,46,],[32,36,-14,-15,-16,-17,38,48,50,52,55,]),'REG':([27,46,],[39,54,]),'@':([27,44,],[41,41,]),'#':([27,44,],[42,42,]),'COMA':([38,39,40,52,],[45,46,47,45,]),'X':([45,47,],[53,56,]),}
+_lr_action_items = {'NAME':([0,2,5,6,15,24,25,27,29,30,32,33,34,35,40,41,46,52,53,67,70,],[4,4,4,-9,39,-8,51,-12,-13,56,-19,-20,-21,-22,59,61,39,-10,-11,-3,-2,]),'$end':([1,23,50,51,],[0,-1,-6,-7,]),'CODOP':([2,4,5,6,9,21,24,27,29,52,53,67,70,],[15,-23,15,-9,15,46,-8,-12,-13,-10,-11,-3,-2,]),'SIO':([2,4,5,6,9,21,24,27,29,52,53,67,70,],[19,-23,19,-9,19,19,-8,-12,-13,-10,-11,-3,-2,]),'TIO':([2,4,5,6,9,21,24,27,29,52,53,67,70,],[20,-23,20,-9,20,20,-8,-12,-13,-10,-11,-3,-2,]),'PLUS':([2,4,5,6,9,24,27,29,52,53,67,70,],[21,-23,21,-9,21,-8,-12,-13,-10,-11,-3,-2,]),'START':([3,4,],[22,-23,]),'BYTE':([4,9,],[-23,32,]),'WORD':([4,9,],[-23,33,]),'RESB':([4,9,],[-23,34,]),'RESW':([4,9,],[-23,35,]),'END':([5,6,24,27,29,52,53,],[25,-9,-8,-12,-13,-10,-11,]),'COMMENT_IL':([7,8,10,11,12,13,14,16,17,18,19,20,31,36,37,38,39,45,47,48,49,54,55,56,58,59,60,61,62,63,64,65,68,69,],[26,28,-15,-24,-25,-26,-27,-28,-29,-30,-31,-32,-14,-47,-38,-44,-37,-36,66,-4,-5,-16,-17,-18,-39,-40,-41,-42,-33,-34,-35,-38,-45,-46,]),'NEWLINE':([7,8,10,11,12,13,14,15,16,17,18,19,20,26,28,31,36,37,38,39,45,47,48,49,54,55,56,58,59,60,61,62,63,64,65,66,68,69,],[27,29,-15,-24,-25,-26,-27,36,-28,-29,-30,-31,-32,52,53,-14,-47,-38,-44,-37,-36,67,-4,-5,-16,-17,-18,-39,-40,-41,-42,-33,-34,-35,-38,70,-45,-46,]),'NUM':([15,30,32,33,34,35,40,41,46,57,],[37,55,-19,-20,-21,-22,58,60,65,69,]),'REG':([15,57,],[38,68,]),'@':([15,46,],[40,40,]),'#':([15,46,],[41,41,]),'COMA':([16,17,18,37,38,39,58,59,60,61,65,],[42,43,44,-38,57,-37,-39,-40,-41,-42,-38,]),'INT':([22,],[48,]),'HEX_INT':([22,],[49,]),'X':([42,43,44,],[62,63,64,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'programa':([0,],[1,]),'inicio':([0,],[2,]),'etiqueta':([0,2,5,],[3,10,10,]),'proposiciones':([2,],[5,]),'proposicion':([2,5,],[6,13,]),'instruccion':([2,5,],[7,7,]),'directiva':([2,5,],[9,9,]),'fin':([5,],[12,]),'opformato':([10,],[17,]),'tipodirectiva':([10,],[18,]),'f1':([10,],[19,]),'f2':([10,],[20,]),'f3':([10,31,],[21,43,]),'f4':([10,],[22,]),'simple3':([10,31,],[28,28,]),'indirecto3':([10,31,],[29,29,]),'inmediato3':([10,31,],[30,30,]),'entrada':([14,],[33,]),'opdirectiva':([18,],[35,]),}
+_lr_goto_items = {'programa':([0,],[1,]),'inicio':([0,],[2,]),'etiqueta':([0,2,5,],[3,9,9,]),'proposiciones':([2,],[5,]),'proposicion':([2,5,],[6,24,]),'directiva':([2,5,],[7,7,]),'instruccion':([2,5,],[8,8,]),'opformato':([2,5,9,],[10,10,31,]),'f1':([2,5,9,],[11,11,11,]),'f2':([2,5,9,],[12,12,12,]),'f3':([2,5,9,21,],[13,13,13,45,]),'f4':([2,5,9,],[14,14,14,]),'simple3':([2,5,9,21,],[16,16,16,16,]),'indirecto3':([2,5,9,21,],[17,17,17,17,]),'inmediato3':([2,5,9,21,],[18,18,18,18,]),'fin':([5,],[23,]),'tipodirectiva':([9,],[30,]),'numero':([22,],[47,]),'entrada':([25,],[50,]),'opdirectiva':([30,],[54,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,43 +27,52 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> programa","S'",1,None,None,None),
-  ('programa -> inicio proposiciones fin','programa',3,'p_programa','lex_SICXE.py',328),
-  ('inicio -> etiqueta START NUM','inicio',3,'p_inicio','lex_SICXE.py',332),
-  ('fin -> END entrada','fin',2,'p_fin','lex_SICXE.py',336),
-  ('entrada -> NAME','entrada',1,'p_entrada','lex_SICXE.py',340),
-  ('proposiciones -> proposiciones proposicion','proposiciones',2,'p_proposiciones','lex_SICXE.py',344),
-  ('proposiciones -> proposicion','proposiciones',1,'p_proposiciones','lex_SICXE.py',345),
-  ('proposicion -> instruccion COMMENT_IL','proposicion',2,'p_proposicion','lex_SICXE.py',353),
-  ('proposicion -> directiva COMMENT_IL','proposicion',2,'p_proposicion','lex_SICXE.py',354),
-  ('proposicion -> COMMENT_IL','proposicion',1,'p_proposicion','lex_SICXE.py',355),
-  ('instruccion -> etiqueta opformato','instruccion',2,'p_instruccion','lex_SICXE.py',360),
-  ('directiva -> etiqueta tipodirectiva opdirectiva','directiva',3,'p_directiva','lex_SICXE.py',366),
-  ('opdirectiva -> NUM','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',370),
-  ('opdirectiva -> NAME','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',371),
-  ('tipodirectiva -> BYTE','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',375),
-  ('tipodirectiva -> WORD','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',376),
-  ('tipodirectiva -> RESB','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',377),
-  ('tipodirectiva -> RESW','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',378),
-  ('etiqueta -> NAME','etiqueta',1,'p_etiqueta','lex_SICXE.py',382),
-  ('opformato -> f1','opformato',1,'p_opformato','lex_SICXE.py',386),
-  ('opformato -> f2','opformato',1,'p_opformato','lex_SICXE.py',387),
-  ('opformato -> f3','opformato',1,'p_opformato','lex_SICXE.py',388),
-  ('opformato -> f4','opformato',1,'p_opformato','lex_SICXE.py',389),
-  ('f1 -> CODOP','f1',1,'p_f1','lex_SICXE.py',393),
-  ('f2 -> CODOP NUM','f2',2,'p_f2','lex_SICXE.py',397),
-  ('f2 -> CODOP REG','f2',2,'p_f2','lex_SICXE.py',398),
-  ('f2 -> CODOP REG COMA REG','f2',4,'p_f2','lex_SICXE.py',399),
-  ('f2 -> CODOP REG COMA NUM','f2',4,'p_f2','lex_SICXE.py',400),
-  ('f3 -> simple3','f3',1,'p_f3','lex_SICXE.py',404),
-  ('f3 -> indirecto3','f3',1,'p_f3','lex_SICXE.py',405),
-  ('f3 -> inmediato3','f3',1,'p_f3','lex_SICXE.py',406),
-  ('f4 -> PLUS f3','f4',2,'p_f4','lex_SICXE.py',410),
-  ('simple3 -> CODOP NAME','simple3',2,'p_simple3','lex_SICXE.py',414),
-  ('simple3 -> CODOP NUM','simple3',2,'p_simple3','lex_SICXE.py',415),
-  ('simple3 -> CODOP NUM COMA X','simple3',4,'p_simple3','lex_SICXE.py',416),
-  ('simple3 -> CODOP NAME COMA X','simple3',4,'p_simple3','lex_SICXE.py',417),
-  ('indirecto3 -> CODOP @ NUM','indirecto3',3,'p_indirecto3','lex_SICXE.py',422),
-  ('indirecto3 -> CODOP @ NAME','indirecto3',3,'p_indirecto3','lex_SICXE.py',423),
-  ('inmediato3 -> CODOP # NUM','inmediato3',3,'p_inmediato3','lex_SICXE.py',427),
-  ('inmediato3 -> CODOP # NAME','inmediato3',3,'p_inmediato3','lex_SICXE.py',428),
+  ('programa -> inicio proposiciones fin','programa',3,'p_programa','lex_SICXE.py',377),
+  ('inicio -> etiqueta START numero COMMENT_IL NEWLINE','inicio',5,'p_inicio','lex_SICXE.py',383),
+  ('inicio -> etiqueta START numero NEWLINE','inicio',4,'p_inicio','lex_SICXE.py',384),
+  ('numero -> INT','numero',1,'p_numero','lex_SICXE.py',389),
+  ('numero -> HEX_INT','numero',1,'p_numero','lex_SICXE.py',390),
+  ('fin -> END entrada','fin',2,'p_fin','lex_SICXE.py',395),
+  ('entrada -> NAME','entrada',1,'p_entrada','lex_SICXE.py',400),
+  ('proposiciones -> proposiciones proposicion','proposiciones',2,'p_proposiciones','lex_SICXE.py',405),
+  ('proposiciones -> proposicion','proposiciones',1,'p_proposiciones','lex_SICXE.py',406),
+  ('proposicion -> directiva COMMENT_IL NEWLINE','proposicion',3,'p_proposicion','lex_SICXE.py',414),
+  ('proposicion -> instruccion COMMENT_IL NEWLINE','proposicion',3,'p_proposicion','lex_SICXE.py',415),
+  ('proposicion -> directiva NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',416),
+  ('proposicion -> instruccion NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',417),
+  ('instruccion -> etiqueta opformato','instruccion',2,'p_instruccion','lex_SICXE.py',423),
+  ('instruccion -> opformato','instruccion',1,'p_instruccion','lex_SICXE.py',424),
+  ('directiva -> etiqueta tipodirectiva opdirectiva','directiva',3,'p_directiva','lex_SICXE.py',431),
+  ('opdirectiva -> NUM','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',436),
+  ('opdirectiva -> NAME','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',437),
+  ('tipodirectiva -> BYTE','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',442),
+  ('tipodirectiva -> WORD','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',443),
+  ('tipodirectiva -> RESB','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',444),
+  ('tipodirectiva -> RESW','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',445),
+  ('etiqueta -> NAME','etiqueta',1,'p_etiqueta','lex_SICXE.py',450),
+  ('opformato -> f1','opformato',1,'p_opformato','lex_SICXE.py',455),
+  ('opformato -> f2','opformato',1,'p_opformato','lex_SICXE.py',456),
+  ('opformato -> f3','opformato',1,'p_opformato','lex_SICXE.py',457),
+  ('opformato -> f4','opformato',1,'p_opformato','lex_SICXE.py',458),
+  ('f3 -> simple3','f3',1,'p_f3','lex_SICXE.py',463),
+  ('f3 -> indirecto3','f3',1,'p_f3','lex_SICXE.py',464),
+  ('f3 -> inmediato3','f3',1,'p_f3','lex_SICXE.py',465),
+  ('f3 -> SIO','f3',1,'p_f3','lex_SICXE.py',466),
+  ('f3 -> TIO','f3',1,'p_f3','lex_SICXE.py',467),
+  ('f3 -> simple3 COMA X','f3',3,'p_f3_Indexado','lex_SICXE.py',472),
+  ('f3 -> indirecto3 COMA X','f3',3,'p_f3_Indexado','lex_SICXE.py',473),
+  ('f3 -> inmediato3 COMA X','f3',3,'p_f3_Indexado','lex_SICXE.py',474),
+  ('f4 -> PLUS f3','f4',2,'p_f4','lex_SICXE.py',479),
+  ('simple3 -> CODOP NAME','simple3',2,'p_simple3','lex_SICXE.py',484),
+  ('simple3 -> CODOP NUM','simple3',2,'p_simple3','lex_SICXE.py',485),
+  ('indirecto3 -> CODOP @ NUM','indirecto3',3,'p_indirecto3','lex_SICXE.py',490),
+  ('indirecto3 -> CODOP @ NAME','indirecto3',3,'p_indirecto3','lex_SICXE.py',491),
+  ('inmediato3 -> CODOP # NUM','inmediato3',3,'p_inmediato3','lex_SICXE.py',496),
+  ('inmediato3 -> CODOP # NAME','inmediato3',3,'p_inmediato3','lex_SICXE.py',497),
+  ('f2 -> CODOP NUM','f2',2,'p_f2','lex_SICXE.py',502),
+  ('f2 -> CODOP REG','f2',2,'p_f2','lex_SICXE.py',503),
+  ('f2 -> CODOP REG COMA REG','f2',4,'p_f2','lex_SICXE.py',504),
+  ('f2 -> CODOP REG COMA NUM','f2',4,'p_f2','lex_SICXE.py',505),
+  ('f1 -> CODOP NEWLINE','f1',2,'p_f1','lex_SICXE.py',510),
+  ('empty -> NEWLINE','empty',1,'p_empty','lex_SICXE.py',516),
 ]

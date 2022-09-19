@@ -68,6 +68,11 @@ argumentTokens = {
     'EXP': '''[a-zA-Z]+[a-zA-Z0-9]*''',
 }
 
+arvhivoLex = {}
+
+LexError = {}
+SintaxError = {}
+
 # Registros SICXE |
 # SICXE Registers
 SIXE_Registers = {'A': 0,  # Acumulador para operaciones aritmeticas |
@@ -188,6 +193,8 @@ tokens = [
     'OPERANDO',
     'C_TEXT',
     'X_HEX',
+    'ARROBA',
+    'NEWLINE'
 ]+list(SICXE_Dictionary.keys())
 
 t_LPARENT = r'''\('''
@@ -207,8 +214,8 @@ t_OR_G = r'\|\|'
 t_AND_G = r'\&\&'
 t_EQUALS = r'\='
 t_COMA = r'''\,'''
-t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
-t_MODIF = r'''(\@|\#|\+)'''
+# t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
+t_MODIF = r'''(\@|\#)'''
 
 
 def t_COMMENT_ML(t):
@@ -220,8 +227,9 @@ def t_COMMENT_ML(t):
 
 def t_newline(t):
     r'''\n+'''
-    # t.type = 'NEWLINE'
+    t.type = 'NEWLINE'
     t.lexer.lineno += len(t.value)
+    return t
 
 
 def t_C_TEXT(t):
@@ -251,24 +259,6 @@ def t_NAME(t):
         t.type = 'REG'
     else:
         t.type = 'NAME'
-    return t
-
-
-def t_START(t):
-    r'START\s'
-    t.type = 'START'
-    return t
-
-
-def t_END(t):
-    r'END\s'
-    t.type = 'END'
-    return t
-
-
-def t_BASE(t):
-    r'BASE\s'
-    t.type = 'BASE'
     return t
 
 
@@ -303,7 +293,7 @@ def t_INT(t):
 
 
 def t_COMMENT_IL(t):
-    r'''[a-zA-Z0-9]+\n'''
+    r'''[a-zA-Z0-9]+'''
     t.type = 'COMMENT_IL'
     return t
 
@@ -325,186 +315,51 @@ def find_column(token):
     return (token.lexpos - line_start) + 1
 
 
-def p_programa(p):
-    """programa : inicio proposiciones fin"""
-
-
-def p_inicio(p):
-    """inicio : etiqueta START NUM"""
-
-
-def p_fin(p):
-    """fin : END entrada """
-
-
-def p_entrada(p):
-    """entrada : NAME"""
-
-
-def p_proposiciones(p):
-    """proposiciones : proposiciones proposicion 
-    | proposicion"""
-
-
-# def p_comentario():
-#     """comentario : COMMENT_IL | COMMENT_ML"""
-
-
-def p_proposicion(p):
-    """proposicion : instruccion COMMENT_IL 
-    | directiva COMMENT_IL 
-    | COMMENT_IL"""
-
-
-def p_instruccion(p):
-    """
-    instruccion : etiqueta opformato
-    """
-
-
-def p_directiva(p):
-    """
-    directiva : etiqueta tipodirectiva opdirectiva"""
-
-
-def p_opdirectiva(p):
-    """opdirectiva : NUM 
-    | NAME """
-
-
-def p_tipodirectiva(p):
-    """tipodirectiva : BYTE 
-    | WORD 
-    | RESB 
-    | RESW"""
-
-
-def p_etiqueta(p):
-    """etiqueta : NAME """
-
-
-def p_opformato(p):
-    """opformato : f1 
-    | f2  
-    | f3 
-    | f4 """
-
-
-def p_f1(p):
-    """f1 : CODOP"""
-
-
-def p_f2(p):
-    """f2 : CODOP NUM 
-    | CODOP REG 
-    | CODOP REG COMA REG 
-    | CODOP REG COMA NUM"""
-
-
-def p_f3(p):
-    """f3 : simple3 
-    | indirecto3 
-    | inmediato3"""
-
-
-def p_f4(p):
-    """f4 : PLUS f3"""
-
-
-def p_simple3(p):
-    """simple3 : CODOP NAME
-    | CODOP NUM 
-    | CODOP NUM COMA 'X'
-    | CODOP NAME COMA 'X'"""
-    p[0] = ()
-
-
-def p_indirecto3(p):
-    """indirecto3 : CODOP '@' NUM 
-    | CODOP '@' NAME"""
-
-
-def p_inmediato3(p):
-    """inmediato3 : CODOP '#' NUM 
-    | CODOP '#' NAME"""
-
-
-# def p_empty(p):
-#     '''
-#     empty :
-#     '''
-#     p[0] = None
-
-
-def p_error(p):
-    print("syntax error")
-    print(p[0])
-
-
 lexer = lex.lex()
+# data = '''
+# INICIO START 0H
+# EJERCFINAL  START   0H
+#             SIO
+#             TIO
+#             +LDX    @TABLA
+# VALOR	    WORD    140
+# 	   	    BASE    CAD
+# TABLA  	    RESW	20
+#     	    +LDS	VALOR, X
+# 	   	    SHIFTL	S,6
+# SIMBOLO     LDD		#VALOR
+# 	        +LDA	1010H ,X
+# CAD	        BYTE	C'FINAL'
+# 	        LDA		#TABLA
+#     	    SUBR	S, X
+# 	   	    RESW	2500H
+# SALTO       ADD		VALOR,X
+# 	        STCH	@TABLA
+# 	        JGT	    SALTO , X
+# AREA        RESB	64
+# 	        STA		SALTO
+# 	        +SUB	350
+# 	        J		CADENA, X
+# 	        +TIX	TABLA,X
+#             END     INICIO
+# /*sdfsdflkjd\nsfASDFAFSD*/
+# /*ComentarioPRRON*/
+# &
+# &
 
-precedence = (
-    ('left', 'OR_G', 'AND_G'),
-    ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
-    ('right', 'UMINUS', 'FACTORIAL')
-)
+
+#  ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
+#  ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
+#  DIVIDENDO DIV
+#  '''
+
+
 data = '''
-/*sdfsdflkjd\nsfASDFAFSD*/
-/*ComentarioPRRON*/
-&
-&
-SUM ADD 0 INICIO START 0H
-&
-EJERCFINAL  START   0H
-?
-            SIO 
-            TIO
-            +LDX    @TABLA	  	   
-VALOR	    WORD    140	   
-	   	    BASE    CAD	   
-TABLA  	    RESW	20
-    	    +LDS	VALOR, X 	   
-	   	    SHIFTL	S,6	   
-SIMBOLO     LDD		#VALOR	       
-	        +LDA	1010H ,X	   
-CAD	        BYTE	C'FINAL'	   
-	        LDA		#TABLA	   
-    	    SUBR	S, X	       
-	   	    RESW	2500H
-SALTO       ADD		VALOR,X	       
-	        STCH	@TABLA
-	        JGT	    SALTO , X	   
-AREA        RESB	64	   
-	        STA		SALTO       
-	        +SUB	350
-	        J		CADENA, X 	   
-	        +TIX	TABLA,X	   
-            END     INICIO
-
-
-
- ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
- ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
- DIVIDENDO DIVF DIVR FIX FLOAT HIO J
- FeniX
- SEGPARC START		0H
- 	RESB	12
- ETIQ	+ADD	@ENTRADA,X
- 	BASE	ARREG
-# CICLO	LDB	(ENTRADA+32)\n
- VALOR	EQU	(CICLO-PRUEBA)*2
- ARREG 	RESW	20
- DATO	EQU	20
- MAYOR	WORD	(ENTRADA-CICLO)+ARREG
- 	LDA 	#(DATO*2)
- 	TIXR	T
- 	WORD	CICLO-ENTRADA
- 	LDA	MAYOR+CICLO-15
- ENTRADA BYTE 		X'3E0'
- 	END
-    
+ EJERCFINAL  START   0H
+             SIO\n
+             TIO
+             +LDX    @TABLA
+             END     INICIO
  '''
 
 lexer.input(data)
@@ -515,13 +370,202 @@ while True:
         break
     print(tok)
 
+print("fin lexer")
 
+
+def p_programa(p):
+    """programa : inicio proposiciones fin"""
+    p[0] = ('programa', p[1], p[2], p[3])
+    run(p[0])
+
+
+def p_inicio(p):
+    """inicio : etiqueta START numero COMMENT_IL NEWLINE
+    | etiqueta START numero NEWLINE"""
+    p[0] = (p[2], p[1], p[3])
+
+
+def p_numero(p):
+    """numero : INT
+    | HEX_INT"""
+    p[0] = ('numero', p[1])
+
+
+def p_fin(p):
+    """fin : END entrada """
+    p[0] = ('END', p[2])
+
+
+def p_entrada(p):
+    """entrada : NAME"""
+    {}
+
+
+def p_proposiciones(p):
+    """proposiciones : proposiciones proposicion
+    | proposicion"""
+    if(len(p) > 2):
+        p[0] = str(p[1] + p[2])
+    else:
+        p[0] = str(p[1])
+
+
+def p_proposicion(p):
+    """proposicion : directiva COMMENT_IL NEWLINE
+    | instruccion COMMENT_IL NEWLINE
+    | directiva NEWLINE
+    | instruccion NEWLINE"""
+    {}
+
+
+def p_instruccion(p):
+    """
+    instruccion : etiqueta opformato
+    | opformato
+    """
+    {}
+
+
+def p_directiva(p):
+    """
+    directiva : etiqueta tipodirectiva opdirectiva"""
+    {}
+
+
+def p_opdirectiva(p):
+    """opdirectiva : NUM
+    | NAME """
+    {}
+
+
+def p_tipodirectiva(p):
+    """tipodirectiva : BYTE
+    | WORD
+    | RESB
+    | RESW"""
+    {}
+
+
+def p_etiqueta(p):
+    """etiqueta : NAME """
+    p[0] = p[1]
+
+
+def p_opformato(p):
+    """opformato : f1
+    | f2
+    | f3
+    | f4 """
+    {}
+
+
+def p_f3(p):
+    """f3 : simple3
+    | indirecto3
+    | inmediato3
+    | SIO
+    | TIO"""
+    p[0] = ('f3', p[1])
+
+
+def p_f3_Indexado(p):
+    """f3 : simple3 COMA 'X'
+    | indirecto3 COMA 'X'
+    | inmediato3 COMA 'X'"""
+    p[0] = ('f3,X', p[1], p[2], p[3])
+
+
+def p_f4(p):
+    """f4 : PLUS f3"""
+    p[0] = ('f4', p[1], p[2])
+
+
+def p_simple3(p):
+    """simple3 : CODOP NAME
+    | CODOP NUM"""
+    {}
+
+
+def p_indirecto3(p):
+    """indirecto3 : CODOP '@' NUM
+    | CODOP '@' NAME"""
+    {}
+
+
+def p_inmediato3(p):
+    """inmediato3 : CODOP '#' NUM
+    | CODOP '#' NAME"""
+    {}
+
+
+def p_f2(p):
+    """f2 : CODOP NUM
+    | CODOP REG
+    | CODOP REG COMA REG
+    | CODOP REG COMA NUM"""
+    {}
+
+
+def p_f1(p):
+    """f1 : CODOP NEWLINE"""
+    {}
+
+
+def p_empty(p):
+    '''
+    empty : NEWLINE
+    '''
+    p[0] = None
+
+
+def p_error(p):
+    print("syntax error")
+    print(p)
+    # p[0] = ("Err", p[1])
+
+
+precedence = (
+    ('left', 'NAME'),
+    ('left', 'CODOP'),
+    ('left', 'REG'),
+    ('left', '@', '#'),
+    ('left', 'OR_G', 'AND_G'),
+    ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
+    ('right', 'UMINUS', 'FACTORIAL')
+)
 parser = yacc.yacc()
 env = {}
 
 
+def des_hex(hexdigit):
+    return int(hexdigit, 16)
+
+
 def run(p):
     if type(p) == tuple:
+        if(p[0] == 'programa'):
+            return run(p[1]) + run(p[2]) + run(p[3])
+        if p[0] == 'START':  # p[1]:etiqueta, p[2]:numero
+            return run(p[1]) + str(run(p[2]))
+        if p[0] == 'numero':
+            {}
+        if p[0] == 'BASE':
+            {}
+        if p[0] == 'DIRECTIV':
+            {}
+        if p[0] == 'f4':
+            {}
+        if p[0] == 'f3':
+            {
+                print("Hoola f3")
+            }
+        if p[0] == 'f2':
+            {}
+        if p[0] == 'f1':
+            {}
+
         if p[0] == '+':
             return run(p[1]) + run(p[2])
         elif p[0] == '-':
@@ -577,17 +621,25 @@ def run(p):
         elif p[0] == '!':
             return math.factorial(int(run(p[1])))
     else:
-        # print(p)
+        print(p)
         return p
 
 
-while True:
-    try:
-        s = input('calc>> ')
-    except EOFError:
-        break
-    parser.parse(s)
+# while True:
+#     try:
+#         s = input('calc>> ')
+#     except EOFError:
+#         break
+par = parser.parse(data)
+# par = par = run(data)
+print(par)
 
+# while True:
+#     try:
+#         s = input('calc>> ')
+#     except EOFError:
+#         break
+#     parser.parse(s)
 
 # lexer.input(data)
 
