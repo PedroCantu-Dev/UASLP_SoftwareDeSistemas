@@ -159,7 +159,6 @@ tokens = [
     'NUM',
     'FINL',
     'COMA',
-    'MODIF',
     'REG',
     'COMMENT_IL',
     'COMMENT_ML',
@@ -167,6 +166,7 @@ tokens = [
     'NAME',
     'DIRECTIV',
     'PLUS',
+    'MODIF',
     'MINUS',
     'INT',
     'FLOAT_NUM',
@@ -188,11 +188,8 @@ tokens = [
     'OPERANDO',
     'C_TEXT',
     'X_HEX',
-    'NEWLINE'
-]
+]+list(SICXE_Dictionary.keys())
 
-t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
-t_MODIF = r'''(\@|\#|\+)'''
 t_LPARENT = r'''\('''
 t_RPARENT = r'''\)'''
 t_PLUS = r'\+'
@@ -210,6 +207,8 @@ t_OR_G = r'\|\|'
 t_AND_G = r'\&\&'
 t_EQUALS = r'\='
 t_COMA = r'''\,'''
+t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
+t_MODIF = r'''(\@|\#|\+)'''
 
 
 def t_COMMENT_ML(t):
@@ -219,10 +218,10 @@ def t_COMMENT_ML(t):
     # return t
 
 
-def t_NEWLINE(t):
+def t_newline(t):
     r'''\n+'''
-    t.type = 'NEWLINE'
-    return t
+    # t.type = 'NEWLINE'
+    t.lexer.lineno += len(t.value)
 
 
 def t_C_TEXT(t):
@@ -246,7 +245,8 @@ def t_NAME(t):
     if(t.value in SICXE_Dictionary_CodOp):
         t.type = 'CODOP'
     elif(t.value in SICXE_Dictionary_Directives):
-        t.type = 'DIRECTIV'
+        # t.type = 'DIRECTIV'
+        t.type = t.value
     elif(t.value in SIXE_Registers):
         t.type = 'REG'
     else:
@@ -311,8 +311,18 @@ def t_COMMENT_IL(t):
 
 
 def t_error(t):
-    print("Illegal characters:"+t.value+":")
+    print("Caracter ilegal en la linea " + str(lexer.lineno-1))
+    # print("Illegal characters:"+t.value+":")
     t.lexer.skip(1)
+
+ # Compute column.
+ #     input is the input text string
+ #     token is a token instance
+
+
+def find_column(token):
+    line_start = data.rfind('\n', 0, token.lexpos) + 1
+    return (token.lexpos - line_start) + 1
 
 
 def p_programa(p):
@@ -443,8 +453,12 @@ precedence = (
 data = '''
 /*sdfsdflkjd\nsfASDFAFSD*/
 /*ComentarioPRRON*/
+&
+&
 SUM ADD 0 INICIO START 0H
+&
 EJERCFINAL  START   0H
+?
             SIO 
             TIO
             +LDX    @TABLA	  	   
