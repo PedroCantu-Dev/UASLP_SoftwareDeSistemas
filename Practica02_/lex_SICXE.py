@@ -3,6 +3,7 @@ from cmd import IDENTCHARS
 import codecs
 import ply.lex as lex
 import ply.yacc as yacc
+
 import re
 import os
 import sys
@@ -165,7 +166,7 @@ tokens = [
     'FINL',
     'COMA',
     'REG',
-    'COMMENT_IL',
+    # 'COMMENT_IL',
     'COMMENT_ML',
     'CODOP',
     'NAME',
@@ -316,62 +317,60 @@ def find_column(token):
 
 
 lexer = lex.lex()
-# data = '''
-# INICIO START 0H
-# EJERCFINAL  START   0H
-#             SIO
-#             TIO
-#             +LDX    @TABLA
-# VALOR	    WORD    140
-# 	   	    BASE    CAD
-# TABLA  	    RESW	20
-#     	    +LDS	VALOR, X
-# 	   	    SHIFTL	S,6
-# SIMBOLO     LDD		#VALOR
-# 	        +LDA	1010H ,X
-# CAD	        BYTE	C'FINAL'
-# 	        LDA		#TABLA
-#     	    SUBR	S, X
-# 	   	    RESW	2500H
-# SALTO       ADD		VALOR,X
-# 	        STCH	@TABLA
-# 	        JGT	    SALTO , X
-# AREA        RESB	64
-# 	        STA		SALTO
-# 	        +SUB	350
-# 	        J		CADENA, X
-# 	        +TIX	TABLA,X
-#             END     INICIO
-# /*sdfsdflkjd\nsfASDFAFSD*/
-# /*ComentarioPRRON*/
-# &
-# &
+dataArchi = '''
+ INICIO START 0H
+ EJERCFINAL  START   0H
+             SIO
+             TIO
+             +LDX    @TABLA
+ VALOR	    WORD    140
+ 	   	    BASE    CAD
+ TABLA  	    RESW	20
+     	    +LDS	VALOR, X
+ 	   	    SHIFTL	S,6
+ SIMBOLO     LDD		#VALOR
+ 	        +LDA	1010H ,X
+ CAD	        BYTE	C'FINAL'
+ 	        LDA		#TABLA
+     	    SUBR	S, X
+ 	   	    RESW	2500H
+ SALTO       ADD		VALOR,X
+ 	        STCH	@TABLA
+ 	        JGT	    SALTO , X
+ AREA        RESB	64
+ 	        STA		SALTO
+ 	        +SUB	350
+ 	        J		CADENA, X
+ 	        +TIX	TABLA,X
+             END     INICIO
+ /*sdfsdflkjd\nsfASDFAFSD*/
+ /*ComentarioPRRON*/
+ &
+ &
 
 
-#  ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
-#  ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
-#  DIVIDENDO DIV
-#  '''
+  ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
+  ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
+  DIVIDENDO DIV
+  '''
+lexer.input(dataArchi)
 
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
+
+# print("fin lexer")
 
 data = '''
  EJERCFINAL  START   0H
-             SIO $$ esto es un comentario en linea maspartes
+             SIO   
              SIO\n
              TIO\n
              +LDX    @TABLA
              END     INICIO
  '''
-
-# lexer.input(data)
-
-# while True:
-#     tok = lexer.token()
-#     if not tok:
-#         break
-#     print(tok)
-
-# print("fin lexer")
 
 # opcional
 start = 'sicxe_file'
@@ -391,9 +390,8 @@ def p_programa(p):
 
 
 def p_inicio(p):
-    """inicio : etiqueta START numero NEWLINE
-    | etiqueta START numero NEWLINE"""
-    p[0] = (p[2], p[1], p[3])
+    """inicio : etiqueta START numero NEWLINE"""
+    p[0] = ("inicio", p[1], p[2], p[3])
 
 
 def p_numero(p):
@@ -415,19 +413,18 @@ def p_entrada(p):
 def p_proposiciones(p):
     """proposiciones : proposiciones proposicion
     | proposicion"""
-    if(len(p) > 2):
-        p[0] = str(p[1] + p[2])
-    else:
-        p[0] = str(p[1])
 
 
 def p_proposicion(p):
     """proposicion : 
     | directiva NEWLINE
-    | instruccion NEWLINE"""
-    p[0] = (p[1], p[2])
+    | instruccion NEWLINE
+    | error NEWLINE"""
+    p[0] = ('proposicion', p[1])
     f = p[0]
-    g = f
+    g = p[1]
+    h = p
+    l = g
 
 
 # def p_proposicion_error(p):
@@ -463,7 +460,7 @@ def p_tipodirectiva(p):
     | WORD
     | RESB
     | RESW"""
-    {}
+    p[0] = p[1]
 
 
 def p_etiqueta(p):
@@ -577,6 +574,10 @@ def run(p):
             return run(p[1]) + str(run(p[2]))
         if p[0] == 'numero':
             {}
+        if p[0] == 'instruccion':
+            {
+                print("instruccion")
+            }
         if p[0] == 'BASE':
             {}
         if p[0] == 'DIRECTIV':
@@ -659,6 +660,7 @@ def run(p):
 
 #log = logging.getLogger()
 #parser.parse(input, debug=log)
+par = parser.parse(data)
 par = parser.parse(data, debug=1)
 # par = parser.parse(data, tracking=1)
 
