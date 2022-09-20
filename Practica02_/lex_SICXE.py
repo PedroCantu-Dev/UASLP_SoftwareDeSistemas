@@ -7,7 +7,7 @@ import re
 import os
 import sys
 import math
-
+import logging
 # Valor de las banderas
 # flags value
 NIXBPE = ''
@@ -225,7 +225,7 @@ def t_COMMENT_ML(t):
     # return t
 
 
-def t_newline(t):
+def t_NEWLINE(t):
     r'''\n+'''
     t.type = 'NEWLINE'
     t.lexer.lineno += len(t.value)
@@ -250,11 +250,10 @@ def t_X_HEX(t):
 
 def t_NAME(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    if(t.value in SICXE_Dictionary_CodOp):
-        t.type = 'CODOP'
-    elif(t.value in SICXE_Dictionary_Directives):
-        # t.type = 'DIRECTIV'
+    if(t.value in SICXE_Dictionary_Directives or t.value == 'SIO' or t.value == 'TIO'):
         t.type = t.value
+    elif(t.value in SICXE_Dictionary_CodOp):
+        t.type = 'CODOP'
     elif(t.value in SIXE_Registers):
         t.type = 'REG'
     else:
@@ -357,20 +356,33 @@ lexer = lex.lex()
 data = '''
  EJERCFINAL  START   0H
              SIO\n
-             TIO
+             SIO\n
+             TIO\n
+             TIO\n
+             SIO\n
              +LDX    @TABLA
              END     INICIO
  '''
 
-lexer.input(data)
+# lexer.input(data)
 
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
 
-print("fin lexer")
+# print("fin lexer")
+
+# opcional
+start = 'sicxe_file'
+
+
+def p_sicxe_file(p):
+    """sicxe_file : empty
+    | programa
+    | empty programa
+    | empty programa empty"""
 
 
 def p_programa(p):
@@ -398,7 +410,7 @@ def p_fin(p):
 
 def p_entrada(p):
     """entrada : NAME"""
-    {}
+    p[0] = p[1]
 
 
 def p_proposiciones(p):
@@ -452,10 +464,10 @@ def p_etiqueta(p):
 
 
 def p_opformato(p):
-    """opformato : f1
-    | f2
+    """opformato : f4
     | f3
-    | f4 """
+    | f2
+    | f1 """
     {}
 
 
@@ -514,13 +526,18 @@ def p_f1(p):
 def p_empty(p):
     '''
     empty : NEWLINE
+    |
     '''
     p[0] = None
 
 
 def p_error(p):
-    print("syntax error")
-    print(p)
+
+    print("syntax error en el token ", p.type)
+    num = 0
+    p.lineno(num)
+    print(num)
+    # p.errors
     # p[0] = ("Err", p[1])
 
 
@@ -630,9 +647,12 @@ def run(p):
 #         s = input('calc>> ')
 #     except EOFError:
 #         break
+
+#log = logging.getLogger()
+#parser.parse(input, debug=log)
 par = parser.parse(data)
 # par = par = run(data)
-print(par)
+# print(par)
 
 # while True:
 #     try:

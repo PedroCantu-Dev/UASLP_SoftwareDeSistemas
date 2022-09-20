@@ -87,60 +87,65 @@ Unused terminals:
 
 Grammar
 
-Rule 0     S' -> programa
-Rule 1     programa -> inicio proposiciones fin
-Rule 2     inicio -> etiqueta START numero COMMENT_IL NEWLINE
-Rule 3     inicio -> etiqueta START numero NEWLINE
-Rule 4     numero -> INT
-Rule 5     numero -> HEX_INT
-Rule 6     fin -> END entrada
-Rule 7     entrada -> NAME
-Rule 8     proposiciones -> proposiciones proposicion
-Rule 9     proposiciones -> proposicion
-Rule 10    proposicion -> directiva COMMENT_IL NEWLINE
-Rule 11    proposicion -> instruccion COMMENT_IL NEWLINE
-Rule 12    proposicion -> directiva NEWLINE
-Rule 13    proposicion -> instruccion NEWLINE
-Rule 14    instruccion -> etiqueta opformato
-Rule 15    instruccion -> opformato
-Rule 16    directiva -> etiqueta tipodirectiva opdirectiva
-Rule 17    opdirectiva -> NUM
-Rule 18    opdirectiva -> NAME
-Rule 19    tipodirectiva -> BYTE
-Rule 20    tipodirectiva -> WORD
-Rule 21    tipodirectiva -> RESB
-Rule 22    tipodirectiva -> RESW
-Rule 23    etiqueta -> NAME
-Rule 24    opformato -> f1
-Rule 25    opformato -> f2
-Rule 26    opformato -> f3
-Rule 27    opformato -> f4
-Rule 28    f3 -> simple3
-Rule 29    f3 -> indirecto3
-Rule 30    f3 -> inmediato3
-Rule 31    f3 -> SIO
-Rule 32    f3 -> TIO
-Rule 33    f3 -> simple3 COMA X
-Rule 34    f3 -> indirecto3 COMA X
-Rule 35    f3 -> inmediato3 COMA X
-Rule 36    f4 -> PLUS f3
-Rule 37    simple3 -> CODOP NAME
-Rule 38    simple3 -> CODOP NUM
-Rule 39    indirecto3 -> CODOP @ NUM
-Rule 40    indirecto3 -> CODOP @ NAME
-Rule 41    inmediato3 -> CODOP # NUM
-Rule 42    inmediato3 -> CODOP # NAME
-Rule 43    f2 -> CODOP NUM
-Rule 44    f2 -> CODOP REG
-Rule 45    f2 -> CODOP REG COMA REG
-Rule 46    f2 -> CODOP REG COMA NUM
-Rule 47    f1 -> CODOP NEWLINE
-Rule 48    empty -> NEWLINE
+Rule 0     S' -> sicxe_file
+Rule 1     sicxe_file -> empty
+Rule 2     sicxe_file -> programa
+Rule 3     sicxe_file -> empty programa
+Rule 4     sicxe_file -> empty programa empty
+Rule 5     programa -> inicio proposiciones fin
+Rule 6     inicio -> etiqueta START numero COMMENT_IL NEWLINE
+Rule 7     inicio -> etiqueta START numero NEWLINE
+Rule 8     numero -> INT
+Rule 9     numero -> HEX_INT
+Rule 10    fin -> END entrada
+Rule 11    entrada -> NAME
+Rule 12    proposiciones -> proposiciones proposicion
+Rule 13    proposiciones -> proposicion
+Rule 14    proposicion -> directiva COMMENT_IL NEWLINE
+Rule 15    proposicion -> instruccion COMMENT_IL NEWLINE
+Rule 16    proposicion -> directiva NEWLINE
+Rule 17    proposicion -> instruccion NEWLINE
+Rule 18    instruccion -> etiqueta opformato
+Rule 19    instruccion -> opformato
+Rule 20    directiva -> etiqueta tipodirectiva opdirectiva
+Rule 21    opdirectiva -> NUM
+Rule 22    opdirectiva -> NAME
+Rule 23    tipodirectiva -> BYTE
+Rule 24    tipodirectiva -> WORD
+Rule 25    tipodirectiva -> RESB
+Rule 26    tipodirectiva -> RESW
+Rule 27    etiqueta -> NAME
+Rule 28    opformato -> f4
+Rule 29    opformato -> f3
+Rule 30    opformato -> f2
+Rule 31    opformato -> f1
+Rule 32    f3 -> simple3
+Rule 33    f3 -> indirecto3
+Rule 34    f3 -> inmediato3
+Rule 35    f3 -> SIO
+Rule 36    f3 -> TIO
+Rule 37    f3 -> simple3 COMA X
+Rule 38    f3 -> indirecto3 COMA X
+Rule 39    f3 -> inmediato3 COMA X
+Rule 40    f4 -> PLUS f3
+Rule 41    simple3 -> CODOP NAME
+Rule 42    simple3 -> CODOP NUM
+Rule 43    indirecto3 -> CODOP @ NUM
+Rule 44    indirecto3 -> CODOP @ NAME
+Rule 45    inmediato3 -> CODOP # NUM
+Rule 46    inmediato3 -> CODOP # NAME
+Rule 47    f2 -> CODOP NUM
+Rule 48    f2 -> CODOP REG
+Rule 49    f2 -> CODOP REG COMA REG
+Rule 50    f2 -> CODOP REG COMA NUM
+Rule 51    f1 -> CODOP NEWLINE
+Rule 52    empty -> NEWLINE
+Rule 53    empty -> <empty>
 
 Terminals, with rules where they appear
 
-#                    : 41 42
-@                    : 39 40
+#                    : 45 46
+@                    : 43 44
 ADD                  : 
 ADDF                 : 
 ADDR                 : 
@@ -148,12 +153,12 @@ AND                  :
 AND_G                : 
 ARROBA               : 
 BASE                 : 
-BYTE                 : 19
+BYTE                 : 23
 CLEAR                : 
-CODOP                : 37 38 39 40 41 42 43 44 45 46 47
-COMA                 : 33 34 35 45 46
+CODOP                : 41 42 43 44 45 46 47 48 49 50 51
+COMA                 : 37 38 39 49 50
 COMF                 : 
-COMMENT_IL           : 2 10 11
+COMMENT_IL           : 6 14 15
 COMMENT_ML           : 
 COMP                 : 
 COMPR                : 
@@ -163,16 +168,16 @@ DIV                  :
 DIVF                 : 
 DIVIDE               : 
 DIVR                 : 
-END                  : 6
+END                  : 10
 EQUALS               : 
 FACTORIAL            : 
 FINL                 : 
 FIX                  : 
 FLOAT                : 
 FLOAT_NUM            : 
-HEX_INT              : 5
+HEX_INT              : 9
 HIO                  : 
-INT                  : 4
+INT                  : 8
 J                    : 
 JEQ                  : 
 JGT                  : 
@@ -199,27 +204,27 @@ MUL                  :
 MULF                 : 
 MULR                 : 
 MULTIPLY             : 
-NAME                 : 7 18 23 37 40 42
-NEWLINE              : 2 3 10 11 12 13 47 48
+NAME                 : 11 22 27 41 44 46
+NEWLINE              : 6 7 14 15 16 17 51 52
 NORM                 : 
-NUM                  : 17 38 39 41 43 46
+NUM                  : 21 42 43 45 47 50
 OPERANDO             : 
 OR                   : 
 OR_G                 : 
-PLUS                 : 36
+PLUS                 : 40
 RD                   : 
-REG                  : 44 45 45 46
-RESB                 : 21
-RESW                 : 22
+REG                  : 48 49 49 50
+RESB                 : 25
+RESW                 : 26
 RMO                  : 
 RPARENT              : 
 RSUB                 : 
 SHIFTL               : 
 SHIFTR               : 
-SIO                  : 31
+SIO                  : 35
 SSK                  : 
 STA                  : 
-START                : 2 3
+START                : 6 7
 STB                  : 
 STCH                 : 
 STF                  : 
@@ -234,865 +239,939 @@ SUBF                 :
 SUBR                 : 
 SVC                  : 
 TD                   : 
-TIO                  : 32
+TIO                  : 36
 TIX                  : 
 TIXR                 : 
 UMINUS               : 
 WD                   : 
-WORD                 : 20
-X                    : 33 34 35
+WORD                 : 24
+X                    : 37 38 39
 X_HEX                : 
 error                : 
 
 Nonterminals, with rules where they appear
 
-directiva            : 10 12
-empty                : 
-entrada              : 6
-etiqueta             : 2 3 14 16
-f1                   : 24
-f2                   : 25
-f3                   : 26 36
-f4                   : 27
-fin                  : 1
-indirecto3           : 29 34
-inicio               : 1
-inmediato3           : 30 35
-instruccion          : 11 13
-numero               : 2 3
-opdirectiva          : 16
-opformato            : 14 15
-programa             : 0
-proposicion          : 8 9
-proposiciones        : 1 8
-simple3              : 28 33
-tipodirectiva        : 16
+directiva            : 14 16
+empty                : 1 3 4 4
+entrada              : 10
+etiqueta             : 6 7 18 20
+f1                   : 31
+f2                   : 30
+f3                   : 29 40
+f4                   : 28
+fin                  : 5
+indirecto3           : 33 38
+inicio               : 5
+inmediato3           : 34 39
+instruccion          : 15 17
+numero               : 6 7
+opdirectiva          : 20
+opformato            : 18 19
+programa             : 2 3 4
+proposicion          : 12 13
+proposiciones        : 5 12
+sicxe_file           : 0
+simple3              : 32 37
+tipodirectiva        : 20
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . programa
-    (1) programa -> . inicio proposiciones fin
-    (2) inicio -> . etiqueta START numero COMMENT_IL NEWLINE
-    (3) inicio -> . etiqueta START numero NEWLINE
-    (23) etiqueta -> . NAME
+    (0) S' -> . sicxe_file
+    (1) sicxe_file -> . empty
+    (2) sicxe_file -> . programa
+    (3) sicxe_file -> . empty programa
+    (4) sicxe_file -> . empty programa empty
+    (52) empty -> . NEWLINE
+    (53) empty -> .
+    (5) programa -> . inicio proposiciones fin
+    (6) inicio -> . etiqueta START numero COMMENT_IL NEWLINE
+    (7) inicio -> . etiqueta START numero NEWLINE
+    (27) etiqueta -> . NAME
 
-    NAME            shift and go to state 4
+  ! shift/reduce conflict for NAME resolved as shift
+    NEWLINE         shift and go to state 4
+    $end            reduce using rule 53 (empty -> .)
+    NAME            shift and go to state 7
 
-    programa                       shift and go to state 1
-    inicio                         shift and go to state 2
-    etiqueta                       shift and go to state 3
+  ! NAME            [ reduce using rule 53 (empty -> .) ]
+
+    sicxe_file                     shift and go to state 1
+    empty                          shift and go to state 2
+    programa                       shift and go to state 3
+    inicio                         shift and go to state 5
+    etiqueta                       shift and go to state 6
 
 state 1
 
-    (0) S' -> programa .
+    (0) S' -> sicxe_file .
 
 
 
 state 2
 
-    (1) programa -> inicio . proposiciones fin
-    (8) proposiciones -> . proposiciones proposicion
-    (9) proposiciones -> . proposicion
-    (10) proposicion -> . directiva COMMENT_IL NEWLINE
-    (11) proposicion -> . instruccion COMMENT_IL NEWLINE
-    (12) proposicion -> . directiva NEWLINE
-    (13) proposicion -> . instruccion NEWLINE
-    (16) directiva -> . etiqueta tipodirectiva opdirectiva
-    (14) instruccion -> . etiqueta opformato
-    (15) instruccion -> . opformato
-    (23) etiqueta -> . NAME
-    (24) opformato -> . f1
-    (25) opformato -> . f2
-    (26) opformato -> . f3
-    (27) opformato -> . f4
-    (47) f1 -> . CODOP NEWLINE
-    (43) f2 -> . CODOP NUM
-    (44) f2 -> . CODOP REG
-    (45) f2 -> . CODOP REG COMA REG
-    (46) f2 -> . CODOP REG COMA NUM
-    (28) f3 -> . simple3
-    (29) f3 -> . indirecto3
-    (30) f3 -> . inmediato3
-    (31) f3 -> . SIO
-    (32) f3 -> . TIO
-    (33) f3 -> . simple3 COMA X
-    (34) f3 -> . indirecto3 COMA X
-    (35) f3 -> . inmediato3 COMA X
-    (36) f4 -> . PLUS f3
-    (37) simple3 -> . CODOP NAME
-    (38) simple3 -> . CODOP NUM
-    (39) indirecto3 -> . CODOP @ NUM
-    (40) indirecto3 -> . CODOP @ NAME
-    (41) inmediato3 -> . CODOP # NUM
-    (42) inmediato3 -> . CODOP # NAME
+    (1) sicxe_file -> empty .
+    (3) sicxe_file -> empty . programa
+    (4) sicxe_file -> empty . programa empty
+    (5) programa -> . inicio proposiciones fin
+    (6) inicio -> . etiqueta START numero COMMENT_IL NEWLINE
+    (7) inicio -> . etiqueta START numero NEWLINE
+    (27) etiqueta -> . NAME
 
-    NAME            shift and go to state 4
-    CODOP           shift and go to state 15
-    SIO             shift and go to state 19
-    TIO             shift and go to state 20
-    PLUS            shift and go to state 21
+    $end            reduce using rule 1 (sicxe_file -> empty .)
+    NAME            shift and go to state 7
 
-    proposiciones                  shift and go to state 5
-    proposicion                    shift and go to state 6
-    directiva                      shift and go to state 7
-    instruccion                    shift and go to state 8
-    etiqueta                       shift and go to state 9
-    opformato                      shift and go to state 10
-    f1                             shift and go to state 11
-    f2                             shift and go to state 12
-    f3                             shift and go to state 13
-    f4                             shift and go to state 14
-    simple3                        shift and go to state 16
-    indirecto3                     shift and go to state 17
-    inmediato3                     shift and go to state 18
+    programa                       shift and go to state 8
+    inicio                         shift and go to state 5
+    etiqueta                       shift and go to state 6
 
 state 3
 
-    (2) inicio -> etiqueta . START numero COMMENT_IL NEWLINE
-    (3) inicio -> etiqueta . START numero NEWLINE
+    (2) sicxe_file -> programa .
 
-    START           shift and go to state 22
+    $end            reduce using rule 2 (sicxe_file -> programa .)
 
 
 state 4
 
-    (23) etiqueta -> NAME .
+    (52) empty -> NEWLINE .
 
-    START           reduce using rule 23 (etiqueta -> NAME .)
-    BYTE            reduce using rule 23 (etiqueta -> NAME .)
-    WORD            reduce using rule 23 (etiqueta -> NAME .)
-    RESB            reduce using rule 23 (etiqueta -> NAME .)
-    RESW            reduce using rule 23 (etiqueta -> NAME .)
-    CODOP           reduce using rule 23 (etiqueta -> NAME .)
-    SIO             reduce using rule 23 (etiqueta -> NAME .)
-    TIO             reduce using rule 23 (etiqueta -> NAME .)
-    PLUS            reduce using rule 23 (etiqueta -> NAME .)
+    NAME            reduce using rule 52 (empty -> NEWLINE .)
+    $end            reduce using rule 52 (empty -> NEWLINE .)
 
 
 state 5
 
-    (1) programa -> inicio proposiciones . fin
-    (8) proposiciones -> proposiciones . proposicion
-    (6) fin -> . END entrada
-    (10) proposicion -> . directiva COMMENT_IL NEWLINE
-    (11) proposicion -> . instruccion COMMENT_IL NEWLINE
-    (12) proposicion -> . directiva NEWLINE
-    (13) proposicion -> . instruccion NEWLINE
-    (16) directiva -> . etiqueta tipodirectiva opdirectiva
-    (14) instruccion -> . etiqueta opformato
-    (15) instruccion -> . opformato
-    (23) etiqueta -> . NAME
-    (24) opformato -> . f1
-    (25) opformato -> . f2
-    (26) opformato -> . f3
-    (27) opformato -> . f4
-    (47) f1 -> . CODOP NEWLINE
-    (43) f2 -> . CODOP NUM
-    (44) f2 -> . CODOP REG
-    (45) f2 -> . CODOP REG COMA REG
-    (46) f2 -> . CODOP REG COMA NUM
-    (28) f3 -> . simple3
-    (29) f3 -> . indirecto3
-    (30) f3 -> . inmediato3
-    (31) f3 -> . SIO
-    (32) f3 -> . TIO
-    (33) f3 -> . simple3 COMA X
-    (34) f3 -> . indirecto3 COMA X
-    (35) f3 -> . inmediato3 COMA X
-    (36) f4 -> . PLUS f3
-    (37) simple3 -> . CODOP NAME
-    (38) simple3 -> . CODOP NUM
-    (39) indirecto3 -> . CODOP @ NUM
-    (40) indirecto3 -> . CODOP @ NAME
-    (41) inmediato3 -> . CODOP # NUM
-    (42) inmediato3 -> . CODOP # NAME
+    (5) programa -> inicio . proposiciones fin
+    (12) proposiciones -> . proposiciones proposicion
+    (13) proposiciones -> . proposicion
+    (14) proposicion -> . directiva COMMENT_IL NEWLINE
+    (15) proposicion -> . instruccion COMMENT_IL NEWLINE
+    (16) proposicion -> . directiva NEWLINE
+    (17) proposicion -> . instruccion NEWLINE
+    (20) directiva -> . etiqueta tipodirectiva opdirectiva
+    (18) instruccion -> . etiqueta opformato
+    (19) instruccion -> . opformato
+    (27) etiqueta -> . NAME
+    (28) opformato -> . f4
+    (29) opformato -> . f3
+    (30) opformato -> . f2
+    (31) opformato -> . f1
+    (40) f4 -> . PLUS f3
+    (32) f3 -> . simple3
+    (33) f3 -> . indirecto3
+    (34) f3 -> . inmediato3
+    (35) f3 -> . SIO
+    (36) f3 -> . TIO
+    (37) f3 -> . simple3 COMA X
+    (38) f3 -> . indirecto3 COMA X
+    (39) f3 -> . inmediato3 COMA X
+    (47) f2 -> . CODOP NUM
+    (48) f2 -> . CODOP REG
+    (49) f2 -> . CODOP REG COMA REG
+    (50) f2 -> . CODOP REG COMA NUM
+    (51) f1 -> . CODOP NEWLINE
+    (41) simple3 -> . CODOP NAME
+    (42) simple3 -> . CODOP NUM
+    (43) indirecto3 -> . CODOP @ NUM
+    (44) indirecto3 -> . CODOP @ NAME
+    (45) inmediato3 -> . CODOP # NUM
+    (46) inmediato3 -> . CODOP # NAME
 
-    END             shift and go to state 25
-    NAME            shift and go to state 4
-    CODOP           shift and go to state 15
-    SIO             shift and go to state 19
-    TIO             shift and go to state 20
-    PLUS            shift and go to state 21
+    NAME            shift and go to state 7
+    PLUS            shift and go to state 19
+    SIO             shift and go to state 23
+    TIO             shift and go to state 24
+    CODOP           shift and go to state 25
 
-    fin                            shift and go to state 23
-    proposicion                    shift and go to state 24
-    directiva                      shift and go to state 7
-    instruccion                    shift and go to state 8
-    etiqueta                       shift and go to state 9
-    opformato                      shift and go to state 10
-    f1                             shift and go to state 11
-    f2                             shift and go to state 12
-    f3                             shift and go to state 13
-    f4                             shift and go to state 14
-    simple3                        shift and go to state 16
-    indirecto3                     shift and go to state 17
-    inmediato3                     shift and go to state 18
+    proposiciones                  shift and go to state 9
+    proposicion                    shift and go to state 10
+    directiva                      shift and go to state 11
+    instruccion                    shift and go to state 12
+    etiqueta                       shift and go to state 13
+    opformato                      shift and go to state 14
+    f4                             shift and go to state 15
+    f3                             shift and go to state 16
+    f2                             shift and go to state 17
+    f1                             shift and go to state 18
+    simple3                        shift and go to state 20
+    indirecto3                     shift and go to state 21
+    inmediato3                     shift and go to state 22
 
 state 6
 
-    (9) proposiciones -> proposicion .
+    (6) inicio -> etiqueta . START numero COMMENT_IL NEWLINE
+    (7) inicio -> etiqueta . START numero NEWLINE
 
-    END             reduce using rule 9 (proposiciones -> proposicion .)
-    NAME            reduce using rule 9 (proposiciones -> proposicion .)
-    CODOP           reduce using rule 9 (proposiciones -> proposicion .)
-    SIO             reduce using rule 9 (proposiciones -> proposicion .)
-    TIO             reduce using rule 9 (proposiciones -> proposicion .)
-    PLUS            reduce using rule 9 (proposiciones -> proposicion .)
+    START           shift and go to state 26
 
 
 state 7
 
-    (10) proposicion -> directiva . COMMENT_IL NEWLINE
-    (12) proposicion -> directiva . NEWLINE
+    (27) etiqueta -> NAME .
 
-    COMMENT_IL      shift and go to state 26
-    NEWLINE         shift and go to state 27
+    START           reduce using rule 27 (etiqueta -> NAME .)
+    BYTE            reduce using rule 27 (etiqueta -> NAME .)
+    WORD            reduce using rule 27 (etiqueta -> NAME .)
+    RESB            reduce using rule 27 (etiqueta -> NAME .)
+    RESW            reduce using rule 27 (etiqueta -> NAME .)
+    PLUS            reduce using rule 27 (etiqueta -> NAME .)
+    SIO             reduce using rule 27 (etiqueta -> NAME .)
+    TIO             reduce using rule 27 (etiqueta -> NAME .)
+    CODOP           reduce using rule 27 (etiqueta -> NAME .)
 
 
 state 8
 
-    (11) proposicion -> instruccion . COMMENT_IL NEWLINE
-    (13) proposicion -> instruccion . NEWLINE
+    (3) sicxe_file -> empty programa .
+    (4) sicxe_file -> empty programa . empty
+    (52) empty -> . NEWLINE
+    (53) empty -> .
 
-    COMMENT_IL      shift and go to state 28
-    NEWLINE         shift and go to state 29
+  ! reduce/reduce conflict for $end resolved using rule 3 (sicxe_file -> empty programa .)
+    $end            reduce using rule 3 (sicxe_file -> empty programa .)
+    NEWLINE         shift and go to state 4
 
+  ! $end            [ reduce using rule 53 (empty -> .) ]
+
+    empty                          shift and go to state 27
 
 state 9
 
-    (16) directiva -> etiqueta . tipodirectiva opdirectiva
-    (14) instruccion -> etiqueta . opformato
-    (19) tipodirectiva -> . BYTE
-    (20) tipodirectiva -> . WORD
-    (21) tipodirectiva -> . RESB
-    (22) tipodirectiva -> . RESW
-    (24) opformato -> . f1
-    (25) opformato -> . f2
-    (26) opformato -> . f3
-    (27) opformato -> . f4
-    (47) f1 -> . CODOP NEWLINE
-    (43) f2 -> . CODOP NUM
-    (44) f2 -> . CODOP REG
-    (45) f2 -> . CODOP REG COMA REG
-    (46) f2 -> . CODOP REG COMA NUM
-    (28) f3 -> . simple3
-    (29) f3 -> . indirecto3
-    (30) f3 -> . inmediato3
-    (31) f3 -> . SIO
-    (32) f3 -> . TIO
-    (33) f3 -> . simple3 COMA X
-    (34) f3 -> . indirecto3 COMA X
-    (35) f3 -> . inmediato3 COMA X
-    (36) f4 -> . PLUS f3
-    (37) simple3 -> . CODOP NAME
-    (38) simple3 -> . CODOP NUM
-    (39) indirecto3 -> . CODOP @ NUM
-    (40) indirecto3 -> . CODOP @ NAME
-    (41) inmediato3 -> . CODOP # NUM
-    (42) inmediato3 -> . CODOP # NAME
+    (5) programa -> inicio proposiciones . fin
+    (12) proposiciones -> proposiciones . proposicion
+    (10) fin -> . END entrada
+    (14) proposicion -> . directiva COMMENT_IL NEWLINE
+    (15) proposicion -> . instruccion COMMENT_IL NEWLINE
+    (16) proposicion -> . directiva NEWLINE
+    (17) proposicion -> . instruccion NEWLINE
+    (20) directiva -> . etiqueta tipodirectiva opdirectiva
+    (18) instruccion -> . etiqueta opformato
+    (19) instruccion -> . opformato
+    (27) etiqueta -> . NAME
+    (28) opformato -> . f4
+    (29) opformato -> . f3
+    (30) opformato -> . f2
+    (31) opformato -> . f1
+    (40) f4 -> . PLUS f3
+    (32) f3 -> . simple3
+    (33) f3 -> . indirecto3
+    (34) f3 -> . inmediato3
+    (35) f3 -> . SIO
+    (36) f3 -> . TIO
+    (37) f3 -> . simple3 COMA X
+    (38) f3 -> . indirecto3 COMA X
+    (39) f3 -> . inmediato3 COMA X
+    (47) f2 -> . CODOP NUM
+    (48) f2 -> . CODOP REG
+    (49) f2 -> . CODOP REG COMA REG
+    (50) f2 -> . CODOP REG COMA NUM
+    (51) f1 -> . CODOP NEWLINE
+    (41) simple3 -> . CODOP NAME
+    (42) simple3 -> . CODOP NUM
+    (43) indirecto3 -> . CODOP @ NUM
+    (44) indirecto3 -> . CODOP @ NAME
+    (45) inmediato3 -> . CODOP # NUM
+    (46) inmediato3 -> . CODOP # NAME
 
-    BYTE            shift and go to state 32
-    WORD            shift and go to state 33
-    RESB            shift and go to state 34
-    RESW            shift and go to state 35
-    CODOP           shift and go to state 15
-    SIO             shift and go to state 19
-    TIO             shift and go to state 20
-    PLUS            shift and go to state 21
+    END             shift and go to state 30
+    NAME            shift and go to state 7
+    PLUS            shift and go to state 19
+    SIO             shift and go to state 23
+    TIO             shift and go to state 24
+    CODOP           shift and go to state 25
 
-    tipodirectiva                  shift and go to state 30
-    opformato                      shift and go to state 31
-    f1                             shift and go to state 11
-    f2                             shift and go to state 12
-    f3                             shift and go to state 13
-    f4                             shift and go to state 14
-    simple3                        shift and go to state 16
-    indirecto3                     shift and go to state 17
-    inmediato3                     shift and go to state 18
+    fin                            shift and go to state 28
+    proposicion                    shift and go to state 29
+    directiva                      shift and go to state 11
+    instruccion                    shift and go to state 12
+    etiqueta                       shift and go to state 13
+    opformato                      shift and go to state 14
+    f4                             shift and go to state 15
+    f3                             shift and go to state 16
+    f2                             shift and go to state 17
+    f1                             shift and go to state 18
+    simple3                        shift and go to state 20
+    indirecto3                     shift and go to state 21
+    inmediato3                     shift and go to state 22
 
 state 10
 
-    (15) instruccion -> opformato .
+    (13) proposiciones -> proposicion .
 
-    COMMENT_IL      reduce using rule 15 (instruccion -> opformato .)
-    NEWLINE         reduce using rule 15 (instruccion -> opformato .)
+    END             reduce using rule 13 (proposiciones -> proposicion .)
+    NAME            reduce using rule 13 (proposiciones -> proposicion .)
+    PLUS            reduce using rule 13 (proposiciones -> proposicion .)
+    SIO             reduce using rule 13 (proposiciones -> proposicion .)
+    TIO             reduce using rule 13 (proposiciones -> proposicion .)
+    CODOP           reduce using rule 13 (proposiciones -> proposicion .)
 
 
 state 11
 
-    (24) opformato -> f1 .
+    (14) proposicion -> directiva . COMMENT_IL NEWLINE
+    (16) proposicion -> directiva . NEWLINE
 
-    COMMENT_IL      reduce using rule 24 (opformato -> f1 .)
-    NEWLINE         reduce using rule 24 (opformato -> f1 .)
+    COMMENT_IL      shift and go to state 31
+    NEWLINE         shift and go to state 32
 
 
 state 12
 
-    (25) opformato -> f2 .
+    (15) proposicion -> instruccion . COMMENT_IL NEWLINE
+    (17) proposicion -> instruccion . NEWLINE
 
-    COMMENT_IL      reduce using rule 25 (opformato -> f2 .)
-    NEWLINE         reduce using rule 25 (opformato -> f2 .)
+    COMMENT_IL      shift and go to state 33
+    NEWLINE         shift and go to state 34
 
 
 state 13
 
-    (26) opformato -> f3 .
+    (20) directiva -> etiqueta . tipodirectiva opdirectiva
+    (18) instruccion -> etiqueta . opformato
+    (23) tipodirectiva -> . BYTE
+    (24) tipodirectiva -> . WORD
+    (25) tipodirectiva -> . RESB
+    (26) tipodirectiva -> . RESW
+    (28) opformato -> . f4
+    (29) opformato -> . f3
+    (30) opformato -> . f2
+    (31) opformato -> . f1
+    (40) f4 -> . PLUS f3
+    (32) f3 -> . simple3
+    (33) f3 -> . indirecto3
+    (34) f3 -> . inmediato3
+    (35) f3 -> . SIO
+    (36) f3 -> . TIO
+    (37) f3 -> . simple3 COMA X
+    (38) f3 -> . indirecto3 COMA X
+    (39) f3 -> . inmediato3 COMA X
+    (47) f2 -> . CODOP NUM
+    (48) f2 -> . CODOP REG
+    (49) f2 -> . CODOP REG COMA REG
+    (50) f2 -> . CODOP REG COMA NUM
+    (51) f1 -> . CODOP NEWLINE
+    (41) simple3 -> . CODOP NAME
+    (42) simple3 -> . CODOP NUM
+    (43) indirecto3 -> . CODOP @ NUM
+    (44) indirecto3 -> . CODOP @ NAME
+    (45) inmediato3 -> . CODOP # NUM
+    (46) inmediato3 -> . CODOP # NAME
 
-    COMMENT_IL      reduce using rule 26 (opformato -> f3 .)
-    NEWLINE         reduce using rule 26 (opformato -> f3 .)
+    BYTE            shift and go to state 37
+    WORD            shift and go to state 38
+    RESB            shift and go to state 39
+    RESW            shift and go to state 40
+    PLUS            shift and go to state 19
+    SIO             shift and go to state 23
+    TIO             shift and go to state 24
+    CODOP           shift and go to state 25
 
+    tipodirectiva                  shift and go to state 35
+    opformato                      shift and go to state 36
+    f4                             shift and go to state 15
+    f3                             shift and go to state 16
+    f2                             shift and go to state 17
+    f1                             shift and go to state 18
+    simple3                        shift and go to state 20
+    indirecto3                     shift and go to state 21
+    inmediato3                     shift and go to state 22
 
 state 14
 
-    (27) opformato -> f4 .
+    (19) instruccion -> opformato .
 
-    COMMENT_IL      reduce using rule 27 (opformato -> f4 .)
-    NEWLINE         reduce using rule 27 (opformato -> f4 .)
+    COMMENT_IL      reduce using rule 19 (instruccion -> opformato .)
+    NEWLINE         reduce using rule 19 (instruccion -> opformato .)
 
 
 state 15
 
-    (47) f1 -> CODOP . NEWLINE
-    (43) f2 -> CODOP . NUM
-    (44) f2 -> CODOP . REG
-    (45) f2 -> CODOP . REG COMA REG
-    (46) f2 -> CODOP . REG COMA NUM
-    (37) simple3 -> CODOP . NAME
-    (38) simple3 -> CODOP . NUM
-    (39) indirecto3 -> CODOP . @ NUM
-    (40) indirecto3 -> CODOP . @ NAME
-    (41) inmediato3 -> CODOP . # NUM
-    (42) inmediato3 -> CODOP . # NAME
+    (28) opformato -> f4 .
 
-    NEWLINE         shift and go to state 36
-    NUM             shift and go to state 37
-    REG             shift and go to state 38
-    NAME            shift and go to state 39
-    @               shift and go to state 40
-    #               shift and go to state 41
+    COMMENT_IL      reduce using rule 28 (opformato -> f4 .)
+    NEWLINE         reduce using rule 28 (opformato -> f4 .)
 
 
 state 16
 
-    (28) f3 -> simple3 .
-    (33) f3 -> simple3 . COMA X
+    (29) opformato -> f3 .
 
-    COMMENT_IL      reduce using rule 28 (f3 -> simple3 .)
-    NEWLINE         reduce using rule 28 (f3 -> simple3 .)
-    COMA            shift and go to state 42
+    COMMENT_IL      reduce using rule 29 (opformato -> f3 .)
+    NEWLINE         reduce using rule 29 (opformato -> f3 .)
 
 
 state 17
 
-    (29) f3 -> indirecto3 .
-    (34) f3 -> indirecto3 . COMA X
+    (30) opformato -> f2 .
 
-    COMMENT_IL      reduce using rule 29 (f3 -> indirecto3 .)
-    NEWLINE         reduce using rule 29 (f3 -> indirecto3 .)
-    COMA            shift and go to state 43
+    COMMENT_IL      reduce using rule 30 (opformato -> f2 .)
+    NEWLINE         reduce using rule 30 (opformato -> f2 .)
 
 
 state 18
 
-    (30) f3 -> inmediato3 .
-    (35) f3 -> inmediato3 . COMA X
+    (31) opformato -> f1 .
 
-    COMMENT_IL      reduce using rule 30 (f3 -> inmediato3 .)
-    NEWLINE         reduce using rule 30 (f3 -> inmediato3 .)
-    COMA            shift and go to state 44
+    COMMENT_IL      reduce using rule 31 (opformato -> f1 .)
+    NEWLINE         reduce using rule 31 (opformato -> f1 .)
 
 
 state 19
 
-    (31) f3 -> SIO .
+    (40) f4 -> PLUS . f3
+    (32) f3 -> . simple3
+    (33) f3 -> . indirecto3
+    (34) f3 -> . inmediato3
+    (35) f3 -> . SIO
+    (36) f3 -> . TIO
+    (37) f3 -> . simple3 COMA X
+    (38) f3 -> . indirecto3 COMA X
+    (39) f3 -> . inmediato3 COMA X
+    (41) simple3 -> . CODOP NAME
+    (42) simple3 -> . CODOP NUM
+    (43) indirecto3 -> . CODOP @ NUM
+    (44) indirecto3 -> . CODOP @ NAME
+    (45) inmediato3 -> . CODOP # NUM
+    (46) inmediato3 -> . CODOP # NAME
 
-    COMMENT_IL      reduce using rule 31 (f3 -> SIO .)
-    NEWLINE         reduce using rule 31 (f3 -> SIO .)
+    SIO             shift and go to state 23
+    TIO             shift and go to state 24
+    CODOP           shift and go to state 42
 
+    f3                             shift and go to state 41
+    simple3                        shift and go to state 20
+    indirecto3                     shift and go to state 21
+    inmediato3                     shift and go to state 22
 
 state 20
 
-    (32) f3 -> TIO .
+    (32) f3 -> simple3 .
+    (37) f3 -> simple3 . COMA X
 
-    COMMENT_IL      reduce using rule 32 (f3 -> TIO .)
-    NEWLINE         reduce using rule 32 (f3 -> TIO .)
+    COMMENT_IL      reduce using rule 32 (f3 -> simple3 .)
+    NEWLINE         reduce using rule 32 (f3 -> simple3 .)
+    COMA            shift and go to state 43
 
 
 state 21
 
-    (36) f4 -> PLUS . f3
-    (28) f3 -> . simple3
-    (29) f3 -> . indirecto3
-    (30) f3 -> . inmediato3
-    (31) f3 -> . SIO
-    (32) f3 -> . TIO
-    (33) f3 -> . simple3 COMA X
-    (34) f3 -> . indirecto3 COMA X
-    (35) f3 -> . inmediato3 COMA X
-    (37) simple3 -> . CODOP NAME
-    (38) simple3 -> . CODOP NUM
-    (39) indirecto3 -> . CODOP @ NUM
-    (40) indirecto3 -> . CODOP @ NAME
-    (41) inmediato3 -> . CODOP # NUM
-    (42) inmediato3 -> . CODOP # NAME
+    (33) f3 -> indirecto3 .
+    (38) f3 -> indirecto3 . COMA X
 
-    SIO             shift and go to state 19
-    TIO             shift and go to state 20
-    CODOP           shift and go to state 46
+    COMMENT_IL      reduce using rule 33 (f3 -> indirecto3 .)
+    NEWLINE         reduce using rule 33 (f3 -> indirecto3 .)
+    COMA            shift and go to state 44
 
-    f3                             shift and go to state 45
-    simple3                        shift and go to state 16
-    indirecto3                     shift and go to state 17
-    inmediato3                     shift and go to state 18
 
 state 22
 
-    (2) inicio -> etiqueta START . numero COMMENT_IL NEWLINE
-    (3) inicio -> etiqueta START . numero NEWLINE
-    (4) numero -> . INT
-    (5) numero -> . HEX_INT
+    (34) f3 -> inmediato3 .
+    (39) f3 -> inmediato3 . COMA X
 
-    INT             shift and go to state 48
-    HEX_INT         shift and go to state 49
+    COMMENT_IL      reduce using rule 34 (f3 -> inmediato3 .)
+    NEWLINE         reduce using rule 34 (f3 -> inmediato3 .)
+    COMA            shift and go to state 45
 
-    numero                         shift and go to state 47
 
 state 23
 
-    (1) programa -> inicio proposiciones fin .
+    (35) f3 -> SIO .
 
-    $end            reduce using rule 1 (programa -> inicio proposiciones fin .)
+    COMMENT_IL      reduce using rule 35 (f3 -> SIO .)
+    NEWLINE         reduce using rule 35 (f3 -> SIO .)
 
 
 state 24
 
-    (8) proposiciones -> proposiciones proposicion .
+    (36) f3 -> TIO .
 
-    END             reduce using rule 8 (proposiciones -> proposiciones proposicion .)
-    NAME            reduce using rule 8 (proposiciones -> proposiciones proposicion .)
-    CODOP           reduce using rule 8 (proposiciones -> proposiciones proposicion .)
-    SIO             reduce using rule 8 (proposiciones -> proposiciones proposicion .)
-    TIO             reduce using rule 8 (proposiciones -> proposiciones proposicion .)
-    PLUS            reduce using rule 8 (proposiciones -> proposiciones proposicion .)
+    COMMENT_IL      reduce using rule 36 (f3 -> TIO .)
+    NEWLINE         reduce using rule 36 (f3 -> TIO .)
 
 
 state 25
 
-    (6) fin -> END . entrada
-    (7) entrada -> . NAME
+    (47) f2 -> CODOP . NUM
+    (48) f2 -> CODOP . REG
+    (49) f2 -> CODOP . REG COMA REG
+    (50) f2 -> CODOP . REG COMA NUM
+    (51) f1 -> CODOP . NEWLINE
+    (41) simple3 -> CODOP . NAME
+    (42) simple3 -> CODOP . NUM
+    (43) indirecto3 -> CODOP . @ NUM
+    (44) indirecto3 -> CODOP . @ NAME
+    (45) inmediato3 -> CODOP . # NUM
+    (46) inmediato3 -> CODOP . # NAME
 
-    NAME            shift and go to state 51
+    NUM             shift and go to state 46
+    REG             shift and go to state 47
+    NEWLINE         shift and go to state 48
+    NAME            shift and go to state 49
+    @               shift and go to state 50
+    #               shift and go to state 51
 
-    entrada                        shift and go to state 50
 
 state 26
 
-    (10) proposicion -> directiva COMMENT_IL . NEWLINE
+    (6) inicio -> etiqueta START . numero COMMENT_IL NEWLINE
+    (7) inicio -> etiqueta START . numero NEWLINE
+    (8) numero -> . INT
+    (9) numero -> . HEX_INT
 
-    NEWLINE         shift and go to state 52
+    INT             shift and go to state 53
+    HEX_INT         shift and go to state 54
 
+    numero                         shift and go to state 52
 
 state 27
 
-    (12) proposicion -> directiva NEWLINE .
+    (4) sicxe_file -> empty programa empty .
 
-    END             reduce using rule 12 (proposicion -> directiva NEWLINE .)
-    NAME            reduce using rule 12 (proposicion -> directiva NEWLINE .)
-    CODOP           reduce using rule 12 (proposicion -> directiva NEWLINE .)
-    SIO             reduce using rule 12 (proposicion -> directiva NEWLINE .)
-    TIO             reduce using rule 12 (proposicion -> directiva NEWLINE .)
-    PLUS            reduce using rule 12 (proposicion -> directiva NEWLINE .)
+    $end            reduce using rule 4 (sicxe_file -> empty programa empty .)
 
 
 state 28
 
-    (11) proposicion -> instruccion COMMENT_IL . NEWLINE
+    (5) programa -> inicio proposiciones fin .
 
-    NEWLINE         shift and go to state 53
+    $end            reduce using rule 5 (programa -> inicio proposiciones fin .)
+    NEWLINE         reduce using rule 5 (programa -> inicio proposiciones fin .)
 
 
 state 29
 
-    (13) proposicion -> instruccion NEWLINE .
+    (12) proposiciones -> proposiciones proposicion .
 
-    END             reduce using rule 13 (proposicion -> instruccion NEWLINE .)
-    NAME            reduce using rule 13 (proposicion -> instruccion NEWLINE .)
-    CODOP           reduce using rule 13 (proposicion -> instruccion NEWLINE .)
-    SIO             reduce using rule 13 (proposicion -> instruccion NEWLINE .)
-    TIO             reduce using rule 13 (proposicion -> instruccion NEWLINE .)
-    PLUS            reduce using rule 13 (proposicion -> instruccion NEWLINE .)
+    END             reduce using rule 12 (proposiciones -> proposiciones proposicion .)
+    NAME            reduce using rule 12 (proposiciones -> proposiciones proposicion .)
+    PLUS            reduce using rule 12 (proposiciones -> proposiciones proposicion .)
+    SIO             reduce using rule 12 (proposiciones -> proposiciones proposicion .)
+    TIO             reduce using rule 12 (proposiciones -> proposiciones proposicion .)
+    CODOP           reduce using rule 12 (proposiciones -> proposiciones proposicion .)
 
 
 state 30
 
-    (16) directiva -> etiqueta tipodirectiva . opdirectiva
-    (17) opdirectiva -> . NUM
-    (18) opdirectiva -> . NAME
+    (10) fin -> END . entrada
+    (11) entrada -> . NAME
 
-    NUM             shift and go to state 55
     NAME            shift and go to state 56
 
-    opdirectiva                    shift and go to state 54
+    entrada                        shift and go to state 55
 
 state 31
 
-    (14) instruccion -> etiqueta opformato .
+    (14) proposicion -> directiva COMMENT_IL . NEWLINE
 
-    COMMENT_IL      reduce using rule 14 (instruccion -> etiqueta opformato .)
-    NEWLINE         reduce using rule 14 (instruccion -> etiqueta opformato .)
+    NEWLINE         shift and go to state 57
 
 
 state 32
 
-    (19) tipodirectiva -> BYTE .
+    (16) proposicion -> directiva NEWLINE .
 
-    NUM             reduce using rule 19 (tipodirectiva -> BYTE .)
-    NAME            reduce using rule 19 (tipodirectiva -> BYTE .)
+    END             reduce using rule 16 (proposicion -> directiva NEWLINE .)
+    NAME            reduce using rule 16 (proposicion -> directiva NEWLINE .)
+    PLUS            reduce using rule 16 (proposicion -> directiva NEWLINE .)
+    SIO             reduce using rule 16 (proposicion -> directiva NEWLINE .)
+    TIO             reduce using rule 16 (proposicion -> directiva NEWLINE .)
+    CODOP           reduce using rule 16 (proposicion -> directiva NEWLINE .)
 
 
 state 33
 
-    (20) tipodirectiva -> WORD .
+    (15) proposicion -> instruccion COMMENT_IL . NEWLINE
 
-    NUM             reduce using rule 20 (tipodirectiva -> WORD .)
-    NAME            reduce using rule 20 (tipodirectiva -> WORD .)
+    NEWLINE         shift and go to state 58
 
 
 state 34
 
-    (21) tipodirectiva -> RESB .
+    (17) proposicion -> instruccion NEWLINE .
 
-    NUM             reduce using rule 21 (tipodirectiva -> RESB .)
-    NAME            reduce using rule 21 (tipodirectiva -> RESB .)
+    END             reduce using rule 17 (proposicion -> instruccion NEWLINE .)
+    NAME            reduce using rule 17 (proposicion -> instruccion NEWLINE .)
+    PLUS            reduce using rule 17 (proposicion -> instruccion NEWLINE .)
+    SIO             reduce using rule 17 (proposicion -> instruccion NEWLINE .)
+    TIO             reduce using rule 17 (proposicion -> instruccion NEWLINE .)
+    CODOP           reduce using rule 17 (proposicion -> instruccion NEWLINE .)
 
 
 state 35
 
-    (22) tipodirectiva -> RESW .
-
-    NUM             reduce using rule 22 (tipodirectiva -> RESW .)
-    NAME            reduce using rule 22 (tipodirectiva -> RESW .)
-
-
-state 36
-
-    (47) f1 -> CODOP NEWLINE .
-
-    COMMENT_IL      reduce using rule 47 (f1 -> CODOP NEWLINE .)
-    NEWLINE         reduce using rule 47 (f1 -> CODOP NEWLINE .)
-
-
-state 37
-
-    (43) f2 -> CODOP NUM .
-    (38) simple3 -> CODOP NUM .
-
-  ! reduce/reduce conflict for COMMENT_IL resolved using rule 38 (simple3 -> CODOP NUM .)
-  ! reduce/reduce conflict for NEWLINE resolved using rule 38 (simple3 -> CODOP NUM .)
-    COMA            reduce using rule 38 (simple3 -> CODOP NUM .)
-    COMMENT_IL      reduce using rule 38 (simple3 -> CODOP NUM .)
-    NEWLINE         reduce using rule 38 (simple3 -> CODOP NUM .)
-
-  ! COMMENT_IL      [ reduce using rule 43 (f2 -> CODOP NUM .) ]
-  ! NEWLINE         [ reduce using rule 43 (f2 -> CODOP NUM .) ]
-
-
-state 38
-
-    (44) f2 -> CODOP REG .
-    (45) f2 -> CODOP REG . COMA REG
-    (46) f2 -> CODOP REG . COMA NUM
-
-    COMMENT_IL      reduce using rule 44 (f2 -> CODOP REG .)
-    NEWLINE         reduce using rule 44 (f2 -> CODOP REG .)
-    COMA            shift and go to state 57
-
-
-state 39
-
-    (37) simple3 -> CODOP NAME .
-
-    COMA            reduce using rule 37 (simple3 -> CODOP NAME .)
-    COMMENT_IL      reduce using rule 37 (simple3 -> CODOP NAME .)
-    NEWLINE         reduce using rule 37 (simple3 -> CODOP NAME .)
-
-
-state 40
-
-    (39) indirecto3 -> CODOP @ . NUM
-    (40) indirecto3 -> CODOP @ . NAME
-
-    NUM             shift and go to state 58
-    NAME            shift and go to state 59
-
-
-state 41
-
-    (41) inmediato3 -> CODOP # . NUM
-    (42) inmediato3 -> CODOP # . NAME
+    (20) directiva -> etiqueta tipodirectiva . opdirectiva
+    (21) opdirectiva -> . NUM
+    (22) opdirectiva -> . NAME
 
     NUM             shift and go to state 60
     NAME            shift and go to state 61
 
+    opdirectiva                    shift and go to state 59
+
+state 36
+
+    (18) instruccion -> etiqueta opformato .
+
+    COMMENT_IL      reduce using rule 18 (instruccion -> etiqueta opformato .)
+    NEWLINE         reduce using rule 18 (instruccion -> etiqueta opformato .)
+
+
+state 37
+
+    (23) tipodirectiva -> BYTE .
+
+    NUM             reduce using rule 23 (tipodirectiva -> BYTE .)
+    NAME            reduce using rule 23 (tipodirectiva -> BYTE .)
+
+
+state 38
+
+    (24) tipodirectiva -> WORD .
+
+    NUM             reduce using rule 24 (tipodirectiva -> WORD .)
+    NAME            reduce using rule 24 (tipodirectiva -> WORD .)
+
+
+state 39
+
+    (25) tipodirectiva -> RESB .
+
+    NUM             reduce using rule 25 (tipodirectiva -> RESB .)
+    NAME            reduce using rule 25 (tipodirectiva -> RESB .)
+
+
+state 40
+
+    (26) tipodirectiva -> RESW .
+
+    NUM             reduce using rule 26 (tipodirectiva -> RESW .)
+    NAME            reduce using rule 26 (tipodirectiva -> RESW .)
+
+
+state 41
+
+    (40) f4 -> PLUS f3 .
+
+    COMMENT_IL      reduce using rule 40 (f4 -> PLUS f3 .)
+    NEWLINE         reduce using rule 40 (f4 -> PLUS f3 .)
+
 
 state 42
 
-    (33) f3 -> simple3 COMA . X
+    (41) simple3 -> CODOP . NAME
+    (42) simple3 -> CODOP . NUM
+    (43) indirecto3 -> CODOP . @ NUM
+    (44) indirecto3 -> CODOP . @ NAME
+    (45) inmediato3 -> CODOP . # NUM
+    (46) inmediato3 -> CODOP . # NAME
 
-    X               shift and go to state 62
+    NAME            shift and go to state 49
+    NUM             shift and go to state 62
+    @               shift and go to state 50
+    #               shift and go to state 51
 
 
 state 43
 
-    (34) f3 -> indirecto3 COMA . X
+    (37) f3 -> simple3 COMA . X
 
     X               shift and go to state 63
 
 
 state 44
 
-    (35) f3 -> inmediato3 COMA . X
+    (38) f3 -> indirecto3 COMA . X
 
     X               shift and go to state 64
 
 
 state 45
 
-    (36) f4 -> PLUS f3 .
+    (39) f3 -> inmediato3 COMA . X
 
-    COMMENT_IL      reduce using rule 36 (f4 -> PLUS f3 .)
-    NEWLINE         reduce using rule 36 (f4 -> PLUS f3 .)
+    X               shift and go to state 65
 
 
 state 46
 
-    (37) simple3 -> CODOP . NAME
-    (38) simple3 -> CODOP . NUM
-    (39) indirecto3 -> CODOP . @ NUM
-    (40) indirecto3 -> CODOP . @ NAME
-    (41) inmediato3 -> CODOP . # NUM
-    (42) inmediato3 -> CODOP . # NAME
+    (47) f2 -> CODOP NUM .
+    (42) simple3 -> CODOP NUM .
 
-    NAME            shift and go to state 39
-    NUM             shift and go to state 65
-    @               shift and go to state 40
-    #               shift and go to state 41
+  ! reduce/reduce conflict for COMMENT_IL resolved using rule 42 (simple3 -> CODOP NUM .)
+  ! reduce/reduce conflict for NEWLINE resolved using rule 42 (simple3 -> CODOP NUM .)
+    COMA            reduce using rule 42 (simple3 -> CODOP NUM .)
+    COMMENT_IL      reduce using rule 42 (simple3 -> CODOP NUM .)
+    NEWLINE         reduce using rule 42 (simple3 -> CODOP NUM .)
+
+  ! COMMENT_IL      [ reduce using rule 47 (f2 -> CODOP NUM .) ]
+  ! NEWLINE         [ reduce using rule 47 (f2 -> CODOP NUM .) ]
 
 
 state 47
 
-    (2) inicio -> etiqueta START numero . COMMENT_IL NEWLINE
-    (3) inicio -> etiqueta START numero . NEWLINE
+    (48) f2 -> CODOP REG .
+    (49) f2 -> CODOP REG . COMA REG
+    (50) f2 -> CODOP REG . COMA NUM
 
-    COMMENT_IL      shift and go to state 66
-    NEWLINE         shift and go to state 67
+    COMMENT_IL      reduce using rule 48 (f2 -> CODOP REG .)
+    NEWLINE         reduce using rule 48 (f2 -> CODOP REG .)
+    COMA            shift and go to state 66
 
 
 state 48
 
-    (4) numero -> INT .
+    (51) f1 -> CODOP NEWLINE .
 
-    COMMENT_IL      reduce using rule 4 (numero -> INT .)
-    NEWLINE         reduce using rule 4 (numero -> INT .)
+    COMMENT_IL      reduce using rule 51 (f1 -> CODOP NEWLINE .)
+    NEWLINE         reduce using rule 51 (f1 -> CODOP NEWLINE .)
 
 
 state 49
 
-    (5) numero -> HEX_INT .
+    (41) simple3 -> CODOP NAME .
 
-    COMMENT_IL      reduce using rule 5 (numero -> HEX_INT .)
-    NEWLINE         reduce using rule 5 (numero -> HEX_INT .)
+    COMA            reduce using rule 41 (simple3 -> CODOP NAME .)
+    COMMENT_IL      reduce using rule 41 (simple3 -> CODOP NAME .)
+    NEWLINE         reduce using rule 41 (simple3 -> CODOP NAME .)
 
 
 state 50
 
-    (6) fin -> END entrada .
+    (43) indirecto3 -> CODOP @ . NUM
+    (44) indirecto3 -> CODOP @ . NAME
 
-    $end            reduce using rule 6 (fin -> END entrada .)
+    NUM             shift and go to state 67
+    NAME            shift and go to state 68
 
 
 state 51
 
-    (7) entrada -> NAME .
+    (45) inmediato3 -> CODOP # . NUM
+    (46) inmediato3 -> CODOP # . NAME
 
-    $end            reduce using rule 7 (entrada -> NAME .)
+    NUM             shift and go to state 69
+    NAME            shift and go to state 70
 
 
 state 52
 
-    (10) proposicion -> directiva COMMENT_IL NEWLINE .
+    (6) inicio -> etiqueta START numero . COMMENT_IL NEWLINE
+    (7) inicio -> etiqueta START numero . NEWLINE
 
-    END             reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
-    NAME            reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
-    CODOP           reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
-    SIO             reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
-    TIO             reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
-    PLUS            reduce using rule 10 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    COMMENT_IL      shift and go to state 71
+    NEWLINE         shift and go to state 72
 
 
 state 53
 
-    (11) proposicion -> instruccion COMMENT_IL NEWLINE .
+    (8) numero -> INT .
 
-    END             reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
-    NAME            reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
-    CODOP           reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
-    SIO             reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
-    TIO             reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
-    PLUS            reduce using rule 11 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    COMMENT_IL      reduce using rule 8 (numero -> INT .)
+    NEWLINE         reduce using rule 8 (numero -> INT .)
 
 
 state 54
 
-    (16) directiva -> etiqueta tipodirectiva opdirectiva .
+    (9) numero -> HEX_INT .
 
-    COMMENT_IL      reduce using rule 16 (directiva -> etiqueta tipodirectiva opdirectiva .)
-    NEWLINE         reduce using rule 16 (directiva -> etiqueta tipodirectiva opdirectiva .)
+    COMMENT_IL      reduce using rule 9 (numero -> HEX_INT .)
+    NEWLINE         reduce using rule 9 (numero -> HEX_INT .)
 
 
 state 55
 
-    (17) opdirectiva -> NUM .
+    (10) fin -> END entrada .
 
-    COMMENT_IL      reduce using rule 17 (opdirectiva -> NUM .)
-    NEWLINE         reduce using rule 17 (opdirectiva -> NUM .)
+    $end            reduce using rule 10 (fin -> END entrada .)
+    NEWLINE         reduce using rule 10 (fin -> END entrada .)
 
 
 state 56
 
-    (18) opdirectiva -> NAME .
+    (11) entrada -> NAME .
 
-    COMMENT_IL      reduce using rule 18 (opdirectiva -> NAME .)
-    NEWLINE         reduce using rule 18 (opdirectiva -> NAME .)
+    $end            reduce using rule 11 (entrada -> NAME .)
+    NEWLINE         reduce using rule 11 (entrada -> NAME .)
 
 
 state 57
 
-    (45) f2 -> CODOP REG COMA . REG
-    (46) f2 -> CODOP REG COMA . NUM
+    (14) proposicion -> directiva COMMENT_IL NEWLINE .
 
-    REG             shift and go to state 68
-    NUM             shift and go to state 69
+    END             reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    NAME            reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    PLUS            reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    SIO             reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    TIO             reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
+    CODOP           reduce using rule 14 (proposicion -> directiva COMMENT_IL NEWLINE .)
 
 
 state 58
 
-    (39) indirecto3 -> CODOP @ NUM .
+    (15) proposicion -> instruccion COMMENT_IL NEWLINE .
 
-    COMA            reduce using rule 39 (indirecto3 -> CODOP @ NUM .)
-    COMMENT_IL      reduce using rule 39 (indirecto3 -> CODOP @ NUM .)
-    NEWLINE         reduce using rule 39 (indirecto3 -> CODOP @ NUM .)
+    END             reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    NAME            reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    PLUS            reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    SIO             reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    TIO             reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
+    CODOP           reduce using rule 15 (proposicion -> instruccion COMMENT_IL NEWLINE .)
 
 
 state 59
 
-    (40) indirecto3 -> CODOP @ NAME .
+    (20) directiva -> etiqueta tipodirectiva opdirectiva .
 
-    COMA            reduce using rule 40 (indirecto3 -> CODOP @ NAME .)
-    COMMENT_IL      reduce using rule 40 (indirecto3 -> CODOP @ NAME .)
-    NEWLINE         reduce using rule 40 (indirecto3 -> CODOP @ NAME .)
+    COMMENT_IL      reduce using rule 20 (directiva -> etiqueta tipodirectiva opdirectiva .)
+    NEWLINE         reduce using rule 20 (directiva -> etiqueta tipodirectiva opdirectiva .)
 
 
 state 60
 
-    (41) inmediato3 -> CODOP # NUM .
+    (21) opdirectiva -> NUM .
 
-    COMA            reduce using rule 41 (inmediato3 -> CODOP # NUM .)
-    COMMENT_IL      reduce using rule 41 (inmediato3 -> CODOP # NUM .)
-    NEWLINE         reduce using rule 41 (inmediato3 -> CODOP # NUM .)
+    COMMENT_IL      reduce using rule 21 (opdirectiva -> NUM .)
+    NEWLINE         reduce using rule 21 (opdirectiva -> NUM .)
 
 
 state 61
 
-    (42) inmediato3 -> CODOP # NAME .
+    (22) opdirectiva -> NAME .
 
-    COMA            reduce using rule 42 (inmediato3 -> CODOP # NAME .)
-    COMMENT_IL      reduce using rule 42 (inmediato3 -> CODOP # NAME .)
-    NEWLINE         reduce using rule 42 (inmediato3 -> CODOP # NAME .)
+    COMMENT_IL      reduce using rule 22 (opdirectiva -> NAME .)
+    NEWLINE         reduce using rule 22 (opdirectiva -> NAME .)
 
 
 state 62
 
-    (33) f3 -> simple3 COMA X .
+    (42) simple3 -> CODOP NUM .
 
-    COMMENT_IL      reduce using rule 33 (f3 -> simple3 COMA X .)
-    NEWLINE         reduce using rule 33 (f3 -> simple3 COMA X .)
+    COMA            reduce using rule 42 (simple3 -> CODOP NUM .)
+    COMMENT_IL      reduce using rule 42 (simple3 -> CODOP NUM .)
+    NEWLINE         reduce using rule 42 (simple3 -> CODOP NUM .)
 
 
 state 63
 
-    (34) f3 -> indirecto3 COMA X .
+    (37) f3 -> simple3 COMA X .
 
-    COMMENT_IL      reduce using rule 34 (f3 -> indirecto3 COMA X .)
-    NEWLINE         reduce using rule 34 (f3 -> indirecto3 COMA X .)
+    COMMENT_IL      reduce using rule 37 (f3 -> simple3 COMA X .)
+    NEWLINE         reduce using rule 37 (f3 -> simple3 COMA X .)
 
 
 state 64
 
-    (35) f3 -> inmediato3 COMA X .
+    (38) f3 -> indirecto3 COMA X .
 
-    COMMENT_IL      reduce using rule 35 (f3 -> inmediato3 COMA X .)
-    NEWLINE         reduce using rule 35 (f3 -> inmediato3 COMA X .)
+    COMMENT_IL      reduce using rule 38 (f3 -> indirecto3 COMA X .)
+    NEWLINE         reduce using rule 38 (f3 -> indirecto3 COMA X .)
 
 
 state 65
 
-    (38) simple3 -> CODOP NUM .
+    (39) f3 -> inmediato3 COMA X .
 
-    COMA            reduce using rule 38 (simple3 -> CODOP NUM .)
-    COMMENT_IL      reduce using rule 38 (simple3 -> CODOP NUM .)
-    NEWLINE         reduce using rule 38 (simple3 -> CODOP NUM .)
+    COMMENT_IL      reduce using rule 39 (f3 -> inmediato3 COMA X .)
+    NEWLINE         reduce using rule 39 (f3 -> inmediato3 COMA X .)
 
 
 state 66
 
-    (2) inicio -> etiqueta START numero COMMENT_IL . NEWLINE
+    (49) f2 -> CODOP REG COMA . REG
+    (50) f2 -> CODOP REG COMA . NUM
 
-    NEWLINE         shift and go to state 70
+    REG             shift and go to state 73
+    NUM             shift and go to state 74
 
 
 state 67
 
-    (3) inicio -> etiqueta START numero NEWLINE .
+    (43) indirecto3 -> CODOP @ NUM .
 
-    NAME            reduce using rule 3 (inicio -> etiqueta START numero NEWLINE .)
-    CODOP           reduce using rule 3 (inicio -> etiqueta START numero NEWLINE .)
-    SIO             reduce using rule 3 (inicio -> etiqueta START numero NEWLINE .)
-    TIO             reduce using rule 3 (inicio -> etiqueta START numero NEWLINE .)
-    PLUS            reduce using rule 3 (inicio -> etiqueta START numero NEWLINE .)
+    COMA            reduce using rule 43 (indirecto3 -> CODOP @ NUM .)
+    COMMENT_IL      reduce using rule 43 (indirecto3 -> CODOP @ NUM .)
+    NEWLINE         reduce using rule 43 (indirecto3 -> CODOP @ NUM .)
 
 
 state 68
 
-    (45) f2 -> CODOP REG COMA REG .
+    (44) indirecto3 -> CODOP @ NAME .
 
-    COMMENT_IL      reduce using rule 45 (f2 -> CODOP REG COMA REG .)
-    NEWLINE         reduce using rule 45 (f2 -> CODOP REG COMA REG .)
+    COMA            reduce using rule 44 (indirecto3 -> CODOP @ NAME .)
+    COMMENT_IL      reduce using rule 44 (indirecto3 -> CODOP @ NAME .)
+    NEWLINE         reduce using rule 44 (indirecto3 -> CODOP @ NAME .)
 
 
 state 69
 
-    (46) f2 -> CODOP REG COMA NUM .
+    (45) inmediato3 -> CODOP # NUM .
 
-    COMMENT_IL      reduce using rule 46 (f2 -> CODOP REG COMA NUM .)
-    NEWLINE         reduce using rule 46 (f2 -> CODOP REG COMA NUM .)
+    COMA            reduce using rule 45 (inmediato3 -> CODOP # NUM .)
+    COMMENT_IL      reduce using rule 45 (inmediato3 -> CODOP # NUM .)
+    NEWLINE         reduce using rule 45 (inmediato3 -> CODOP # NUM .)
 
 
 state 70
 
-    (2) inicio -> etiqueta START numero COMMENT_IL NEWLINE .
+    (46) inmediato3 -> CODOP # NAME .
 
-    NAME            reduce using rule 2 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
-    CODOP           reduce using rule 2 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
-    SIO             reduce using rule 2 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
-    TIO             reduce using rule 2 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
-    PLUS            reduce using rule 2 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
+    COMA            reduce using rule 46 (inmediato3 -> CODOP # NAME .)
+    COMMENT_IL      reduce using rule 46 (inmediato3 -> CODOP # NAME .)
+    NEWLINE         reduce using rule 46 (inmediato3 -> CODOP # NAME .)
+
+
+state 71
+
+    (6) inicio -> etiqueta START numero COMMENT_IL . NEWLINE
+
+    NEWLINE         shift and go to state 75
+
+
+state 72
+
+    (7) inicio -> etiqueta START numero NEWLINE .
+
+    NAME            reduce using rule 7 (inicio -> etiqueta START numero NEWLINE .)
+    PLUS            reduce using rule 7 (inicio -> etiqueta START numero NEWLINE .)
+    SIO             reduce using rule 7 (inicio -> etiqueta START numero NEWLINE .)
+    TIO             reduce using rule 7 (inicio -> etiqueta START numero NEWLINE .)
+    CODOP           reduce using rule 7 (inicio -> etiqueta START numero NEWLINE .)
+
+
+state 73
+
+    (49) f2 -> CODOP REG COMA REG .
+
+    COMMENT_IL      reduce using rule 49 (f2 -> CODOP REG COMA REG .)
+    NEWLINE         reduce using rule 49 (f2 -> CODOP REG COMA REG .)
+
+
+state 74
+
+    (50) f2 -> CODOP REG COMA NUM .
+
+    COMMENT_IL      reduce using rule 50 (f2 -> CODOP REG COMA NUM .)
+    NEWLINE         reduce using rule 50 (f2 -> CODOP REG COMA NUM .)
+
+
+state 75
+
+    (6) inicio -> etiqueta START numero COMMENT_IL NEWLINE .
+
+    NAME            reduce using rule 6 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
+    PLUS            reduce using rule 6 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
+    SIO             reduce using rule 6 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
+    TIO             reduce using rule 6 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
+    CODOP           reduce using rule 6 (inicio -> etiqueta START numero COMMENT_IL NEWLINE .)
 
 WARNING: 
 WARNING: Conflicts:
 WARNING: 
-WARNING: reduce/reduce conflict in state 37 resolved using rule (simple3 -> CODOP NUM)
-WARNING: rejected rule (f2 -> CODOP NUM) in state 37
+WARNING: shift/reduce conflict for NAME in state 0 resolved as shift
+WARNING: reduce/reduce conflict in state 8 resolved using rule (sicxe_file -> empty programa)
+WARNING: rejected rule (empty -> <empty>) in state 8
+WARNING: reduce/reduce conflict in state 46 resolved using rule (simple3 -> CODOP NUM)
+WARNING: rejected rule (f2 -> CODOP NUM) in state 46
 WARNING: Rule (f2 -> CODOP NUM) is never reduced
