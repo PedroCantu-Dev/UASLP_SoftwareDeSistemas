@@ -430,6 +430,14 @@ def p_proposicion(p):
     {}
 
 
+def p_proposicion_error(p):
+    """proposicion_error : er COMMENT_IL NEWLINE
+    | instruccion COMMENT_IL NEWLINE
+    | directiva NEWLINE
+    | instruccion NEWLINE"""
+    {}
+
+
 def p_instruccion(p):
     """
     instruccion : etiqueta opformato
