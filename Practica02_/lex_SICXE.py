@@ -218,6 +218,12 @@ t_COMA = r'''\,'''
 t_MODIF = r'''(\@|\#)'''
 
 
+# def t_COMMENT_IL(t):
+#     r'''$$[ ]{0,1}*[a-zA-Z0-9]*\n'''
+#     t.type = 'COMMENT_IL'
+#     return t
+
+
 def t_COMMENT_ML(t):
     r'''\/\*[a-zA-Z0-9\s]+\*\/'''
     pass
@@ -290,17 +296,12 @@ def t_INT(t):
     t.value = int(t.value)
     return t
 
-
-def t_COMMENT_IL(t):
-    r'''[a-zA-Z0-9]+'''
-    t.type = 'COMMENT_IL'
-    return t
-
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
 
 
 def t_error(t):
-    print("Caracter ilegal en la linea " + str(lexer.lineno-1))
+    print("Caracter ilegal en la linea " +
+          str(lexer.lineno-1) + " valor: " + t.value + "\n")
     # print("Illegal characters:"+t.value+":")
     t.lexer.skip(1)
 
@@ -355,11 +356,9 @@ lexer = lex.lex()
 
 data = '''
  EJERCFINAL  START   0H
-             SIO\n
+             SIO $$ esto es un comentario en linea maspartes
              SIO\n
              TIO\n
-             TIO\n
-             SIO\n
              +LDX    @TABLA
              END     INICIO
  '''
@@ -392,7 +391,7 @@ def p_programa(p):
 
 
 def p_inicio(p):
-    """inicio : etiqueta START numero COMMENT_IL NEWLINE
+    """inicio : etiqueta START numero NEWLINE
     | etiqueta START numero NEWLINE"""
     p[0] = (p[2], p[1], p[3])
 
@@ -423,19 +422,20 @@ def p_proposiciones(p):
 
 
 def p_proposicion(p):
-    """proposicion : directiva COMMENT_IL NEWLINE
-    | instruccion COMMENT_IL NEWLINE
+    """proposicion : 
     | directiva NEWLINE
     | instruccion NEWLINE"""
-    {}
+    p[0] = (p[1], p[2])
+    f = p[0]
+    g = f
 
 
-def p_proposicion_error(p):
-    """proposicion_error : er COMMENT_IL NEWLINE
-    | instruccion COMMENT_IL NEWLINE
-    | directiva NEWLINE
-    | instruccion NEWLINE"""
-    {}
+# def p_proposicion_error(p):
+#     """proposicion_error :  COMMENT_IL NEWLINE
+#     | instruccion COMMENT_IL NEWLINE
+#     | directiva NEWLINE
+#     | instruccion NEWLINE"""
+#     {}
 
 
 def p_instruccion(p):
@@ -542,11 +542,12 @@ def p_empty(p):
 def p_error(p):
 
     print("syntax error en el token ", p.type)
-    num = 0
-    p.lineno(num)
-    print(num)
+    # num = 0
+    # p.lineno(num)
+    # print(num)
     # p.errors
     # p[0] = ("Err", p[1])
+    dir(p)
 
 
 precedence = (
@@ -649,16 +650,18 @@ def run(p):
         print(p)
         return p
 
-
 # while True:
 #     try:
 #         s = input('calc>> ')
 #     except EOFError:
 #         break
 
+
 #log = logging.getLogger()
 #parser.parse(input, debug=log)
-par = parser.parse(data)
+par = parser.parse(data, debug=1)
+# par = parser.parse(data, tracking=1)
+
 # par = par = run(data)
 # print(par)
 
