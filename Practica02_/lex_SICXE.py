@@ -194,7 +194,9 @@ tokens = [
     'C_TEXT',
     'X_HEX',
     'ARROBA',
-    'NEWLINE'
+    'NEWLINE',
+    'AT',
+    'SHARP'
 ]+list(SICXE_Dictionary.keys())
 
 t_LPARENT = r'''\('''
@@ -214,12 +216,13 @@ t_OR_G = r'\|\|'
 t_AND_G = r'\&\&'
 t_EQUALS = r'\='
 t_COMA = r'''\,'''
+t_AT = r'''\@'''
+t_SHARP = r'''\#'''
 # t_OPERANDO = r'(\@|\#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(\,X)*'
-t_MODIF = r'''(\@|\#)'''
 
 
 # def t_COMMENT_IL(t):
-#     r'''$$[ ]{0,1}*[a-zA-Z0-9]*\n'''
+#     r'''¿¿[ ]{0,1}*[a-zA-Z0-9]*\n'''
 #     t.type = 'COMMENT_IL'
 #     return t
 
@@ -350,6 +353,13 @@ dataArchi = '''
   ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
   ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
   DIVIDENDO DIV
+
+  EJERCFINAL  START   0H
+             SIO
+             SIO\n
+             TIO\n
+             +LDX    @TABLA
+             END     INICIO
   '''
 lexer.input(dataArchi)
 
@@ -369,6 +379,31 @@ data = '''
              +LDX    @TABLA
              END     INICIO
  '''
+
+dete = '''
+ EJERCFINAL  START   0H
+            SIO
+            +LDX    @TABLA	  	   
+VALOR	    WORD    140	   
+	   	    BASE    CAD	   
+TABLA  	    RESW	20
+    	    +LDS	VALOR, X 	   
+	   	    SHIFTL	S,6	   
+SIMBOLO     LDD		#VALOR	       
+	        +LDA	1010H ,X	   
+CAD	        BYTE	C'FINAL'	   
+	        LDA		#TABLA	   
+    	    SUBR	S, X	       
+	   	    RESW	2500H
+SALTO       ADD		VALOR,X	       
+	        STCH	@TABLA
+	        JGT	    SALTO , X	   
+AREA        RESB	64	   
+	        STA		SALTO       
+	        +SUB	350
+	        J		CADENA, X 	   
+	        +TIX	TABLA,X	   
+            END     INICIO'''
 
 # opcional
 start = 'sicxe_file'
@@ -446,7 +481,7 @@ def p_instruccion(p):
 def p_directiva(p):
     """
     directiva : etiqueta tipodirectiva opdirectiva"""
-    p[0] = (p[1], p[2], p[3])
+    p[0] = ("directiva", p[1], p[2], p[3])
     # test run
     run(p[0])
 
@@ -522,16 +557,16 @@ def p_simple3(p):
 
 
 def p_indirecto3(p):
-    """indirecto3 : CODOP '@' NUM
-    | CODOP '@' NAME"""
+    """indirecto3 : CODOP AT NUM
+    | CODOP AT NAME"""
     p[0] = ('indirecto3', p[1], p[3])
     # test run
     run(p[0])
 
 
 def p_inmediato3(p):
-    """inmediato3 : CODOP '#' NUM
-    | CODOP '#' NAME"""
+    """inmediato3 : CODOP SHARP NUM
+    | CODOP SHARP NAME"""
     p[0] = ('inmediato3', p[1], p[3])
     # test run
     run(p[0])
@@ -577,7 +612,7 @@ precedence = (
     ('left', 'NAME'),
     ('left', 'CODOP'),
     ('left', 'REG'),
-    ('left', '@', '#'),
+    ('left', 'AT', 'SHARP'),
     ('left', 'OR_G', 'AND_G'),
     ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
     ('left', 'PLUS', 'MINUS'),
@@ -594,39 +629,52 @@ def des_hex(hexdigit):
 
 def run(p):
     if type(p) == tuple:
-        tupleFirstElement = p[1]
-        if(tupleFirstElement == 'programa'):
+        pZeroValue = p[0]
+        if(pZeroValue == 'programa'):
             return run(p[1]) + run(p[2]) + run(p[3])
-        elif tupleFirstElement == 'inicio':  # p[1]:etiqueta, p[2]:numero
+        elif pZeroValue == 'inicio':  # p[1]:etiqueta, p[2]:numero
             return run(p[1]) + str(run(p[2]))
-        elif tupleFirstElement == 'numero':
+        elif pZeroValue == 'numero':
             {
                 print("numero")
 
             }
-        elif tupleFirstElement == 'fin':
+        elif pZeroValue == 'fin':
             {
                 print("fin")
             }
-        elif tupleFirstElement == 'entrada':
+        elif pZeroValue == 'entrada':
             {
                 print("entrada")
             }
-        elif tupleFirstElement == 'proposiciones':
+        elif pZeroValue == 'f3':
+            {
+                print(p[1].value)
+            }
+        elif pZeroValue == 'f3,X':
+            {
+                print(run(p[1].value) + p[2].value + p[3].value)
+            }
+        elif pZeroValue == 'proposiciones':
             {
                 print("proposiciones")
             }
-        elif tupleFirstElement == 'proposicion':
+        elif pZeroValue == 'proposicion':
             {
                 print("proposicion")
             }
-        elif tupleFirstElement == 'instruccion':
+        elif pZeroValue == 'instruccion':
             {
                 print("instruccion")
             }
-        elif tupleFirstElement == 'directiva':
+        elif pZeroValue == 'directiva':
             {
                 print("directiva")
+            }
+        elif pZeroValue == 'inmediato3':
+            {
+                print("inmediato3:")
+                # print(p[1])
             }
         elif p[0].value == '+':
             return run(p[1]) + run(p[2])
@@ -684,8 +732,14 @@ def run(p):
             return math.factorial(int(run(p[1])))
     else:
         print(p)
+        if(p.type == 'etiqueta'):
+            print(p.value.value)
+            print(p.value.lineno)
+            print(p.value.lexpos)
+        elif(p.type == 'directiva'):
+            if(p.type)
         return p
 
 
-par = parser.parse(data)
-par = parser.parse(data, debug=1)
+par = parser.parse(dete)
+# par = parser.parse(data, debug=1)

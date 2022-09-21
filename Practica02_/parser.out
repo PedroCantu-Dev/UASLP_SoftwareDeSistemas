@@ -127,10 +127,10 @@ Rule 36    f3 -> simple3 COMA X
 Rule 37    f4 -> PLUS f3
 Rule 38    simple3 -> CODOP NAME
 Rule 39    simple3 -> CODOP NUM
-Rule 40    indirecto3 -> CODOP @ NUM
-Rule 41    indirecto3 -> CODOP @ NAME
-Rule 42    inmediato3 -> CODOP # NUM
-Rule 43    inmediato3 -> CODOP # NAME
+Rule 40    indirecto3 -> CODOP AT NUM
+Rule 41    indirecto3 -> CODOP AT NAME
+Rule 42    inmediato3 -> CODOP SHARP NUM
+Rule 43    inmediato3 -> CODOP SHARP NAME
 Rule 44    f2 -> CODOP NUM
 Rule 45    f2 -> CODOP REG
 Rule 46    f2 -> CODOP REG COMA REG
@@ -141,14 +141,13 @@ Rule 50    empty -> <empty>
 
 Terminals, with rules where they appear
 
-#                    : 42 43
-@                    : 40 41
 ADD                  : 
 ADDF                 : 
 ADDR                 : 
 AND                  : 
 AND_G                : 
 ARROBA               : 
+AT                   : 40 41
 BASE                 : 
 BYTE                 : 22
 CLEAR                : 
@@ -215,6 +214,7 @@ RESW                 : 25
 RMO                  : 
 RPARENT              : 
 RSUB                 : 
+SHARP                : 42 43
 SHIFTL               : 
 SHIFTR               : 
 SIO                  : 34
@@ -366,10 +366,10 @@ state 5
     (48) f1 -> . CODOP NEWLINE
     (38) simple3 -> . CODOP NAME
     (39) simple3 -> . CODOP NUM
-    (40) indirecto3 -> . CODOP @ NUM
-    (41) indirecto3 -> . CODOP @ NAME
-    (42) inmediato3 -> . CODOP # NUM
-    (43) inmediato3 -> . CODOP # NAME
+    (40) indirecto3 -> . CODOP AT NUM
+    (41) indirecto3 -> . CODOP AT NAME
+    (42) inmediato3 -> . CODOP SHARP NUM
+    (43) inmediato3 -> . CODOP SHARP NAME
 
   ! shift/reduce conflict for error resolved as shift
   ! shift/reduce conflict for NAME resolved as shift
@@ -474,10 +474,10 @@ state 9
     (48) f1 -> . CODOP NEWLINE
     (38) simple3 -> . CODOP NAME
     (39) simple3 -> . CODOP NUM
-    (40) indirecto3 -> . CODOP @ NUM
-    (41) indirecto3 -> . CODOP @ NAME
-    (42) inmediato3 -> . CODOP # NUM
-    (43) inmediato3 -> . CODOP # NAME
+    (40) indirecto3 -> . CODOP AT NUM
+    (41) indirecto3 -> . CODOP AT NAME
+    (42) inmediato3 -> . CODOP SHARP NUM
+    (43) inmediato3 -> . CODOP SHARP NAME
 
   ! shift/reduce conflict for END resolved as shift
   ! shift/reduce conflict for error resolved as shift
@@ -576,10 +576,10 @@ state 14
     (48) f1 -> . CODOP NEWLINE
     (38) simple3 -> . CODOP NAME
     (39) simple3 -> . CODOP NUM
-    (40) indirecto3 -> . CODOP @ NUM
-    (41) indirecto3 -> . CODOP @ NAME
-    (42) inmediato3 -> . CODOP # NUM
-    (43) inmediato3 -> . CODOP # NAME
+    (40) indirecto3 -> . CODOP AT NUM
+    (41) indirecto3 -> . CODOP AT NAME
+    (42) inmediato3 -> . CODOP SHARP NUM
+    (43) inmediato3 -> . CODOP SHARP NAME
 
     BYTE            shift and go to state 37
     WORD            shift and go to state 38
@@ -646,10 +646,10 @@ state 20
     (36) f3 -> . simple3 COMA X
     (38) simple3 -> . CODOP NAME
     (39) simple3 -> . CODOP NUM
-    (40) indirecto3 -> . CODOP @ NUM
-    (41) indirecto3 -> . CODOP @ NAME
-    (42) inmediato3 -> . CODOP # NUM
-    (43) inmediato3 -> . CODOP # NAME
+    (40) indirecto3 -> . CODOP AT NUM
+    (41) indirecto3 -> . CODOP AT NAME
+    (42) inmediato3 -> . CODOP SHARP NUM
+    (43) inmediato3 -> . CODOP SHARP NAME
 
     SIO             shift and go to state 24
     TIO             shift and go to state 25
@@ -706,17 +706,17 @@ state 26
     (48) f1 -> CODOP . NEWLINE
     (38) simple3 -> CODOP . NAME
     (39) simple3 -> CODOP . NUM
-    (40) indirecto3 -> CODOP . @ NUM
-    (41) indirecto3 -> CODOP . @ NAME
-    (42) inmediato3 -> CODOP . # NUM
-    (43) inmediato3 -> CODOP . # NAME
+    (40) indirecto3 -> CODOP . AT NUM
+    (41) indirecto3 -> CODOP . AT NAME
+    (42) inmediato3 -> CODOP . SHARP NUM
+    (43) inmediato3 -> CODOP . SHARP NAME
 
     NUM             shift and go to state 44
     REG             shift and go to state 45
     NEWLINE         shift and go to state 46
     NAME            shift and go to state 47
-    @               shift and go to state 48
-    #               shift and go to state 49
+    AT              shift and go to state 48
+    SHARP           shift and go to state 49
 
 
 state 27
@@ -867,15 +867,15 @@ state 42
 
     (38) simple3 -> CODOP . NAME
     (39) simple3 -> CODOP . NUM
-    (40) indirecto3 -> CODOP . @ NUM
-    (41) indirecto3 -> CODOP . @ NAME
-    (42) inmediato3 -> CODOP . # NUM
-    (43) inmediato3 -> CODOP . # NAME
+    (40) indirecto3 -> CODOP . AT NUM
+    (41) indirecto3 -> CODOP . AT NAME
+    (42) inmediato3 -> CODOP . SHARP NUM
+    (43) inmediato3 -> CODOP . SHARP NAME
 
     NAME            shift and go to state 47
     NUM             shift and go to state 58
-    @               shift and go to state 48
-    #               shift and go to state 49
+    AT              shift and go to state 48
+    SHARP           shift and go to state 49
 
 
 state 43
@@ -924,8 +924,8 @@ state 47
 
 state 48
 
-    (40) indirecto3 -> CODOP @ . NUM
-    (41) indirecto3 -> CODOP @ . NAME
+    (40) indirecto3 -> CODOP AT . NUM
+    (41) indirecto3 -> CODOP AT . NAME
 
     NUM             shift and go to state 61
     NAME            shift and go to state 62
@@ -933,8 +933,8 @@ state 48
 
 state 49
 
-    (42) inmediato3 -> CODOP # . NUM
-    (43) inmediato3 -> CODOP # . NAME
+    (42) inmediato3 -> CODOP SHARP . NUM
+    (43) inmediato3 -> CODOP SHARP . NAME
 
     NUM             shift and go to state 63
     NAME            shift and go to state 64
@@ -1024,30 +1024,30 @@ state 60
 
 state 61
 
-    (40) indirecto3 -> CODOP @ NUM .
+    (40) indirecto3 -> CODOP AT NUM .
 
-    NEWLINE         reduce using rule 40 (indirecto3 -> CODOP @ NUM .)
+    NEWLINE         reduce using rule 40 (indirecto3 -> CODOP AT NUM .)
 
 
 state 62
 
-    (41) indirecto3 -> CODOP @ NAME .
+    (41) indirecto3 -> CODOP AT NAME .
 
-    NEWLINE         reduce using rule 41 (indirecto3 -> CODOP @ NAME .)
+    NEWLINE         reduce using rule 41 (indirecto3 -> CODOP AT NAME .)
 
 
 state 63
 
-    (42) inmediato3 -> CODOP # NUM .
+    (42) inmediato3 -> CODOP SHARP NUM .
 
-    NEWLINE         reduce using rule 42 (inmediato3 -> CODOP # NUM .)
+    NEWLINE         reduce using rule 42 (inmediato3 -> CODOP SHARP NUM .)
 
 
 state 64
 
-    (43) inmediato3 -> CODOP # NAME .
+    (43) inmediato3 -> CODOP SHARP NAME .
 
-    NEWLINE         reduce using rule 43 (inmediato3 -> CODOP # NAME .)
+    NEWLINE         reduce using rule 43 (inmediato3 -> CODOP SHARP NAME .)
 
 
 state 65
