@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = "sicxe_fileleftNAMEleftCODOPleftREGleftATSHARPleftOR_GAND_GleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALADD ADDF ADDR AND AND_G ARROBA AT BASE BYTE CLEAR CODOP COMA COMF COMMENT_ML COMP COMPR C_TEXT DIRECTIV DIV DIVF DIVIDE DIVR END EQUALS FACTORIAL FINL FIX FLOAT FLOAT_NUM HEX_INT HIO INT J JEQ JGT JLT JSUB LDA LDB LDCH LDF LDL LDS LDT LDX LESSEQ LESST LPARENT LPS MINUS MOD MODIF MOREEQ MORET MUL MULF MULR MULTIPLY NAME NEWLINE NORM NUM OPERANDO OR OR_G PLUS RD REG RESB RESW RMO RPARENT RSUB SHARP SHIFTL SHIFTR SIO SSK STA START STB STCH STF STI STL STS STSW STT STX SUB SUBF SUBR SVC TD TIO TIX TIXR UMINUS WD WORD X_HEXsicxe_file : empty\n    | programa\n    | empty programa\n    | empty programa emptyprograma : inicio proposiciones fininicio : etiqueta START numero NEWLINEnumero : INT\n    | HEX_INTfin : END entrada entrada : NAMEproposiciones : proposiciones proposicion\n    | proposicionproposicion :\n    | directiva NEWLINE\n    | instruccion NEWLINE\n    | error NEWLINE\n    instruccion : etiqueta opformato\n    | opformato\n    \n    directiva : etiqueta tipodirectiva opdirectivaopdirectiva : NUM\n    | NAME tipodirectiva : BYTE\n    | WORD\n    | RESB\n    | RESWetiqueta : NAME opformato : f4\n    | f3\n    | f2\n    | f1 f3 : simple3\n    | indirecto3\n    | inmediato3\n    | SIO\n    | TIOf3 : simple3 COMA 'X'f4 : PLUS f3simple3 : CODOP NAME\n    | CODOP NUMindirecto3 : CODOP AT NUM\n    | CODOP AT NAMEinmediato3 : CODOP SHARP NUM\n    | CODOP SHARP NAMEf2 : CODOP NUM\n    | CODOP REGf2 : CODOP REG COMA REG\n    | CODOP REG COMA NUMf1 : CODOP NEWLINE\n    empty : NEWLINE\n    |\n    "
+_lr_signature = "sicxe_fileleftNAMEleftCODOPleftREGleftATSHARPleftOR_GAND_GleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALADD ADDF ADDR AND AND_G ARROBA AT BASE BYTE CLEAR CODOP COMA COMF COMMENT_ML COMP COMPR C_TEXT DIRECTIV DIV DIVF DIVIDE DIVR END EQUALS FACTORIAL FINL FIX FLOAT FLOAT_NUM HEX_INT HIO INT J JEQ JGT JLT JSUB LDA LDB LDCH LDF LDL LDS LDT LDX LESSEQ LESST LPARENT LPS MINUS MOD MODIF MOREEQ MORET MUL MULF MULR MULTIPLY NAME NEWLINE NORM NUM OPERANDO OR OR_G PLUS RD REG RESB RESW RMO RPARENT RSUB SHARP SHIFTL SHIFTR SIO SSK STA START STB STCH STF STI STL STS STSW STT STX SUB SUBF SUBR SVC TD TIO TIX TIXR UMINUS WD WORD X_HEXsicxe_file : empty\n    | programa\n    | empty programa\n    | empty programa emptyprograma : inicio proposiciones fininicio : etiqueta START numero NEWLINEnumero : INT\n    | HEX_INTfin : END entrada entrada : NAMEproposiciones : proposiciones proposicion\n    | proposicionproposicion :\n    | directiva NEWLINE\n    | instruccion NEWLINE\n    | error NEWLINE\n    instruccion : etiqueta opformato\n    | opformato\n    \n    directiva : etiqueta tipodirectiva opdirectiva\n    | tipodirectiva opdirectivaopdirectiva : NUM\n    | NAME tipodirectiva : BYTE\n    | WORD\n    | RESB\n    | RESWetiqueta : NAME opformato : f4\n    | f3\n    | f2\n    | f1 f3 : simple3\n    | indirecto3\n    | inmediato3\n    | RSUB\n    | f3 : simple3 COMA 'X'f4 : PLUS f3simple3 : CODOP NAME\n    | CODOP NUMindirecto3 : CODOP AT NUM\n    | CODOP AT NAMEinmediato3 : CODOP SHARP NUM\n    | CODOP SHARP NAMEf2 : CODOP NUM\n    | CODOP REGf2 : CODOP REG COMA REG\n    | CODOP REG COMA NUMf1 : CODOP NEWLINE\n    empty : NEWLINE\n    |\n    "
     
-_lr_action_items = {'NEWLINE':([0,8,11,12,13,15,16,17,18,19,21,22,23,24,25,26,29,36,41,44,45,46,47,50,51,52,53,54,55,56,57,58,59,61,62,63,64,66,67,],[4,4,32,33,34,-18,-27,-28,-29,-30,-31,-32,-33,-34,-35,46,-5,-17,-37,-39,-45,-48,-38,65,-7,-8,-9,-10,-19,-20,-21,-39,-36,-40,-41,-42,-43,-46,-47,]),'NAME':([0,2,4,5,9,10,26,30,31,32,33,34,35,37,38,39,40,42,48,49,65,],[7,7,-49,7,7,-12,47,-11,54,-14,-15,-16,57,-22,-23,-24,-25,47,62,64,-6,]),'$end':([0,1,2,3,4,8,28,29,53,54,],[-50,0,-1,-2,-49,-3,-4,-5,-9,-10,]),'END':([5,9,10,30,32,33,34,65,],[-13,31,-12,-11,-14,-15,-16,-6,]),'error':([5,9,10,30,32,33,34,65,],[13,13,-12,-11,-14,-15,-16,-6,]),'PLUS':([5,7,9,10,14,30,32,33,34,65,],[20,-26,20,-12,20,-11,-14,-15,-16,-6,]),'SIO':([5,7,9,10,14,20,30,32,33,34,65,],[24,-26,24,-12,24,24,-11,-14,-15,-16,-6,]),'TIO':([5,7,9,10,14,20,30,32,33,34,65,],[25,-26,25,-12,25,25,-11,-14,-15,-16,-6,]),'CODOP':([5,7,9,10,14,20,30,32,33,34,65,],[26,-26,26,-12,26,42,-11,-14,-15,-16,-6,]),'START':([6,7,],[27,-26,]),'BYTE':([7,14,],[-26,37,]),'WORD':([7,14,],[-26,38,]),'RESB':([7,14,],[-26,39,]),'RESW':([7,14,],[-26,40,]),'COMA':([21,44,45,47,58,],[43,-39,60,-38,-39,]),'NUM':([26,35,37,38,39,40,42,48,49,60,],[44,56,-22,-23,-24,-25,58,61,63,67,]),'REG':([26,60,],[45,66,]),'AT':([26,42,],[48,48,]),'SHARP':([26,42,],[49,49,]),'INT':([27,],[51,]),'HEX_INT':([27,],[52,]),'X':([43,],[59,]),}
+_lr_action_items = {'NEWLINE':([0,5,7,8,9,10,11,12,13,14,16,21,22,23,24,25,26,27,28,29,30,33,34,36,37,38,40,41,42,43,44,47,48,49,50,53,54,55,56,57,58,59,60,62,63,64,65,66,67,68,],[4,-13,-27,4,-13,-12,36,37,38,-36,-18,-28,-29,-30,-31,-36,-32,-33,-34,-35,49,-5,-11,-14,-15,-16,-17,-20,-21,-22,-38,-40,-46,-49,-39,66,-7,-8,-9,-10,-19,-40,-37,-41,-42,-43,-44,-6,-47,-48,]),'NAME':([0,2,4,5,9,10,15,17,18,19,20,30,34,35,36,37,38,39,45,51,52,66,],[7,7,-50,7,7,-12,43,-23,-24,-25,-26,50,-11,57,-14,-15,-16,43,50,63,65,-6,]),'$end':([0,1,2,3,4,8,32,33,56,57,],[-51,0,-1,-2,-50,-3,-4,-5,-9,-10,]),'END':([5,9,10,34,36,37,38,66,],[-13,35,-12,-11,-14,-15,-16,-6,]),'error':([5,9,10,34,36,37,38,66,],[13,13,-12,-11,-14,-15,-16,-6,]),'BYTE':([5,7,9,10,14,34,36,37,38,66,],[17,-27,17,-12,17,-11,-14,-15,-16,-6,]),'WORD':([5,7,9,10,14,34,36,37,38,66,],[18,-27,18,-12,18,-11,-14,-15,-16,-6,]),'RESB':([5,7,9,10,14,34,36,37,38,66,],[19,-27,19,-12,19,-11,-14,-15,-16,-6,]),'RESW':([5,7,9,10,14,34,36,37,38,66,],[20,-27,20,-12,20,-11,-14,-15,-16,-6,]),'PLUS':([5,7,9,10,14,34,36,37,38,66,],[25,-27,25,-12,25,-11,-14,-15,-16,-6,]),'RSUB':([5,7,9,10,14,25,34,36,37,38,66,],[29,-27,29,-12,29,29,-11,-14,-15,-16,-6,]),'CODOP':([5,7,9,10,14,25,34,36,37,38,66,],[30,-27,30,-12,30,45,-11,-14,-15,-16,-6,]),'START':([6,7,],[31,-27,]),'NUM':([15,17,18,19,20,30,39,45,51,52,61,],[42,-23,-24,-25,-26,47,42,59,62,64,68,]),'COMA':([26,47,48,50,59,],[46,-40,61,-39,-40,]),'REG':([30,61,],[48,67,]),'AT':([30,45,],[51,51,]),'SHARP':([30,45,],[52,52,]),'INT':([31,],[54,]),'HEX_INT':([31,],[55,]),'X':([46,],[60,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'sicxe_file':([0,],[1,]),'empty':([0,8,],[2,28,]),'programa':([0,2,],[3,8,]),'inicio':([0,2,],[5,5,]),'etiqueta':([0,2,5,9,],[6,6,14,14,]),'proposiciones':([5,],[9,]),'proposicion':([5,9,],[10,30,]),'directiva':([5,9,],[11,11,]),'instruccion':([5,9,],[12,12,]),'opformato':([5,9,14,],[15,15,36,]),'f4':([5,9,14,],[16,16,16,]),'f3':([5,9,14,20,],[17,17,17,41,]),'f2':([5,9,14,],[18,18,18,]),'f1':([5,9,14,],[19,19,19,]),'simple3':([5,9,14,20,],[21,21,21,21,]),'indirecto3':([5,9,14,20,],[22,22,22,22,]),'inmediato3':([5,9,14,20,],[23,23,23,23,]),'fin':([9,],[29,]),'tipodirectiva':([14,],[35,]),'numero':([27,],[50,]),'entrada':([31,],[53,]),'opdirectiva':([35,],[55,]),}
+_lr_goto_items = {'sicxe_file':([0,],[1,]),'empty':([0,8,],[2,32,]),'programa':([0,2,],[3,8,]),'inicio':([0,2,],[5,5,]),'etiqueta':([0,2,5,9,],[6,6,14,14,]),'proposiciones':([5,],[9,]),'proposicion':([5,9,],[10,34,]),'directiva':([5,9,],[11,11,]),'instruccion':([5,9,],[12,12,]),'tipodirectiva':([5,9,14,],[15,15,39,]),'opformato':([5,9,14,],[16,16,40,]),'f4':([5,9,14,],[21,21,21,]),'f3':([5,9,14,25,],[22,22,22,44,]),'f2':([5,9,14,],[23,23,23,]),'f1':([5,9,14,],[24,24,24,]),'simple3':([5,9,14,25,],[26,26,26,26,]),'indirecto3':([5,9,14,25,],[27,27,27,27,]),'inmediato3':([5,9,14,25,],[28,28,28,28,]),'fin':([9,],[33,]),'opdirectiva':([15,39,],[41,58,]),'numero':([31,],[53,]),'entrada':([35,],[56,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,54 +27,55 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> sicxe_file","S'",1,None,None,None),
-  ('sicxe_file -> empty','sicxe_file',1,'p_sicxe_file','lex_SICXE.py',388),
-  ('sicxe_file -> programa','sicxe_file',1,'p_sicxe_file','lex_SICXE.py',389),
-  ('sicxe_file -> empty programa','sicxe_file',2,'p_sicxe_file','lex_SICXE.py',390),
-  ('sicxe_file -> empty programa empty','sicxe_file',3,'p_sicxe_file','lex_SICXE.py',391),
-  ('programa -> inicio proposiciones fin','programa',3,'p_programa','lex_SICXE.py',395),
-  ('inicio -> etiqueta START numero NEWLINE','inicio',4,'p_inicio','lex_SICXE.py',401),
-  ('numero -> INT','numero',1,'p_numero','lex_SICXE.py',406),
-  ('numero -> HEX_INT','numero',1,'p_numero','lex_SICXE.py',407),
-  ('fin -> END entrada','fin',2,'p_fin','lex_SICXE.py',412),
-  ('entrada -> NAME','entrada',1,'p_entrada','lex_SICXE.py',417),
-  ('proposiciones -> proposiciones proposicion','proposiciones',2,'p_proposiciones','lex_SICXE.py',422),
-  ('proposiciones -> proposicion','proposiciones',1,'p_proposiciones','lex_SICXE.py',423),
-  ('proposicion -> <empty>','proposicion',0,'p_proposicion','lex_SICXE.py',432),
-  ('proposicion -> directiva NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',433),
-  ('proposicion -> instruccion NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',434),
-  ('proposicion -> error NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',435),
-  ('instruccion -> etiqueta opformato','instruccion',2,'p_instruccion','lex_SICXE.py',449),
-  ('instruccion -> opformato','instruccion',1,'p_instruccion','lex_SICXE.py',450),
-  ('directiva -> etiqueta tipodirectiva opdirectiva','directiva',3,'p_directiva','lex_SICXE.py',458),
-  ('opdirectiva -> NUM','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',465),
-  ('opdirectiva -> NAME','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',466),
-  ('tipodirectiva -> BYTE','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',473),
-  ('tipodirectiva -> WORD','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',474),
-  ('tipodirectiva -> RESB','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',475),
-  ('tipodirectiva -> RESW','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',476),
-  ('etiqueta -> NAME','etiqueta',1,'p_etiqueta','lex_SICXE.py',483),
-  ('opformato -> f4','opformato',1,'p_opformato','lex_SICXE.py',490),
-  ('opformato -> f3','opformato',1,'p_opformato','lex_SICXE.py',491),
-  ('opformato -> f2','opformato',1,'p_opformato','lex_SICXE.py',492),
-  ('opformato -> f1','opformato',1,'p_opformato','lex_SICXE.py',493),
-  ('f3 -> simple3','f3',1,'p_f3','lex_SICXE.py',500),
-  ('f3 -> indirecto3','f3',1,'p_f3','lex_SICXE.py',501),
-  ('f3 -> inmediato3','f3',1,'p_f3','lex_SICXE.py',502),
-  ('f3 -> SIO','f3',1,'p_f3','lex_SICXE.py',503),
-  ('f3 -> TIO','f3',1,'p_f3','lex_SICXE.py',504),
-  ('f3 -> simple3 COMA X','f3',3,'p_f3_Indexado','lex_SICXE.py',513),
-  ('f4 -> PLUS f3','f4',2,'p_f4','lex_SICXE.py',520),
-  ('simple3 -> CODOP NAME','simple3',2,'p_simple3','lex_SICXE.py',527),
-  ('simple3 -> CODOP NUM','simple3',2,'p_simple3','lex_SICXE.py',528),
-  ('indirecto3 -> CODOP AT NUM','indirecto3',3,'p_indirecto3','lex_SICXE.py',535),
-  ('indirecto3 -> CODOP AT NAME','indirecto3',3,'p_indirecto3','lex_SICXE.py',536),
-  ('inmediato3 -> CODOP SHARP NUM','inmediato3',3,'p_inmediato3','lex_SICXE.py',543),
-  ('inmediato3 -> CODOP SHARP NAME','inmediato3',3,'p_inmediato3','lex_SICXE.py',544),
-  ('f2 -> CODOP NUM','f2',2,'p_f2','lex_SICXE.py',551),
-  ('f2 -> CODOP REG','f2',2,'p_f2','lex_SICXE.py',552),
-  ('f2 -> CODOP REG COMA REG','f2',4,'p_f2_3','lex_SICXE.py',559),
-  ('f2 -> CODOP REG COMA NUM','f2',4,'p_f2_3','lex_SICXE.py',560),
-  ('f1 -> CODOP NEWLINE','f1',2,'p_f1','lex_SICXE.py',567),
-  ('empty -> NEWLINE','empty',1,'p_empty','lex_SICXE.py',575),
-  ('empty -> <empty>','empty',0,'p_empty','lex_SICXE.py',576),
+  ('sicxe_file -> empty','sicxe_file',1,'p_sicxe_file','lex_SICXE.py',413),
+  ('sicxe_file -> programa','sicxe_file',1,'p_sicxe_file','lex_SICXE.py',414),
+  ('sicxe_file -> empty programa','sicxe_file',2,'p_sicxe_file','lex_SICXE.py',415),
+  ('sicxe_file -> empty programa empty','sicxe_file',3,'p_sicxe_file','lex_SICXE.py',416),
+  ('programa -> inicio proposiciones fin','programa',3,'p_programa','lex_SICXE.py',420),
+  ('inicio -> etiqueta START numero NEWLINE','inicio',4,'p_inicio','lex_SICXE.py',426),
+  ('numero -> INT','numero',1,'p_numero','lex_SICXE.py',431),
+  ('numero -> HEX_INT','numero',1,'p_numero','lex_SICXE.py',432),
+  ('fin -> END entrada','fin',2,'p_fin','lex_SICXE.py',437),
+  ('entrada -> NAME','entrada',1,'p_entrada','lex_SICXE.py',442),
+  ('proposiciones -> proposiciones proposicion','proposiciones',2,'p_proposiciones','lex_SICXE.py',447),
+  ('proposiciones -> proposicion','proposiciones',1,'p_proposiciones','lex_SICXE.py',448),
+  ('proposicion -> <empty>','proposicion',0,'p_proposicion','lex_SICXE.py',457),
+  ('proposicion -> directiva NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',458),
+  ('proposicion -> instruccion NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',459),
+  ('proposicion -> error NEWLINE','proposicion',2,'p_proposicion','lex_SICXE.py',460),
+  ('instruccion -> etiqueta opformato','instruccion',2,'p_instruccion','lex_SICXE.py',474),
+  ('instruccion -> opformato','instruccion',1,'p_instruccion','lex_SICXE.py',475),
+  ('directiva -> etiqueta tipodirectiva opdirectiva','directiva',3,'p_directiva','lex_SICXE.py',483),
+  ('directiva -> tipodirectiva opdirectiva','directiva',2,'p_directiva','lex_SICXE.py',484),
+  ('opdirectiva -> NUM','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',491),
+  ('opdirectiva -> NAME','opdirectiva',1,'p_opdirectiva','lex_SICXE.py',492),
+  ('tipodirectiva -> BYTE','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',499),
+  ('tipodirectiva -> WORD','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',500),
+  ('tipodirectiva -> RESB','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',501),
+  ('tipodirectiva -> RESW','tipodirectiva',1,'p_tipodirectiva','lex_SICXE.py',502),
+  ('etiqueta -> NAME','etiqueta',1,'p_etiqueta','lex_SICXE.py',509),
+  ('opformato -> f4','opformato',1,'p_opformato','lex_SICXE.py',516),
+  ('opformato -> f3','opformato',1,'p_opformato','lex_SICXE.py',517),
+  ('opformato -> f2','opformato',1,'p_opformato','lex_SICXE.py',518),
+  ('opformato -> f1','opformato',1,'p_opformato','lex_SICXE.py',519),
+  ('f3 -> simple3','f3',1,'p_f3','lex_SICXE.py',526),
+  ('f3 -> indirecto3','f3',1,'p_f3','lex_SICXE.py',527),
+  ('f3 -> inmediato3','f3',1,'p_f3','lex_SICXE.py',528),
+  ('f3 -> RSUB','f3',1,'p_f3','lex_SICXE.py',529),
+  ('f3 -> <empty>','f3',0,'p_f3','lex_SICXE.py',530),
+  ('f3 -> simple3 COMA X','f3',3,'p_f3_Indexado','lex_SICXE.py',539),
+  ('f4 -> PLUS f3','f4',2,'p_f4','lex_SICXE.py',546),
+  ('simple3 -> CODOP NAME','simple3',2,'p_simple3','lex_SICXE.py',553),
+  ('simple3 -> CODOP NUM','simple3',2,'p_simple3','lex_SICXE.py',554),
+  ('indirecto3 -> CODOP AT NUM','indirecto3',3,'p_indirecto3','lex_SICXE.py',561),
+  ('indirecto3 -> CODOP AT NAME','indirecto3',3,'p_indirecto3','lex_SICXE.py',562),
+  ('inmediato3 -> CODOP SHARP NUM','inmediato3',3,'p_inmediato3','lex_SICXE.py',569),
+  ('inmediato3 -> CODOP SHARP NAME','inmediato3',3,'p_inmediato3','lex_SICXE.py',570),
+  ('f2 -> CODOP NUM','f2',2,'p_f2','lex_SICXE.py',577),
+  ('f2 -> CODOP REG','f2',2,'p_f2','lex_SICXE.py',578),
+  ('f2 -> CODOP REG COMA REG','f2',4,'p_f2_3','lex_SICXE.py',585),
+  ('f2 -> CODOP REG COMA NUM','f2',4,'p_f2_3','lex_SICXE.py',586),
+  ('f1 -> CODOP NEWLINE','f1',2,'p_f1','lex_SICXE.py',591),
+  ('empty -> NEWLINE','empty',1,'p_empty','lex_SICXE.py',599),
+  ('empty -> <empty>','empty',0,'p_empty','lex_SICXE.py',600),
 ]

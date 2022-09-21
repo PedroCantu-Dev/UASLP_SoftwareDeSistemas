@@ -259,7 +259,7 @@ def t_X_HEX(t):
 
 def t_NAME(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    if(t.value in SICXE_Dictionary_Directives or t.value == 'SIO' or t.value == 'TIO'):
+    if(t.value in SICXE_Dictionary_Directives or t.value == 'RSUB'):
         t.type = t.value
     elif(t.value in SICXE_Dictionary_CodOp):
         t.type = 'CODOP'
@@ -383,26 +383,34 @@ data = '''
 dete = '''
  EJERCFINAL  START   0H
             SIO
-            +LDX    @TABLA	  	   
-VALOR	    WORD    140	   
-	   	    BASE    CAD	   
+            +LDX    @TABLA
+VALOR	    WORD    140
+	   	    BASE    CAD
 TABLA  	    RESW	20
-    	    +LDS	VALOR, X 	   
-	   	    SHIFTL	S,6	   
-SIMBOLO     LDD		#VALOR	       
-	        +LDA	1010H ,X	   
-CAD	        BYTE	C'FINAL'	   
-	        LDA		#TABLA	   
-    	    SUBR	S, X	       
+    	    +LDS	VALOR, X
+	   	    SHIFTL	S,6
+SIMBOLO     LDD		#VALOR
+	        +LDA	1010H ,X
+CAD	        BYTE	C'FINAL'
+	        LDA		#TABLA
+    	    SUBR	S, X
 	   	    RESW	2500H
-SALTO       ADD		VALOR,X	       
+SALTO       ADD		VALOR,X
 	        STCH	@TABLA
-	        JGT	    SALTO , X	   
-AREA        RESB	64	   
-	        STA		SALTO       
+	        JGT	    SALTO , X
+AREA        RESB	64
+	        STA		SALTO
 	        +SUB	350
-	        J		CADENA, X 	   
-	        +TIX	TABLA,X	   
+	        J		CADENA, X
+	        +TIX	TABLA,X
+            END     INICIO'''
+
+programita = '''
+
+ EJERCFINAL  START   0H
+            SIO
+            +LDX    @TABLA
+VALOR	    WORD    140
             END     INICIO'''
 
 # opcional
@@ -480,7 +488,8 @@ def p_instruccion(p):
 
 def p_directiva(p):
     """
-    directiva : etiqueta tipodirectiva opdirectiva"""
+    directiva : etiqueta tipodirectiva opdirectiva
+    | tipodirectiva opdirectiva"""
     p[0] = ("directiva", p[1], p[2], p[3])
     # test run
     run(p[0])
@@ -525,11 +534,11 @@ def p_f3(p):
     """f3 : simple3
     | indirecto3
     | inmediato3
-    | SIO
-    | TIO"""
+    | RSUB
+    | """
     p[0] = ('f3', p[1])
     # test run
-    run(p[0])
+    # run(p[0])
 
 # nota: solo el simple puede ser indexado
 
@@ -583,9 +592,7 @@ def p_f2(p):
 def p_f2_3(p):
     """f2 : CODOP REG COMA REG
     | CODOP REG COMA NUM"""
-    p[0] = ('f2', p[1], p[2], p[4])
-    # test run
-    run(p[0])
+    p[0] = ('f2_3', p[1], p[2], p[4])
 
 
 def p_f1(p):
@@ -628,54 +635,86 @@ def des_hex(hexdigit):
 
 
 def run(p):
-    if type(p) == tuple:
-        pZeroValue = p[0]
-        if(pZeroValue == 'programa'):
-            return run(p[1]) + run(p[2]) + run(p[3])
-        elif pZeroValue == 'inicio':  # p[1]:etiqueta, p[2]:numero
-            return run(p[1]) + str(run(p[2]))
-        elif pZeroValue == 'numero':
-            {
-                print("numero")
-
-            }
-        elif pZeroValue == 'fin':
-            {
-                print("fin")
-            }
-        elif pZeroValue == 'entrada':
-            {
-                print("entrada")
-            }
-        elif pZeroValue == 'f3':
-            {
-                print(p[1].value)
-            }
-        elif pZeroValue == 'f3,X':
-            {
-                print(run(p[1].value) + p[2].value + p[3].value)
-            }
-        elif pZeroValue == 'proposiciones':
+    # if(True):
+    #     typeGot = p.type
+    #     if(typeGot == 'programa'):
+    #         return run(p[1]) + run(p[2]) + run(p[3])
+    #     elif typeGot == 'inicio':  # p[1]:etiqueta, p[2]:numero
+    #         return run(p[1]) + ' '+'START'+' ' + str(run(p[2]))
+    #     elif typeGot == 'numero':
+    #         return str(run(p[1]))
+    #     elif typeGot == 'fin':
+    #         return 'END' + ' ' + run(p[1])
+    #     elif typeGot == 'entrada':
+    #         return run(p[1])
+    #     elif typeGot == 'f3':
+    #         return run(p[1])
+    #     elif typeGot == 'f3,X':
+    #         return run(p[1]) + run(p[2]) + run(p[3])
+    #     elif typeGot == 'proposiciones':
+    #         {
+    #             print("proposiciones")
+    #         }
+    #     elif typeGot == 'proposicion':
+    #         {
+    #             print("proposicion")
+    #         }
+    #     elif typeGot == 'simple3':
+    #         print("simple3")
+    #         return run(p[1]) + ' ' + run(p[2])
+    #     elif typeGot == 'indirecto3':
+    #         print("indirecto3:")
+    #         return run(p[1]) + ' ' + run(p[2]) + run(p[3])
+    #     elif typeGot == 'inmediato3':
+    #         print("inmediato3:")
+    #         return run(p[1])
+    #     elif typeGot == 'RSUB':
+    #         print("RSUB")
+    #         return run(p[0])
+    if type(p.value) == tuple:
+        tupleValues = p.value
+        firstElement = tupleValues[0]
+        if(firstElement == 'programa'):
+            print(run(tupleValues[1]) +
+                  run(tupleValues[2]) + run(tupleValues[3]))
+        elif firstElement == 'inicio':
+            lineSTART = run(tupleValues[1]) + ' START ' + run(tupleValues[2])
+            return lineSTART
+        elif firstElement == 'numero':
+            return str(run(tupleValues[1]))
+        elif firstElement == 'fin':
+            return 'END' + ' ' + run(tupleValues[1])
+        elif firstElement == 'entrada':
+            return run(tupleValues[1])
+        elif firstElement == 'f1':
+            return run(tupleValues[1])
+        elif firstElement == 'f2':
+            return run(tupleValues[1])
+        elif firstElement == 'f3':
+            return run(tupleValues[1])
+        elif firstElement == 'f3,X':
+            return run(tupleValues[1]) + run(tupleValues[2]) + run(tupleValues[3])
+        elif firstElement == 'proposiciones':
             {
                 print("proposiciones")
             }
-        elif pZeroValue == 'proposicion':
+        elif firstElement == 'proposicion':
             {
                 print("proposicion")
             }
-        elif pZeroValue == 'instruccion':
-            {
-                print("instruccion")
-            }
-        elif pZeroValue == 'directiva':
-            {
-                print("directiva")
-            }
-        elif pZeroValue == 'inmediato3':
-            {
-                print("inmediato3:")
-                # print(p[1])
-            }
+        elif firstElement == 'simple3':
+            print("simple3")
+            return run(tupleValues[1]) + ' ' + run(tupleValues[2])
+        elif firstElement == 'indirecto3':
+            print("indirecto3:")
+            return run(tupleValues[1]) + ' ' + run(tupleValues[2]) + run(tupleValues[3])
+        elif firstElement == 'inmediato3':
+            print("inmediato3:")
+            return run(tupleValues[1])
+        elif firstElement == 'RSUB':
+            print("RSUB")
+            return run(tupleValues[0])
+            # parte de la calculadora de expresiones
         elif p[0].value == '+':
             return run(p[1]) + run(p[2])
         elif p[0].value == '-':
@@ -737,9 +776,10 @@ def run(p):
             print(p.value.lineno)
             print(p.value.lexpos)
         elif(p.type == 'directiva'):
-            if(p.type)
-        return p
+            if(p.type):
+                {}
+        return p.value
 
 
-par = parser.parse(dete)
+par = parser.parse(programita)
 # par = parser.parse(data, debug=1)
