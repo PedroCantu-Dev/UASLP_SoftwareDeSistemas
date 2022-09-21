@@ -70,7 +70,6 @@ argumentTokens = {
 }
 
 arvhivoLex = {}
-
 LexError = {}
 SintaxError = {}
 
@@ -348,7 +347,6 @@ dataArchi = '''
  &
  &
 
-
   ADD ADDA ADDF ADDF_ _ADDF ADDFA ADDR ADDR_ AND
   ANDA CLEAR _CLEAR UNOCLEAR DIV CLEARA CLEAR_ DIV
   DIVIDENDO DIV
@@ -365,7 +363,7 @@ while True:
 
 data = '''
  EJERCFINAL  START   0H
-             SIO   
+             SIO
              SIO\n
              TIO\n
              +LDX    @TABLA
@@ -414,17 +412,18 @@ def p_proposiciones(p):
     """proposiciones : proposiciones proposicion
     | proposicion"""
 
+    if(len(p) > 2):
+        p[0] = ('proposiciones-multi', p[1], p[2])
+    else:
+        p[0] = ('proposiciones', p[1])
+
 
 def p_proposicion(p):
-    """proposicion : 
+    """proposicion :
     | directiva NEWLINE
     | instruccion NEWLINE
     | error NEWLINE"""
     p[0] = ('proposicion', p[1])
-    f = p[0]
-    g = p[1]
-    h = p
-    l = g
 
 
 # def p_proposicion_error(p):
@@ -440,19 +439,24 @@ def p_instruccion(p):
     instruccion : etiqueta opformato
     | opformato
     """
-    {}
+    # test run
+    run(p[0])
 
 
 def p_directiva(p):
     """
     directiva : etiqueta tipodirectiva opdirectiva"""
-    {}
+    p[0] = (p[1], p[2], p[3])
+    # test run
+    run(p[0])
 
 
 def p_opdirectiva(p):
     """opdirectiva : NUM
     | NAME """
-    {}
+    p[0] = p[1]
+    # test run
+    run(p[0])
 
 
 def p_tipodirectiva(p):
@@ -461,11 +465,15 @@ def p_tipodirectiva(p):
     | RESB
     | RESW"""
     p[0] = p[1]
+    # test run
+    run(p[0])
 
 
 def p_etiqueta(p):
     """etiqueta : NAME """
     p[0] = p[1]
+    # test run
+    run(p[0])
 
 
 def p_opformato(p):
@@ -473,7 +481,9 @@ def p_opformato(p):
     | f3
     | f2
     | f1 """
-    {}
+    p[0] = p[1]
+    # test run
+    run(p[0])
 
 
 def p_f3(p):
@@ -483,49 +493,71 @@ def p_f3(p):
     | SIO
     | TIO"""
     p[0] = ('f3', p[1])
+    # test run
+    run(p[0])
+
+# nota: solo el simple puede ser indexado
 
 
 def p_f3_Indexado(p):
-    """f3 : simple3 COMA 'X'
-    | indirecto3 COMA 'X'
-    | inmediato3 COMA 'X'"""
+    """f3 : simple3 COMA 'X'"""
     p[0] = ('f3,X', p[1], p[2], p[3])
+    # test run
+    run(p[0])
 
 
 def p_f4(p):
     """f4 : PLUS f3"""
     p[0] = ('f4', p[1], p[2])
+    # test run
+    run(p[0])
 
 
 def p_simple3(p):
     """simple3 : CODOP NAME
     | CODOP NUM"""
-    {}
+    p[0] = ('simple3', p[1], p[2])
+    # test run
+    run(p[0])
 
 
 def p_indirecto3(p):
     """indirecto3 : CODOP '@' NUM
     | CODOP '@' NAME"""
-    {}
+    p[0] = ('indirecto3', p[1], p[3])
+    # test run
+    run(p[0])
 
 
 def p_inmediato3(p):
     """inmediato3 : CODOP '#' NUM
     | CODOP '#' NAME"""
-    {}
+    p[0] = ('inmediato3', p[1], p[3])
+    # test run
+    run(p[0])
 
 
 def p_f2(p):
     """f2 : CODOP NUM
-    | CODOP REG
-    | CODOP REG COMA REG
+    | CODOP REG"""
+    p[0] = ('f2', p[1], p[2])
+    # test run
+    run(p[0])
+
+
+def p_f2_3(p):
+    """f2 : CODOP REG COMA REG
     | CODOP REG COMA NUM"""
-    {}
+    p[0] = ('f2', p[1], p[2], p[4])
+    # test run
+    run(p[0])
 
 
 def p_f1(p):
     """f1 : CODOP NEWLINE"""
-    {}
+    p[0] = ('f1', p[1], p[2])
+    # test run
+    run(p[0])
 
 
 def p_empty(p):
@@ -537,14 +569,8 @@ def p_empty(p):
 
 
 def p_error(p):
-
-    print("syntax error en el token ", p.type)
-    # num = 0
-    # p.lineno(num)
-    # print(num)
-    # p.errors
-    # p[0] = ("Err", p[1])
-    dir(p)
+    print("syntax error en el token ", p.type, )
+    # dir(p)
 
 
 precedence = (
@@ -568,46 +594,55 @@ def des_hex(hexdigit):
 
 def run(p):
     if type(p) == tuple:
-        if(p[0] == 'programa'):
+        tupleFirstElement = p[1]
+        if(tupleFirstElement == 'programa'):
             return run(p[1]) + run(p[2]) + run(p[3])
-        if p[0] == 'START':  # p[1]:etiqueta, p[2]:numero
+        elif tupleFirstElement == 'inicio':  # p[1]:etiqueta, p[2]:numero
             return run(p[1]) + str(run(p[2]))
-        if p[0] == 'numero':
-            {}
-        if p[0] == 'instruccion':
+        elif tupleFirstElement == 'numero':
+            {
+                print("numero")
+
+            }
+        elif tupleFirstElement == 'fin':
+            {
+                print("fin")
+            }
+        elif tupleFirstElement == 'entrada':
+            {
+                print("entrada")
+            }
+        elif tupleFirstElement == 'proposiciones':
+            {
+                print("proposiciones")
+            }
+        elif tupleFirstElement == 'proposicion':
+            {
+                print("proposicion")
+            }
+        elif tupleFirstElement == 'instruccion':
             {
                 print("instruccion")
             }
-        if p[0] == 'BASE':
-            {}
-        if p[0] == 'DIRECTIV':
-            {}
-        if p[0] == 'f4':
-            {}
-        if p[0] == 'f3':
+        elif tupleFirstElement == 'directiva':
             {
-                print("Hoola f3")
+                print("directiva")
             }
-        if p[0] == 'f2':
-            {}
-        if p[0] == 'f1':
-            {}
-
-        if p[0] == '+':
+        elif p[0].value == '+':
             return run(p[1]) + run(p[2])
-        elif p[0] == '-':
+        elif p[0].value == '-':
             return run(p[1]) - run(p[2])
-        elif p[0] == '*':
+        elif p[0].value == '*':
             return run(p[1]) * run(p[2])
-        elif p[0] == '/':
+        elif p[0].value == '/':
             divisor = run(p[2])
             if(divisor > 0):
                 return run(p[1]) / run(p[2])
             else:
                 return inf
-        elif p[0] == '%':
+        elif p[0].value == '%':
             return run(p[1]) % run(p[2])
-        elif p[0] == '||':
+        elif p[0].value == '||':
             if(run(p[1]) > 0 or run(p[2]) > 0):
                 return 1
             else:
@@ -651,54 +686,6 @@ def run(p):
         print(p)
         return p
 
-# while True:
-#     try:
-#         s = input('calc>> ')
-#     except EOFError:
-#         break
 
-
-#log = logging.getLogger()
-#parser.parse(input, debug=log)
 par = parser.parse(data)
 par = parser.parse(data, debug=1)
-# par = parser.parse(data, tracking=1)
-
-# par = par = run(data)
-# print(par)
-
-# while True:
-#     try:
-#         s = input('calc>> ')
-#     except EOFError:
-#         break
-#     parser.parse(s)
-
-# lexer.input(data)
-
-# while True:
-#     try:
-#         s = input('lex-SICXE>>')
-#         lexer.input(s)
-#         while True:
-#             try:
-#                 tok = lexer.token()
-#                 if not tok:
-#                     break
-#                 print(tok)
-#             except:
-#                 print("en corto")
-#                 break
-#     except EOFError:
-#         break
-
-
-#  # Give the lexer some input
-#  lexer.input(data)
-
-#  # Tokenize
-#  while True:
-#      tok = lexer.token()
-#      if not tok:
-#          break      # No more input
-#      print(tok)
