@@ -634,6 +634,102 @@ def p_error(p):
     print("syntax error en el token ", p.type, )
     # dir(p)
 
+#################
+#Aqui empieza la parte de la calculadore de expresiones#
+###############
+# calc can be an expression or an empty
+
+
+def p_calc(p):
+    '''
+    calc : expression
+         | bool_expression
+         | empty
+    '''
+    print(run(p[1]))
+
+
+def p_bool_expression(p):
+    '''
+    bool_expression : 
+    '''
+    p[0] = (p[2], p[1], p[3])
+
+
+def p_expression_uminus(p):
+    '''expression : MINUS expression %prec UMINUS'''
+    p[0] = -p[2]
+
+
+def p_expression_uni(p):
+    '''
+    expression : FACTORIAL expression
+    '''
+    p[0] = (p[1], p[2])
+
+
+def p_expression_bin(p):
+    '''
+    expression : expression PLUS expression
+               | expression MINUS expression
+               | expression MULTIPLY expression
+               | expression DIVIDE expression
+               | expression MOD expression
+               | expression LESST expression
+               | expression MORET expression
+               | expression LESSEQ expression
+               | expression MOREEQ expression
+               | expression OR expression
+               | expression AND expression
+
+    '''
+    p[0] = (p[2], p[1], p[3])
+
+
+def p_expression_assign(p):
+    '''
+    expression : NAME EQUALS expression
+    '''
+    p[0] = ('=', p[1], p[3])
+
+
+def p_var_expression(p):
+    '''
+    var : NAME
+    '''
+    p[0] = ('var', p[1])
+
+
+def p_expression_int_float_name(p):
+    '''
+    expression : INT
+               | FLOAT 
+               | var
+    '''
+    p[0] = p[1]
+
+
+def p_expression_parent(p):
+    '''
+    expression : LPARENT expression RPARENT
+    '''
+    p[0] = p[2]
+
+
+def p_empty(p):
+    '''
+    empty :
+    '''
+    p[0] = None
+
+
+def p_error(p):
+    print("syntax error")
+    print(p[0])
+
+
+parser = yacc.yacc()
+env = {}
 
 precedence = (
     ('left', 'NAME'),
