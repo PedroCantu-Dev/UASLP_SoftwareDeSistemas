@@ -406,6 +406,11 @@ AREA        RESB	64
             END     INICIO'''
 
 programita = '''
+9 + 23
+'''
+
+
+programita1 = '''
 
  EJERCFINAL  START   0H
             SIO
@@ -431,8 +436,18 @@ def p_programa(p):
 
 
 def p_inicio(p):
-    """inicio : etiqueta START numero NEWLINE"""
+    """inicio : nombre_programa START numero NEWLINE"""
     p[0] = ("inicio", p[1], p[2], p[3])
+
+
+def p_error_inicio_numero(p):
+    """inicio : nombre_programa START error NEWLINE """
+    p[0] = ("error_inicio_numero", p[1], p[2], p[3])
+
+
+def p_error_inicio_nombre_programa(p):
+    """inicio : error START numero NEWLINE """
+    p[0] = ("error_inicio_nombre_programa", p[1], p[2], p[3])
 
 
 def p_numero(p):
@@ -482,8 +497,6 @@ def p_instruccion(p):
     instruccion : etiqueta opformato
     | opformato
     """
-    # test run
-    run(p[0])
 
 
 def p_directiva(p):
@@ -492,7 +505,7 @@ def p_directiva(p):
     | tipodirectiva opdirectiva"""
     p[0] = ("directiva", p[1], p[2], p[3])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_opdirectiva(p):
@@ -500,7 +513,7 @@ def p_opdirectiva(p):
     | NAME """
     p[0] = p[1]
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_tipodirectiva(p):
@@ -510,14 +523,21 @@ def p_tipodirectiva(p):
     | RESW"""
     p[0] = p[1]
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_etiqueta(p):
     """etiqueta : NAME """
     p[0] = p[1]
     # test run
-    run(p[0])
+    # run(p[0])
+
+
+def p_nombre_programa(p):
+    """nombre_programa : NAME """
+    p[0] = p[1]
+    # test run
+    # run(p[0])
 
 
 def p_opformato(p):
@@ -527,7 +547,7 @@ def p_opformato(p):
     | f1 """
     p[0] = p[1]
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_f3(p):
@@ -547,14 +567,14 @@ def p_f3_Indexado(p):
     """f3 : simple3 COMA 'X'"""
     p[0] = ('f3,X', p[1], p[2], p[3])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_f4(p):
     """f4 : PLUS f3"""
     p[0] = ('f4', p[1], p[2])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_simple3(p):
@@ -562,7 +582,7 @@ def p_simple3(p):
     | CODOP NUM"""
     p[0] = ('simple3', p[1], p[2])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_indirecto3(p):
@@ -570,7 +590,7 @@ def p_indirecto3(p):
     | CODOP AT NAME"""
     p[0] = ('indirecto3', p[1], p[3])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_inmediato3(p):
@@ -578,7 +598,7 @@ def p_inmediato3(p):
     | CODOP SHARP NAME"""
     p[0] = ('inmediato3', p[1], p[3])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_f2(p):
@@ -586,7 +606,7 @@ def p_f2(p):
     | CODOP REG"""
     p[0] = ('f2', p[1], p[2])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_f2_3(p):
@@ -599,7 +619,7 @@ def p_f1(p):
     """f1 : CODOP NEWLINE"""
     p[0] = ('f1', p[1], p[2])
     # test run
-    run(p[0])
+    # run(p[0])
 
 
 def p_empty(p):
@@ -635,53 +655,48 @@ def des_hex(hexdigit):
 
 
 def run(p):
-    # if(True):
-    #     typeGot = p.type
-    #     if(typeGot == 'programa'):
-    #         return run(p[1]) + run(p[2]) + run(p[3])
-    #     elif typeGot == 'inicio':  # p[1]:etiqueta, p[2]:numero
-    #         return run(p[1]) + ' '+'START'+' ' + str(run(p[2]))
-    #     elif typeGot == 'numero':
-    #         return str(run(p[1]))
-    #     elif typeGot == 'fin':
-    #         return 'END' + ' ' + run(p[1])
-    #     elif typeGot == 'entrada':
-    #         return run(p[1])
-    #     elif typeGot == 'f3':
-    #         return run(p[1])
-    #     elif typeGot == 'f3,X':
-    #         return run(p[1]) + run(p[2]) + run(p[3])
-    #     elif typeGot == 'proposiciones':
-    #         {
-    #             print("proposiciones")
-    #         }
-    #     elif typeGot == 'proposicion':
-    #         {
-    #             print("proposicion")
-    #         }
-    #     elif typeGot == 'simple3':
-    #         print("simple3")
-    #         return run(p[1]) + ' ' + run(p[2])
-    #     elif typeGot == 'indirecto3':
-    #         print("indirecto3:")
-    #         return run(p[1]) + ' ' + run(p[2]) + run(p[3])
-    #     elif typeGot == 'inmediato3':
-    #         print("inmediato3:")
-    #         return run(p[1])
-    #     elif typeGot == 'RSUB':
-    #         print("RSUB")
-    #         return run(p[0])
+    # if(not hasattr(p, 'value')):
+    #     # tuplas con tratamiento especial
+    #     if type(p) == tuple:
+    #         if(len(p) == 2):
+    #             return p[1].value
+    # else:
     if type(p.value) == tuple:
         tupleValues = p.value
         firstElement = tupleValues[0]
         if(firstElement == 'programa'):
-            print(run(tupleValues[1]) +
-                  run(tupleValues[2]) + run(tupleValues[3]))
+            programInicio = run(tupleValues[1])
+            programProposiciones = run(tupleValues[2])
+            programFin = run(tupleValues[3])
+            print(programInicio + '\n' +
+                  programProposiciones + '\n' + programFin)
         elif firstElement == 'inicio':
-            lineSTART = run(tupleValues[1]) + ' START ' + run(tupleValues[2])
+            programName = run(tupleValues[1])
+            startToken = run(tupleValues[2])
+            startAddressString = str(run(tupleValues[3]))
+            # linea start
+            lineSTART = programName.value + ';' + startToken + ';' + startAddressString
+            return lineSTART
+        elif firstElement == 'error_inicio_nombre_programa':
+            startToken = run(tupleValues[2])
+            startAddressString = str(run(tupleValues[3]))
+            # linea start
+            lineSTART = programName.type + ';' + startToken + ';' + startAddressString
+            return lineSTART
+        elif firstElement == 'error_inicio_numero':
+            programName = run(tupleValues[1])
+            startToken = run(tupleValues[2])
+            startAddressString = run(tupleValues[3])
+            # linea start
+            lineSTART = programName.type + ';' + startToken + ';' + startAddressString
             return lineSTART
         elif firstElement == 'numero':
-            return str(run(tupleValues[1]))
+            if(tupleValues[1].type == 'HEX_INT'):
+                return 'HEX_INT'
+            elif(tupleValues[1].type == 'INT'):
+                return 'INT'
+            else:
+                return 'NULL_numero'
         elif firstElement == 'fin':
             return 'END' + ' ' + run(tupleValues[1])
         elif firstElement == 'entrada':
@@ -694,14 +709,20 @@ def run(p):
             return run(tupleValues[1])
         elif firstElement == 'f3,X':
             return run(tupleValues[1]) + run(tupleValues[2]) + run(tupleValues[3])
+        elif firstElement == 'proposiciones-multi':
+            return run(tupleValues[1]) + run(tupleValues[2])
         elif firstElement == 'proposiciones':
-            {
-                print("proposiciones")
-            }
+            return run(tupleValues[1])
         elif firstElement == 'proposicion':
-            {
-                print("proposicion")
-            }
+            return run(tupleValues[1])
+        elif firstElement == 'directiva':
+            return run(tupleValues[1])
+        elif firstElement == 'instruccion':
+            return run(tupleValues[1])
+        elif firstElement == 'error':
+            return run(tupleValues[1])
+        elif firstElement == 'opformato':
+            return run(tupleValues[1])
         elif firstElement == 'simple3':
             print("simple3")
             return run(tupleValues[1]) + ' ' + run(tupleValues[2])
@@ -776,9 +797,25 @@ def run(p):
             print(p.value.lineno)
             print(p.value.lexpos)
         elif(p.type == 'directiva'):
-            if(p.type):
-                {}
+            {}
+        elif(p.type == 'directiva'):
+            {}
+        elif(p.type == 'nombre_programa'):
+            {}
+        elif(p.type == 'directiva'):
+            {}
+        elif(p.type == 'directiva'):
+            {}
         return p.value
+
+
+def runApropiate(objX):
+    if(objX == tuple()):
+        for elemento in objX:
+            if(hasattr(objX, 'value')):
+                return(run(objX.value))
+            else:
+                return
 
 
 par = parser.parse(programita)
