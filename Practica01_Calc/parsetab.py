@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftORANDleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALAND DIVIDE EQUALS FACTORIAL FLOAT INT LESSEQ LESST LPARENT MINUS MOD MOREEQ MORET MULTIPLY NAME OR PLUS RPARENT UMINUS\n    calc : expression\n         | bool_expression\n         | empty\n    \n    bool_expression : \n    expression : MINUS expression %prec UMINUS\n    expression : FACTORIAL expression\n    \n    expression : expression PLUS expression\n               | expression MINUS expression\n               | expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression MOD expression\n               | expression LESST expression\n               | expression MORET expression\n               | expression LESSEQ expression\n               | expression MOREEQ expression\n               | expression OR expression\n               | expression AND expression\n\n    \n    expression : NAME EQUALS expression\n    \n    var : NAME\n    \n    expression : INT\n               | FLOAT \n               | var\n    \n    expression : LPARENT expression RPARENT\n    \n    empty :\n    '
+_lr_signature = 'leftORANDleftMORETLESSTMOREEQLESSEQleftPLUSMINUSleftMULTIPLYDIVIDEMODrightUMINUSFACTORIALAND DIVIDE EQUALS FACTORIAL FLOAT INT LESSEQ LESST LPARENT MINUS MOD MOREEQ MORET MULTIPLY NAME OR PLUS RPARENT UMINUS\n    calc : expression\n         | empty\n    expression : MINUS expression %prec UMINUS\n    expression : FACTORIAL expression\n    \n    expression : expression PLUS expression\n               | expression MINUS expression\n               | expression MULTIPLY expression\n               | expression DIVIDE expression\n               | expression MOD expression\n               | expression LESST expression\n               | expression MORET expression\n               | expression LESSEQ expression\n               | expression MOREEQ expression\n               | expression OR expression\n               | expression AND expression\n\n    \n    expression : NAME EQUALS expression\n    \n    var : NAME\n    \n    expression : INT\n               | FLOAT\n               | var\n    \n    expression : LPARENT expression RPARENT\n    \n    empty :\n    '
     
-_lr_action_items = {'MINUS':([0,2,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[5,13,5,5,-19,-20,-21,-22,5,5,5,5,5,5,5,5,5,5,5,5,-5,-6,5,13,-7,-8,-9,-10,-11,13,13,13,13,13,13,13,-23,]),'FACTORIAL':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,]),'NAME':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,]),'INT':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'FLOAT':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),'LPARENT':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,]),'$end':([0,1,2,3,4,7,8,9,10,23,24,27,28,29,30,31,32,33,34,35,36,37,38,39,],[-4,0,-1,-2,-3,-19,-20,-21,-22,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-23,]),'PLUS':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[12,-19,-20,-21,-22,-5,-6,12,-7,-8,-9,-10,-11,12,12,12,12,12,12,12,-23,]),'MULTIPLY':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[14,-19,-20,-21,-22,-5,-6,14,14,14,-9,-10,-11,14,14,14,14,14,14,14,-23,]),'DIVIDE':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[15,-19,-20,-21,-22,-5,-6,15,15,15,-9,-10,-11,15,15,15,15,15,15,15,-23,]),'MOD':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[16,-19,-20,-21,-22,-5,-6,16,16,16,-9,-10,-11,16,16,16,16,16,16,16,-23,]),'LESST':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[17,-19,-20,-21,-22,-5,-6,17,-7,-8,-9,-10,-11,-12,-13,-14,-15,17,17,17,-23,]),'MORET':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[18,-19,-20,-21,-22,-5,-6,18,-7,-8,-9,-10,-11,-12,-13,-14,-15,18,18,18,-23,]),'LESSEQ':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[19,-19,-20,-21,-22,-5,-6,19,-7,-8,-9,-10,-11,-12,-13,-14,-15,19,19,19,-23,]),'MOREEQ':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[20,-19,-20,-21,-22,-5,-6,20,-7,-8,-9,-10,-11,-12,-13,-14,-15,20,20,20,-23,]),'OR':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[21,-19,-20,-21,-22,-5,-6,21,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,21,-23,]),'AND':([2,7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[22,-19,-20,-21,-22,-5,-6,22,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,22,-23,]),'EQUALS':([7,],[25,]),'RPARENT':([7,8,9,10,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,39,],[-19,-20,-21,-22,-5,-6,39,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,-23,]),}
+_lr_action_items = {'MINUS':([0,2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[4,12,4,4,-17,-18,-19,-20,4,4,4,4,4,4,4,4,4,4,4,4,-3,-4,4,12,-5,-6,-7,-8,-9,12,12,12,12,12,12,12,-21,]),'FACTORIAL':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,]),'NAME':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,]),'INT':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,]),'FLOAT':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'LPARENT':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,]),'$end':([0,1,2,3,6,7,8,9,22,23,26,27,28,29,30,31,32,33,34,35,36,37,38,],[-22,0,-1,-2,-17,-18,-19,-20,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-21,]),'PLUS':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[11,-17,-18,-19,-20,-3,-4,11,-5,-6,-7,-8,-9,11,11,11,11,11,11,11,-21,]),'MULTIPLY':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[13,-17,-18,-19,-20,-3,-4,13,13,13,-7,-8,-9,13,13,13,13,13,13,13,-21,]),'DIVIDE':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[14,-17,-18,-19,-20,-3,-4,14,14,14,-7,-8,-9,14,14,14,14,14,14,14,-21,]),'MOD':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[15,-17,-18,-19,-20,-3,-4,15,15,15,-7,-8,-9,15,15,15,15,15,15,15,-21,]),'LESST':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[16,-17,-18,-19,-20,-3,-4,16,-5,-6,-7,-8,-9,-10,-11,-12,-13,16,16,16,-21,]),'MORET':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[17,-17,-18,-19,-20,-3,-4,17,-5,-6,-7,-8,-9,-10,-11,-12,-13,17,17,17,-21,]),'LESSEQ':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[18,-17,-18,-19,-20,-3,-4,18,-5,-6,-7,-8,-9,-10,-11,-12,-13,18,18,18,-21,]),'MOREEQ':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[19,-17,-18,-19,-20,-3,-4,19,-5,-6,-7,-8,-9,-10,-11,-12,-13,19,19,19,-21,]),'OR':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[20,-17,-18,-19,-20,-3,-4,20,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,20,-21,]),'AND':([2,6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[21,-17,-18,-19,-20,-3,-4,21,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,21,-21,]),'EQUALS':([6,],[24,]),'RPARENT':([6,7,8,9,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,38,],[-17,-18,-19,-20,-3,-4,38,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-21,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'calc':([0,],[1,]),'expression':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[2,23,24,26,27,28,29,30,31,32,33,34,35,36,37,38,]),'bool_expression':([0,],[3,]),'empty':([0,],[4,]),'var':([0,5,6,11,12,13,14,15,16,17,18,19,20,21,22,25,],[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,]),}
+_lr_goto_items = {'calc':([0,],[1,]),'expression':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[2,22,23,25,26,27,28,29,30,31,32,33,34,35,36,37,]),'empty':([0,],[3,]),'var':([0,4,5,10,11,12,13,14,15,16,17,18,19,20,21,24,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,28 +27,26 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> calc","S'",1,None,None,None),
-  ('calc -> expression','calc',1,'p_calc','calc_lex.py',108),
-  ('calc -> bool_expression','calc',1,'p_calc','calc_lex.py',109),
-  ('calc -> empty','calc',1,'p_calc','calc_lex.py',110),
-  ('bool_expression -> <empty>','bool_expression',0,'p_bool_expression','calc_lex.py',117),
-  ('expression -> MINUS expression','expression',2,'p_expression_uminus','calc_lex.py',123),
-  ('expression -> FACTORIAL expression','expression',2,'p_expression_uni','calc_lex.py',130),
-  ('expression -> expression PLUS expression','expression',3,'p_expression_bin','calc_lex.py',137),
-  ('expression -> expression MINUS expression','expression',3,'p_expression_bin','calc_lex.py',138),
-  ('expression -> expression MULTIPLY expression','expression',3,'p_expression_bin','calc_lex.py',139),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression_bin','calc_lex.py',140),
-  ('expression -> expression MOD expression','expression',3,'p_expression_bin','calc_lex.py',141),
-  ('expression -> expression LESST expression','expression',3,'p_expression_bin','calc_lex.py',142),
-  ('expression -> expression MORET expression','expression',3,'p_expression_bin','calc_lex.py',143),
-  ('expression -> expression LESSEQ expression','expression',3,'p_expression_bin','calc_lex.py',144),
-  ('expression -> expression MOREEQ expression','expression',3,'p_expression_bin','calc_lex.py',145),
-  ('expression -> expression OR expression','expression',3,'p_expression_bin','calc_lex.py',146),
-  ('expression -> expression AND expression','expression',3,'p_expression_bin','calc_lex.py',147),
-  ('expression -> NAME EQUALS expression','expression',3,'p_expression_assign','calc_lex.py',155),
-  ('var -> NAME','var',1,'p_var_expression','calc_lex.py',162),
-  ('expression -> INT','expression',1,'p_expression_int_float_name','calc_lex.py',169),
-  ('expression -> FLOAT','expression',1,'p_expression_int_float_name','calc_lex.py',170),
-  ('expression -> var','expression',1,'p_expression_int_float_name','calc_lex.py',171),
-  ('expression -> LPARENT expression RPARENT','expression',3,'p_expression_parent','calc_lex.py',178),
-  ('empty -> <empty>','empty',0,'p_empty','calc_lex.py',185),
+  ('calc -> expression','calc',1,'p_calc','calc_lex_yacc.py',107),
+  ('calc -> empty','calc',1,'p_calc','calc_lex_yacc.py',108),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','calc_lex_yacc.py',114),
+  ('expression -> FACTORIAL expression','expression',2,'p_expression_uni','calc_lex_yacc.py',121),
+  ('expression -> expression PLUS expression','expression',3,'p_expression_bin','calc_lex_yacc.py',128),
+  ('expression -> expression MINUS expression','expression',3,'p_expression_bin','calc_lex_yacc.py',129),
+  ('expression -> expression MULTIPLY expression','expression',3,'p_expression_bin','calc_lex_yacc.py',130),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression_bin','calc_lex_yacc.py',131),
+  ('expression -> expression MOD expression','expression',3,'p_expression_bin','calc_lex_yacc.py',132),
+  ('expression -> expression LESST expression','expression',3,'p_expression_bin','calc_lex_yacc.py',133),
+  ('expression -> expression MORET expression','expression',3,'p_expression_bin','calc_lex_yacc.py',134),
+  ('expression -> expression LESSEQ expression','expression',3,'p_expression_bin','calc_lex_yacc.py',135),
+  ('expression -> expression MOREEQ expression','expression',3,'p_expression_bin','calc_lex_yacc.py',136),
+  ('expression -> expression OR expression','expression',3,'p_expression_bin','calc_lex_yacc.py',137),
+  ('expression -> expression AND expression','expression',3,'p_expression_bin','calc_lex_yacc.py',138),
+  ('expression -> NAME EQUALS expression','expression',3,'p_expression_assign','calc_lex_yacc.py',146),
+  ('var -> NAME','var',1,'p_var_expression','calc_lex_yacc.py',153),
+  ('expression -> INT','expression',1,'p_expression_int_float_name','calc_lex_yacc.py',160),
+  ('expression -> FLOAT','expression',1,'p_expression_int_float_name','calc_lex_yacc.py',161),
+  ('expression -> var','expression',1,'p_expression_int_float_name','calc_lex_yacc.py',162),
+  ('expression -> LPARENT expression RPARENT','expression',3,'p_expression_parent','calc_lex_yacc.py',169),
+  ('empty -> <empty>','empty',0,'p_empty','calc_lex_yacc.py',176),
 ]

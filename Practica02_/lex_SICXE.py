@@ -621,19 +621,6 @@ def p_f1(p):
     # test run
     # run(p[0])
 
-
-def p_empty(p):
-    '''
-    empty : NEWLINE
-    |
-    '''
-    p[0] = None
-
-
-def p_error(p):
-    print("syntax error en el token ", p.type, )
-    # dir(p)
-
 #################
 #Aqui empieza la parte de la calculadore de expresiones#
 ###############
@@ -643,17 +630,9 @@ def p_error(p):
 def p_calc(p):
     '''
     calc : expression
-         | bool_expression
          | empty
     '''
     print(run(p[1]))
-
-
-def p_bool_expression(p):
-    '''
-    bool_expression : 
-    '''
-    p[0] = (p[2], p[1], p[3])
 
 
 def p_expression_uminus(p):
@@ -718,14 +697,15 @@ def p_expression_parent(p):
 
 def p_empty(p):
     '''
-    empty :
+    empty : NEWLINE
+    |
     '''
     p[0] = None
 
 
 def p_error(p):
-    print("syntax error")
-    print(p[0])
+    print("syntax error en el token ", p.type, )
+    # dir(p)
 
 
 parser = yacc.yacc()

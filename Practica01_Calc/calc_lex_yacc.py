@@ -82,9 +82,9 @@ def t_NAME(t):
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
 
 
-def t_error(t):
-    print("Illegal characters:"+t.value+":")
-    t.lexer.skip(1)
+# def t_error(t):
+#     print("Illegal characters:"+t.value+":")
+#     t.lexer.skip(1)
 
 
 # Build the lexer
@@ -105,22 +105,14 @@ precedence = (
 def p_calc(p):
     '''
     calc : expression
-         | bool_expression
          | empty
     '''
-    print(run(p[1]))
-
-
-def p_bool_expression(p):
-    '''
-    bool_expression : 
-    '''
-    p[0] = (p[2], p[1], p[3])
+    print(run(p[1].value))
 
 
 def p_expression_uminus(p):
     '''expression : MINUS expression %prec UMINUS'''
-    p[0] = -p[2]
+    p[0] = -p[2].value
     # p[0] = ('uminus', p[2])
 
 
@@ -128,7 +120,7 @@ def p_expression_uni(p):
     '''
     expression : FACTORIAL expression
     '''
-    p[0] = (p[1], p[2])
+    p[0] = (p[1].value, p[2].value)
 
 
 def p_expression_bin(p):
@@ -146,37 +138,37 @@ def p_expression_bin(p):
                | expression AND expression
 
     '''
-    p[0] = (p[2], p[1], p[3])
+    p[0] = (p[2].value, p[1].value, p[3].value)
 
 
 def p_expression_assign(p):
     '''
     expression : NAME EQUALS expression
     '''
-    p[0] = ('=', p[1], p[3])
+    p[0] = ('=', p[1].value, p[3].value)
 
 
 def p_var_expression(p):
     '''
     var : NAME
     '''
-    p[0] = ('var', p[1])
+    p[0] = ('var', p[1].value)
 
 
 def p_expression_int_float_name(p):
     '''
     expression : INT
-               | FLOAT 
+               | FLOAT
                | var
     '''
-    p[0] = p[1]
+    p[0] = p[1].value
 
 
 def p_expression_parent(p):
     '''
     expression : LPARENT expression RPARENT
     '''
-    p[0] = p[2]
+    p[0] = p[2].value
 
 
 def p_empty(p):
@@ -202,6 +194,7 @@ env = {}
 
 
 def run(p):
+
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
