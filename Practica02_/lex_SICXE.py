@@ -424,7 +424,7 @@ VALOR	    WORD    140
 input = '''EJERCFINAL  START   0H
              SIO
              TIO
-             +LDX    @TABLA
+  VARIABLE            +LDX    @TABLA
  VALOR	    WORD    140
  	   	    BASE    CAD
  TABLA  	    RESW	20
@@ -536,9 +536,18 @@ def p_proposiciones(p):
         p[0] = ('proposiciones', p[1])
 
 
+def p_propisicion_etiqueta(p):
+    """proposicion : etiqueta proposicion"""
+    p[0] = ('proposicion_con_etiqueta', p[1], p[2])
+
+
+def p_propisicion(p):
+    """proposicion :  empty proposicion empty"""
+    p[0] = ('proposicion', p[1], p[2])
+
+
 def p_proposicion(p):
-    """proposicion :
-    | directiva NEWLINE
+    """proposicion : directiva NEWLINE
     | instruccion NEWLINE
     | error NEWLINE"""
     p[0] = ('proposicion', p[1])
@@ -546,36 +555,17 @@ def p_proposicion(p):
 
 def p_instruccion(p):
     """
-    instruccion : etiqueta opformato
-    | opformato
+    instruccion : opformato
     """
     if(len(p) == 2):
         p[0] = ('instruccion', p[1])
-    elif(len(p) == 3):
-        p[0] = ('instruccion_con_etiqueta', p[1], p[2])
-
-
-def p_instruccion_error(p):
-    """
-    instruccion : error opformato
-    | etiqueta error
-    """
-    if(p[1].type == 'error'):
-        p[0] = ('error_instruccion_etiqueta', p[1], p[2])
-    elif(p[2].type == 'error'):
-        p[0] = ('error_instruccion_opformato', p[1], p[2])
 
 
 def p_directiva(p):
     """
-    directiva : etiqueta tipodirectiva opdirectiva
-    | tipodirectiva opdirectiva"""
+    directiva : tipodirectiva opdirectiva"""
     if(len(p) == 3):
         p[0] = ("directiva", p[1], p[2])
-    elif(len(p) == 4):
-        p[0] = ("directiva_con_etiqueta", p[1], p[2], p[3])
-    # test run
-    # run(p[0])
 
 
 def p_opdirectiva(p):
@@ -641,7 +631,10 @@ def p_f3(p):
 
 
 def p_f3_Indexado(p):
-    """f3 : simple3 COMA 'X'"""
+    """f3 : simple3 COMA 'X'
+    | simple3 empty COMA 'X'
+    | simple3 empty COMA empty 'X'
+    | simple3 COMA empty 'X'"""
     p[0] = ('f3,X', p[1], p[2], p[3])
     # test run
     # run(p[0])
@@ -910,6 +903,8 @@ def run(p):
                 prop = run(p_aux_value[1])
                 print(prop)
                 return prop + newLine
+            elif firstElement == 'proposicion_con_etiqueta':
+                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
             elif firstElement == 'proposiciones':
                 prop = run(p_aux_value[1])
                 return prop
@@ -918,16 +913,8 @@ def run(p):
                 return prop
             elif firstElement == 'directiva':
                 return run(p_aux_value[1])
-            elif firstElement == 'directiva_con_etiqueta':
-                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
             elif firstElement == 'instruccion':
                 return run(p_aux_value[1])
-            elif firstElement == 'instruccion_con_etiqueta':
-                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
-            elif firstElement == 'error_instruccion_etiqueta':
-                {}
-            elif firstElement == 'error_instruccion_opformato':
-                {}
             elif firstElement == 'error':
                 {}
             elif firstElement == 'opformato':
