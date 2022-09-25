@@ -733,6 +733,62 @@ env = {}
 def des_hex(hexdigit):
     return int(hexdigit, 16)
 
+# para determinar si un parametro puede ser hex,
+# si stringify está en True la función se encarga de convertir primero a string el parametro
+
+
+def is_hex(s, stringify=False):
+    if(stringify):
+        s = str(s)
+    try:
+        int(s, 16)
+        return True
+    except:
+        return False
+
+
+def is_SIC_hex(s):
+    if(re.match('[0-9a-fA-F]+(H|h)', s)):
+        s = s.replace("H", "")
+        s = s.replace("h", "")
+        return is_hex(s)
+    else:
+        return False
+
+
+def SIC_hex_value(s, hex=False):
+    try:
+        if(re.match('[0-9a-fA-F]+(H|h)', s)):
+            s = s.replace("H", "")
+            s = s.replace("h", "")
+            if(hex):
+                return hex(int(s, 16))
+            return int(s, 16)
+    except:
+        return 0
+
+
+def operation(operation, operator1, operator2, hex=False):
+    res = 0
+    if(is_hex(operator1)):
+        operator1 = des_hex(operator1)
+    if(is_hex(operator2)):
+        operator2 = des_hex(operator2)
+
+    match operation:
+        case "+":
+            res = operator1 + operator2
+        case "-":
+            res = operator1 - operator2
+        case "*":
+            res = operator1 * operator2
+        case "/":
+            res = operator1 / operator2
+    if(hex):
+        return hex(res)
+    else:
+        return res
+
 
 def run(p):
     if(hasattr(p, 'value')):
