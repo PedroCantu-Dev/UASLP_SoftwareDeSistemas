@@ -406,7 +406,7 @@ programita = '''
 
 programita1 = '''EJERCFINAL  START   0H
             SIO
-            +LDX    @@TABLA
+            +LDX    @@(TABLA - TABLA2)
             END     INICIO'''
 
 programita11 = '''EJERCFINAL  START   0H
@@ -420,6 +420,31 @@ programita2 = '''EJERCFINAL  START   0H
             +LDX    @TABLA
 VALOR	    WORD    140
             END     INICIO'''
+
+input = '''EJERCFINAL  START   0H
+             SIO
+             TIO
+             +LDX    @TABLA
+ VALOR	    WORD    140
+ 	   	    BASE    CAD
+ TABLA  	    RESW	20
+     	    +LDS	VALOR, X
+ 	   	    SHIFTL	S,6
+ SIMBOLO     LDD		#VALOR
+ 	        +LDA	1010H ,X
+ CAD	        BYTE	C'FINAL'
+ 	        LDA		#TABLA
+     	    SUBR	S, X
+ 	   	    RESW	2500H
+ SALTO       ADD		VALOR,X
+ 	        STCH	@TABLA
+ 	        JGT	    SALTO , X
+ AREA        RESB	64
+ 	        STA		SALTO
+ 	        +SUB	350
+ 	        J		CADENA, X
+ 	        +TIX	TABLA,X
+             END     INICIO'''
 
 ########
 #
@@ -493,7 +518,7 @@ def p_numero(p):
 
 def p_fin(p):
     """fin : END entrada """
-    p[0] = ('END', p[1], p[2])
+    p[0] = ('fin', p[1], p[2])
 
 
 def p_entrada(p):
@@ -524,13 +549,31 @@ def p_instruccion(p):
     instruccion : etiqueta opformato
     | opformato
     """
+    if(len(p) == 2):
+        p[0] = ('instruccion', p[1])
+    elif(len(p) == 3):
+        p[0] = ('instruccion_con_etiqueta', p[1], p[2])
+
+
+def p_instruccion_error(p):
+    """
+    instruccion : error opformato
+    | etiqueta error
+    """
+    if(p[1].type == 'error'):
+        p[0] = ('error_instruccion_etiqueta', p[1], p[2])
+    elif(p[2].type == 'error'):
+        p[0] = ('error_instruccion_opformato', p[1], p[2])
 
 
 def p_directiva(p):
     """
     directiva : etiqueta tipodirectiva opdirectiva
     | tipodirectiva opdirectiva"""
-    p[0] = ("directiva", p[1], p[2], p[3])
+    if(len(p) == 3):
+        p[0] = ("directiva", p[1], p[2])
+    elif(len(p) == 4):
+        p[0] = ("directiva_con_etiqueta", p[1], p[2], p[3])
     # test run
     # run(p[0])
 
@@ -548,7 +591,8 @@ def p_tipodirectiva(p):
     """tipodirectiva : BYTE
     | WORD
     | RESB
-    | RESW"""
+    | RESW
+    | BASE"""
     p[0] = p[1]
     # test run
     # run(p[0])
@@ -605,7 +649,8 @@ def p_f3_Indexado(p):
 
 def p_simple3(p):
     """simple3 : CODOP NAME
-    | CODOP NUM"""
+    | CODOP NUM
+    | CODOP expression"""
     p[0] = ('simple3', p[1], p[2])
     # test run
     # run(p[0])
@@ -613,32 +658,25 @@ def p_simple3(p):
 
 def p_indirecto3(p):
     """indirecto3 : CODOP AT NUM
-    | PLUS CODOP AT NAME"""
+    | CODOP AT expression"""
     p[0] = ('indirecto3', p[1], p[3])
-    # test run
-    # run(p[0])
 
 
 def p_inmediato3(p):
     """inmediato3 : CODOP SHARP NUM
-    | CODOP SHARP NAME"""
+    | CODOP SHARP expression"""
     p[0] = ('inmediato3', p[1], p[3])
-    # test run
-    # run(p[0])
 
 
 def p_f2(p):
     """f2 : CODOP NUM
-    | CODOP REG"""
-    p[0] = ('f2', p[1], p[2])
-    # test run
-    # run(p[0])
-
-
-def p_f2_3(p):
-    """f2 : CODOP REG COMA REG
+    | CODOP REG
+    | CODOP REG COMA REG
     | CODOP REG COMA NUM"""
-    p[0] = ('f2_3', p[1], p[2], p[4])
+    if(len(p) == 3):
+        p[0] = ('f2', p[1], p[2])
+    elif(len(p) == 4):
+        p[0] = ('f2_3', p[1], p[2], p[4])
 
 
 def p_f1(p):
@@ -699,7 +737,7 @@ def p_var_expression(p):
 def p_expression_int_float_name(p):
     '''
     expression : INT
-               | FLOAT 
+               | FLOAT
                | var
     '''
     p[0] = p[1]
@@ -768,6 +806,9 @@ def SIC_hex_value(s, hex=False):
         return 0
 
 
+binaryOperationTokens = "+-*/%||&&<><=>="
+
+
 def operation(operation, operator1, operator2, hex=False):
     res = 0
     if(is_hex(operator1)):
@@ -776,18 +817,55 @@ def operation(operation, operator1, operator2, hex=False):
         operator2 = des_hex(operator2)
 
     match operation:
-        case "+":
+        case '+':
             res = operator1 + operator2
-        case "-":
+        case '-':
             res = operator1 - operator2
-        case "*":
+        case '*':
             res = operator1 * operator2
-        case "/":
+        case '/':
             res = operator1 / operator2
+        case '%':
+            res = operator1 / operator2
+        case '||':
+            if(operator1 > 0 or operator2 > 0):
+                return 1
+            else:
+                return 0
+        case '&&':
+            if(operator1 > 0 and operator2 > 0):
+                return 1
+            else:
+                return 0
+        case '<':
+            if(operator1) < run(operator2):
+                return 1
+            else:
+                return 0
+        case '>':
+            if(operator1) > run(operator2):
+                return 1
+            else:
+                return 0
+        case '<=':
+            if(operator1) <= run(operator2):
+                return 1
+            else:
+                return 0
+        case '>=':
+            if(operator1) >= run(operator2):
+                return 1
+            else:
+                return 0
     if(hex):
         return hex(res)
     else:
         return res
+
+
+oneSpace = " "
+newLine = "\n"
+archivoIntermedio = ""
 
 
 def run(p):
@@ -801,12 +879,13 @@ def run(p):
                 proposiciones = run(p_aux_value[2])
                 fin = run(p_aux_value[3])
                 programa = inicio + proposiciones + fin
+                print(programa)
                 return programa
             elif firstElement == 'inicio':
                 nombre_programa = run(p_aux_value[1])
                 startToken = run(p_aux_value[2])
                 numero = run(p_aux_value[3])
-                inicio = nombre_programa + startToken + numero
+                inicio = nombre_programa + oneSpace + startToken + oneSpace + numero + newLine
                 return inicio
             elif firstElement == 'error_inicio_numero':
                 nombre_programa = run(p_aux_value[1])
@@ -824,21 +903,92 @@ def run(p):
             elif firstElement == 'fin':
                 endToken = run(p_aux_value[1])
                 entrada = run(p_aux_value[2])
+                return endToken + entrada
             elif firstElement == 'numero':
-                {
+                return run(p_aux_value[1])
+            elif firstElement == 'proposicion':
+                prop = run(p_aux_value[1])
+                print(prop)
+                return prop + newLine
+            elif firstElement == 'proposiciones':
+                prop = run(p_aux_value[1])
+                return prop
+            elif firstElement == 'proposiciones-multi':
+                prop = run(p_aux_value[1]) + run(p_aux_value[2])
+                return prop
+            elif firstElement == 'directiva':
+                return run(p_aux_value[1])
+            elif firstElement == 'directiva_con_etiqueta':
+                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
+            elif firstElement == 'instruccion':
+                return run(p_aux_value[1])
+            elif firstElement == 'instruccion_con_etiqueta':
+                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
+            elif firstElement == 'error_instruccion_etiqueta':
+                {}
+            elif firstElement == 'error_instruccion_opformato':
+                {}
+            elif firstElement == 'error':
+                {}
+            elif firstElement == 'opformato':
+                return run(p_aux_value[1])
+            elif firstElement == 'f1':
+                return run(p_aux_value[1])
+            elif firstElement == 'f2':
+                return run(p_aux_value[1])
+            elif firstElement == 'f3':
+                # suma 3 bytes
+                return run(p_aux_value[1])
+            elif firstElement == '+f3':
+                # suma 4 bytes
+                return run(p_aux_value[1]) + run(p_aux_value[2])
+            elif firstElement == 'f4':
+                p_aux_value = ('+f3', p_aux_value[1], p_aux_value[2])
+                return run(p_aux_value[1]) + run(p_aux_value[2])
+            elif firstElement == 'simple3':
+                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
+            elif firstElement == 'indirecto3':
+                return run(p_aux_value[1]) + oneSpace + '@' + run(p_aux_value[2])
+            elif firstElement == 'inmediato3':
+                return run(p_aux_value[1]) + oneSpace + '#' + run(p_aux_value[2])
+            elif firstElement == '=':
+                env[p_aux_value[1]] = run(p_aux_value[2])
+                return env[p_aux_value[1]]
+            elif firstElement == 'uminus':
+                print("funciono muminus")
+                return -(run(p_aux_value[1]))
+            elif firstElement == 'var':
+                nombreVar = run(p_aux_value[1])
+                # if(nombreVar in env):
+                #     return env[nombreVar]
+                # else:
+                #     return "0"
+                return nombreVar
+            elif firstElement == '!':
+                return math.factorial(int(run(p_aux_value[1])))
+            elif firstElement in binaryOperationTokens:
+                return operation(p_aux_value[0], run(p_aux_value[1]), run(p_aux_value[2]))
+            elif(hasattr(p_aux_value, "value")):
+                return run()
 
-                }
+            else:
+                {}  # this should not hapend
         else:
+            if(p.type == 'error'):
+                {}
             if(p.type == 'NUM'):
                 # la logica que permite determinar el numero
                 {}
             else:
                 return run(p.value)
     else:
-        return p
+        if(p):
+            return str(p)
+        else:
+            return ""
 
 
-par = parser.parse(programita1, debug=True)
+par = parser.parse(input, debug=True)
 # par = parser.parse(data, debug=1)
 
 
