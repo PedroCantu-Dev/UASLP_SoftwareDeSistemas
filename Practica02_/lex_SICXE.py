@@ -196,12 +196,14 @@ tokens = [
     'ARROBA',
     'NEWLINE',
     'AT',
-    'SHARP'
+    'SHARP',
+    'EXTENDED'
 ]+list(SICXE_Dictionary.keys())
 
 t_LPARENT = r'''\('''
 t_RPARENT = r'''\)'''
 t_PLUS = r'\+'
+t_EXTENDED = r'\+'
 t_MINUS = r'\-'
 t_UMINUS = r'\-'
 t_FACTORIAL = r'\!'
@@ -361,15 +363,7 @@ dataArchi = '''
              +LDX    @TABLA
              END     INICIO
   '''
-lexer.input(dataArchi)
 
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
-
-# print("fin lexer")
 
 data = '''
  EJERCFINAL  START   0H
@@ -410,23 +404,59 @@ programita = '''
 '''
 
 
-programita1 = '''
+programita1 = '''EJERCFINAL  START   0H
+            SIO
+            +LDX    @TABLA
+            END     INICIO'''
 
- EJERCFINAL  START   0H
+programita11 = '''EJERCFINAL  START   0H
+            SIO
+            LDX    @TABLA
+            END     INICIO'''
+
+
+programita2 = '''EJERCFINAL  START   0H
             SIO
             +LDX    @TABLA
 VALOR	    WORD    140
             END     INICIO'''
 
+########
+#
+# EL LEXER
+lexer.input(programita1)
+
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
+
+# print("fin lexer")
+
 # opcional
 start = 'sicxe_file'
 
+precedence = (
+    ('left', 'NEWLINE'),
+    ('left', 'OR_G', 'AND_G'),
+    ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
+    ('right', 'UMINUS', 'EXTENDED', 'FACTORIAL'),
+    ('right', 'AT', 'SHARP', 'EXTENDED'),
+    ('right', 'NUM'),
+    ('left', 'NAME'),
+    ('left', 'CODOP'),
+    ('left', 'REG'),
+)
+
 
 def p_sicxe_file(p):
-    """sicxe_file : empty
-    | programa
+    """sicxe_file : programa
     | empty programa
-    | empty programa empty"""
+    | empty programa empty
+    | programa empty"""
 
 
 def p_programa(p):
@@ -450,6 +480,11 @@ def p_error_inicio_nombre_programa(p):
     p[0] = ("error_inicio_nombre_programa", p[1], p[2], p[3])
 
 
+def p_error_inicio_nombre_numero(p):
+    """inicio : error START error NEWLINE """
+    p[0] = ("error_inicio_nombre_numero", p[1], p[2], p[3])
+
+
 def p_numero(p):
     """numero : INT
     | HEX_INT"""
@@ -458,7 +493,7 @@ def p_numero(p):
 
 def p_fin(p):
     """fin : END entrada """
-    p[0] = ('END', p[2])
+    p[0] = ('END', p[1], p[2])
 
 
 def p_entrada(p):
@@ -484,14 +519,6 @@ def p_proposicion(p):
     p[0] = ('proposicion', p[1])
 
 
-# def p_proposicion_error(p):
-#     """proposicion_error :  COMMENT_IL NEWLINE
-#     | instruccion COMMENT_IL NEWLINE
-#     | directiva NEWLINE
-#     | instruccion NEWLINE"""
-#     {}
-
-
 def p_instruccion(p):
     """
     instruccion : etiqueta opformato
@@ -510,7 +537,8 @@ def p_directiva(p):
 
 def p_opdirectiva(p):
     """opdirectiva : NUM
-    | NAME """
+    | NAME
+    | expression """
     p[0] = p[1]
     # test run
     # run(p[0])
@@ -544,8 +572,15 @@ def p_opformato(p):
     """opformato : f4
     | f3
     | f2
-    | f1 """
+    | f1"""
     p[0] = p[1]
+    # test run
+    # run(p[0])
+
+
+def p_f4(p):
+    """f4 : PLUS f3 %prec EXTENDED"""
+    p[0] = ('f4', p[1], p[2])
     # test run
     # run(p[0])
 
@@ -554,25 +589,16 @@ def p_f3(p):
     """f3 : simple3
     | indirecto3
     | inmediato3
-    | RSUB
-    | """
+    | RSUB """
     p[0] = ('f3', p[1])
     # test run
     # run(p[0])
-
 # nota: solo el simple puede ser indexado
 
 
 def p_f3_Indexado(p):
     """f3 : simple3 COMA 'X'"""
     p[0] = ('f3,X', p[1], p[2], p[3])
-    # test run
-    # run(p[0])
-
-
-def p_f4(p):
-    """f4 : PLUS f3"""
-    p[0] = ('f4', p[1], p[2])
     # test run
     # run(p[0])
 
@@ -587,7 +613,7 @@ def p_simple3(p):
 
 def p_indirecto3(p):
     """indirecto3 : CODOP AT NUM
-    | CODOP AT NAME"""
+    | PLUS CODOP AT NAME"""
     p[0] = ('indirecto3', p[1], p[3])
     # test run
     # run(p[0])
@@ -616,23 +642,14 @@ def p_f2_3(p):
 
 
 def p_f1(p):
-    """f1 : CODOP NEWLINE"""
-    p[0] = ('f1', p[1], p[2])
+    """f1 : CODOP """
+    p[0] = ('f1', p[1])
     # test run
     # run(p[0])
 
 #################
-#Aqui empieza la parte de la calculadore de expresiones#
+#Aquí empieza la parte de la calculadora de expresiones#
 ###############
-# calc can be an expression or an empty
-
-
-def p_calc(p):
-    '''
-    calc : expression
-         | empty
-    '''
-    print(run(p[1]))
 
 
 def p_expression_uminus(p):
@@ -658,8 +675,8 @@ def p_expression_bin(p):
                | expression MORET expression
                | expression LESSEQ expression
                | expression MOREEQ expression
-               | expression OR expression
-               | expression AND expression
+               | expression OR_G expression
+               | expression AND_G expression
 
     '''
     p[0] = (p[2], p[1], p[3])
@@ -704,24 +721,11 @@ def p_empty(p):
 
 
 def p_error(p):
-    print("syntax error en el token ", p.type, )
+    print("syntax error en el token: " + p.type +
+          "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
     # dir(p)
 
 
-parser = yacc.yacc()
-env = {}
-
-precedence = (
-    ('left', 'NAME'),
-    ('left', 'CODOP'),
-    ('left', 'REG'),
-    ('left', 'AT', 'SHARP'),
-    ('left', 'OR_G', 'AND_G'),
-    ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
-    ('left', 'PLUS', 'MINUS'),
-    ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
-    ('right', 'UMINUS', 'FACTORIAL')
-)
 parser = yacc.yacc()
 env = {}
 
@@ -731,168 +735,48 @@ def des_hex(hexdigit):
 
 
 def run(p):
-    # if(not hasattr(p, 'value')):
-    #     # tuplas con tratamiento especial
-    #     if type(p) == tuple:
-    #         if(len(p) == 2):
-    #             return p[1].value
-    # else:
-    if type(p.value) == tuple:
-        tupleValues = p.value
-        firstElement = tupleValues[0]
-        if(firstElement == 'programa'):
-            programInicio = run(tupleValues[1])
-            programProposiciones = run(tupleValues[2])
-            programFin = run(tupleValues[3])
-            print(programInicio + '\n' +
-                  programProposiciones + '\n' + programFin)
-        elif firstElement == 'inicio':
-            programName = run(tupleValues[1])
-            startToken = run(tupleValues[2])
-            startAddressString = str(run(tupleValues[3]))
-            # linea start
-            lineSTART = programName.value + ';' + startToken + ';' + startAddressString
-            return lineSTART
-        elif firstElement == 'error_inicio_nombre_programa':
-            startToken = run(tupleValues[2])
-            startAddressString = str(run(tupleValues[3]))
-            # linea start
-            lineSTART = programName.type + ';' + startToken + ';' + startAddressString
-            return lineSTART
+    if type(p) == tuple:
+        firstElement = p[0]
+    # de la parte del programa
+        if firstElement == 'programa':
+            inicio = run(p[1])
+            proposiciones = run(p[2])
+            fin = run(p[3])
+            programa = inicio + proposiciones + fin
+            return programa
+        elif firstElement == ' inicio':
+            nombre_programa = run(p[1])
+            startToken = run(p[2])
+            numero = run(p[3])
+            inicio = nombre_programa + startToken + numero
+            return inicio
         elif firstElement == 'error_inicio_numero':
-            programName = run(tupleValues[1])
-            startToken = run(tupleValues[2])
-            startAddressString = run(tupleValues[3])
-            # linea start
-            lineSTART = programName.type + ';' + startToken + ';' + startAddressString
-            return lineSTART
-        elif firstElement == 'numero':
-            if(tupleValues[1].type == 'HEX_INT'):
-                return 'HEX_INT'
-            elif(tupleValues[1].type == 'INT'):
-                return 'INT'
-            else:
-                return 'NULL_numero'
+            nombre_programa = run(p[1])
+            startToken = run(p[2])
+            error = run(p[3])
+            inicio = nombre_programa + startToken
+        elif firstElement == 'error_inicio_nombre_programa':
+            error = run(p[1])
+            startToken = run(p[2])
+            numero = run(p[3])
+        elif firstElement == 'error_inicio_nombre_numero':
+            error = run(p[1])
+            startToken = run(p[2])
+            error = run(p[3])
         elif firstElement == 'fin':
-            return 'END' + ' ' + run(tupleValues[1])
-        elif firstElement == 'entrada':
-            return run(tupleValues[1])
-        elif firstElement == 'f1':
-            return run(tupleValues[1])
-        elif firstElement == 'f2':
-            return run(tupleValues[1])
-        elif firstElement == 'f3':
-            return run(tupleValues[1])
-        elif firstElement == 'f3,X':
-            return run(tupleValues[1]) + run(tupleValues[2]) + run(tupleValues[3])
-        elif firstElement == 'proposiciones-multi':
-            return run(tupleValues[1]) + run(tupleValues[2])
-        elif firstElement == 'proposiciones':
-            return run(tupleValues[1])
-        elif firstElement == 'proposicion':
-            return run(tupleValues[1])
-        elif firstElement == 'directiva':
-            return run(tupleValues[1])
-        elif firstElement == 'instruccion':
-            return run(tupleValues[1])
-        elif firstElement == 'error':
-            return run(tupleValues[1])
-        elif firstElement == 'opformato':
-            return run(tupleValues[1])
-        elif firstElement == 'simple3':
-            print("simple3")
-            return run(tupleValues[1]) + ' ' + run(tupleValues[2])
-        elif firstElement == 'indirecto3':
-            print("indirecto3:")
-            return run(tupleValues[1]) + ' ' + run(tupleValues[2]) + run(tupleValues[3])
-        elif firstElement == 'inmediato3':
-            print("inmediato3:")
-            return run(tupleValues[1])
-        elif firstElement == 'RSUB':
-            print("RSUB")
-            return run(tupleValues[0])
-            # parte de la calculadora de expresiones
-        elif p[0].value == '+':
-            return run(p[1]) + run(p[2])
-        elif p[0].value == '-':
-            return run(p[1]) - run(p[2])
-        elif p[0].value == '*':
-            return run(p[1]) * run(p[2])
-        elif p[0].value == '/':
-            divisor = run(p[2])
-            if(divisor > 0):
-                return run(p[1]) / run(p[2])
-            else:
-                return inf
-        elif p[0].value == '%':
-            return run(p[1]) % run(p[2])
-        elif p[0].value == '||':
-            if(run(p[1]) > 0 or run(p[2]) > 0):
-                return 1
-            else:
-                return 0
-        elif p[0] == '&&':
-            if(run(p[1]) > 0 and run(p[2]) > 0):
-                return 1
-            else:
-                return 0
-        elif p[0] == '<':
-            if(run(p[1]) < run(p[2])):
-                return 1
-            else:
-                return 0
-        elif p[0] == '>':
-            if(run(p[1]) > run(p[2])):
-                return 1
-            else:
-                return 0
-        elif p[0] == '<=':
-            if(run(p[1]) <= run(p[2])):
-                return 1
-            else:
-                return 0
-        elif p[0] == '>=':
-            if(run(p[1]) >= run(p[2])):
-                return 1
-            else:
-                return 0
-        elif p[0] == '=':
-            env[p[1]] = run(p[2])
-            return env[p[1]]
-        elif p[0] == 'uminus':
-            print("funciono muminus")
-            return -(run(p[1]))
-        elif p[0] == 'var':
-            return env[p[1]]
-        elif p[0] == '!':
-            return math.factorial(int(run(p[1])))
-    else:
-        print(p)
-        if(p.type == 'etiqueta'):
-            print(p.value.value)
-            print(p.value.lineno)
-            print(p.value.lexpos)
-        elif(p.type == 'directiva'):
-            {}
-        elif(p.type == 'directiva'):
-            {}
-        elif(p.type == 'nombre_programa'):
-            {}
-        elif(p.type == 'directiva'):
-            {}
-        elif(p.type == 'directiva'):
-            {}
-        return p.value
+            endToken = run(p[1])
+            entrada = run(p[2])
+        elif firstElement == 'numero':
+            {
+
+            }
 
 
-def runApropiate(objX):
-    if(objX == tuple()):
-        for elemento in objX:
-            if(hasattr(objX, 'value')):
-                return(run(objX.value))
-            else:
-                return
-
-
-par = parser.parse(programita)
+par = parser.parse(programita1, debug=True)
 # par = parser.parse(data, debug=1)
+
+
+def lineWithSpaces(words):
+    {
+
+    }

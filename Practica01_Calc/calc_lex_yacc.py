@@ -194,7 +194,6 @@ env = {}
 
 
 def run(p):
-
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
