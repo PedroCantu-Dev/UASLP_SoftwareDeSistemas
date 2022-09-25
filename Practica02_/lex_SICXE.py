@@ -406,7 +406,7 @@ programita = '''
 
 programita1 = '''EJERCFINAL  START   0H
             SIO
-            +LDX    @TABLA
+            +LDX    @@TABLA
             END     INICIO'''
 
 programita11 = '''EJERCFINAL  START   0H
@@ -735,41 +735,51 @@ def des_hex(hexdigit):
 
 
 def run(p):
-    if type(p) == tuple:
-        firstElement = p[0]
-    # de la parte del programa
-        if firstElement == 'programa':
-            inicio = run(p[1])
-            proposiciones = run(p[2])
-            fin = run(p[3])
-            programa = inicio + proposiciones + fin
-            return programa
-        elif firstElement == ' inicio':
-            nombre_programa = run(p[1])
-            startToken = run(p[2])
-            numero = run(p[3])
-            inicio = nombre_programa + startToken + numero
-            return inicio
-        elif firstElement == 'error_inicio_numero':
-            nombre_programa = run(p[1])
-            startToken = run(p[2])
-            error = run(p[3])
-            inicio = nombre_programa + startToken
-        elif firstElement == 'error_inicio_nombre_programa':
-            error = run(p[1])
-            startToken = run(p[2])
-            numero = run(p[3])
-        elif firstElement == 'error_inicio_nombre_numero':
-            error = run(p[1])
-            startToken = run(p[2])
-            error = run(p[3])
-        elif firstElement == 'fin':
-            endToken = run(p[1])
-            entrada = run(p[2])
-        elif firstElement == 'numero':
-            {
+    if(hasattr(p, 'value')):
+        p_aux_value = p.value
+        if type(p_aux_value) == tuple:
+            firstElement = p_aux_value[0]
+        # de la parte del programa
+            if firstElement == 'programa':
+                inicio = run(p_aux_value[1])
+                proposiciones = run(p_aux_value[2])
+                fin = run(p_aux_value[3])
+                programa = inicio + proposiciones + fin
+                return programa
+            elif firstElement == 'inicio':
+                nombre_programa = run(p_aux_value[1])
+                startToken = run(p_aux_value[2])
+                numero = run(p_aux_value[3])
+                inicio = nombre_programa + startToken + numero
+                return inicio
+            elif firstElement == 'error_inicio_numero':
+                nombre_programa = run(p_aux_value[1])
+                startToken = run(p_aux_value[2])
+                error = run(p_aux_value[3])
+                inicio = nombre_programa + startToken
+            elif firstElement == 'error_inicio_nombre_programa':
+                error = run(p_aux_value[1])
+                startToken = run(p_aux_value[2])
+                numero = run(p_aux_value[3])
+            elif firstElement == 'error_inicio_nombre_numero':
+                error = run(p_aux_value[1])
+                startToken = run(p_aux_value[2])
+                error = run(p_aux_value[3])
+            elif firstElement == 'fin':
+                endToken = run(p_aux_value[1])
+                entrada = run(p_aux_value[2])
+            elif firstElement == 'numero':
+                {
 
-            }
+                }
+        else:
+            if(p.type == 'NUM'):
+                # la logica que permite determinar el numero
+                {}
+            else:
+                return run(p.value)
+    else:
+        return p
 
 
 par = parser.parse(programita1, debug=True)
