@@ -870,13 +870,11 @@ auxCount = "-"
 
 
 def run(p):
-    global auxCount += "-"
     if(hasattr(p, 'value')):
         p_aux_value = p.value
         if type(p_aux_value) == tuple:
             firstElement = p_aux_value[0]
             print(auxCount + firstElement + auxCount)
-            auxCount = auxCount.rstrip(auxCount[-1])
         # de la parte del programa
             if firstElement == 'programa':
                 inicio = run(p_aux_value[1])
