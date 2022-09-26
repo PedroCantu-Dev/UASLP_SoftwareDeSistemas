@@ -538,6 +538,28 @@ def p_propisicion_etiqueta(p):
     p[0] = ('proposicion_con_etiqueta', p[1], p[2])
 
 
+def p_linea(p):
+    """linea : f_column s_column t_column NEWLINE"""
+
+
+def p_first_column(p):
+    """f_column : etiqueta"""
+
+
+def p_second_column(p):
+    """s_column : CODOP
+    | tipodirectiva"""
+
+
+def p_third_column(p):
+    """t_column : expression"""
+
+
+def p_fourth_column(p):
+    """four_column : COMMENT_IL
+    | empty"""
+
+
 def p_propisicion(p):
     """proposicion :  empty proposicion empty"""
     p[0] = ('proposicion', p[1], p[2])
@@ -875,6 +897,7 @@ def run(p):
         if type(p_aux_value) == tuple:
             firstElement = p_aux_value[0]
             print(auxCount + firstElement + auxCount)
+            if(firstElement == "proposicion_con_etiqueta")
         # de la parte del programa
             if firstElement == 'programa':
                 inicio = run(p_aux_value[1])
