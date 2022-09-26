@@ -1,1 +1,302 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ADD
+    ADDF
+    ADDR
+    AND
+    ARROBA
+    CLEAR
+    COMF
+    COMMENT_ML
+    COMP
+    COMPR
+    C_TEXT
+    DIRECTIV
+    DIV
+    DIVF
+    DIVR
+    EXTENDED
+    FINL
+    FIX
+    FLOAT_NUM
+    HIO
+    J
+    JEQ
+    JGT
+    JLT
+    JSUB
+    LDA
+    LDB
+    LDCH
+    LDF
+    LDL
+    LDS
+    LDT
+    LDX
+    LPS
+    MODIF
+    MUL
+    MULF
+    MULR
+    NORM
+    OPERANDO
+    OR
+    RD
+    RMO
+    SHIFTL
+    SHIFTR
+    SIO
+    SSK
+    STA
+    STB
+    STCH
+    STF
+    STI
+    STL
+    STS
+    STSW
+    STT
+    STX
+    SUB
+    SUBF
+    SUBR
+    SVC
+    TD
+    TIO
+    TIX
+    TIXR
+    UMINUS
+    WD
+    X_HEX
+
+Grammar
+
+Rule 0     S' -> sicxe_file
+Rule 1     sicxe_file -> programa
+Rule 2     sicxe_file -> empty programa
+Rule 3     sicxe_file -> empty programa empty
+Rule 4     sicxe_file -> programa empty
+Rule 5     programa -> inicio proposiciones fin
+Rule 6     inicio -> nombre_programa START numero NEWLINE
+Rule 7     inicio -> nombre_programa START error NEWLINE
+Rule 8     inicio -> error START numero NEWLINE
+Rule 9     inicio -> error START error NEWLINE
+Rule 10    numero -> INT
+Rule 11    numero -> HEX_INT
+Rule 12    fin -> END entrada
+Rule 13    entrada -> NAME
+Rule 14    proposiciones -> proposiciones proposicion
+Rule 15    proposiciones -> proposicion
+Rule 16    proposicion -> etiqueta proposicion
+Rule 17    linea -> f_column s_column t_column NEWLINE
+Rule 18    f_column -> etiqueta
+Rule 19    s_column -> CODOP
+Rule 20    s_column -> tipodirectiva
+Rule 21    t_column -> expression
+Rule 22    four_column -> COMMENT_IL
+Rule 23    four_column -> empty
+Rule 24    proposicion -> empty proposicion empty
+Rule 25    proposicion -> directiva NEWLINE
+Rule 26    proposicion -> instruccion NEWLINE
+Rule 27    proposicion -> error NEWLINE
+Rule 28    instruccion -> opformato
+Rule 29    directiva -> tipodirectiva opdirectiva
+Rule 30    opdirectiva -> NUM
+Rule 31    opdirectiva -> NAME
+Rule 32    opdirectiva -> expression
+Rule 33    tipodirectiva -> BYTE
+Rule 34    tipodirectiva -> WORD
+Rule 35    tipodirectiva -> RESB
+Rule 36    tipodirectiva -> RESW
+Rule 37    tipodirectiva -> BASE
+Rule 38    etiqueta -> NAME
+Rule 39    nombre_programa -> NAME
+Rule 40    opformato -> f4
+Rule 41    opformato -> f3
+Rule 42    opformato -> f2
+Rule 43    opformato -> f1
+Rule 44    f4 -> PLUS f3
+Rule 45    f3 -> simple3
+Rule 46    f3 -> indirecto3
+Rule 47    f3 -> inmediato3
+Rule 48    f3 -> RSUB
+Rule 49    f3 -> simple3 COMA REG
+Rule 50    f3 -> simple3 empty COMA REG
+Rule 51    f3 -> simple3 empty COMA empty REG
+Rule 52    f3 -> simple3 COMA empty REG
+Rule 53    simple3 -> CODOP empty expression
+Rule 54    indirecto3 -> CODOP empty AT expression
+Rule 55    indirecto3 -> CODOP empty AT empty expression
+Rule 56    inmediato3 -> CODOP empty SHARP expression
+Rule 57    inmediato3 -> CODOP empty SHARP empty expression
+Rule 58    f2 -> CODOP expression
+Rule 59    f2 -> CODOP REG
+Rule 60    f2 -> CODOP REG COMA REG
+Rule 61    f2 -> CODOP REG COMA expression
+Rule 62    f1 -> CODOP
+Rule 63    expression -> MINUS expression
+Rule 64    expression -> FACTORIAL expression
+Rule 65    expression -> expression PLUS expression
+Rule 66    expression -> expression MINUS expression
+Rule 67    expression -> expression MULTIPLY expression
+Rule 68    expression -> expression DIVIDE expression
+Rule 69    expression -> expression MOD expression
+Rule 70    expression -> expression LESST expression
+Rule 71    expression -> expression MORET expression
+Rule 72    expression -> expression LESSEQ expression
+Rule 73    expression -> expression MOREEQ expression
+Rule 74    expression -> expression OR_G expression
+Rule 75    expression -> expression AND_G expression
+Rule 76    expression -> NAME EQUALS expression
+Rule 77    var -> NAME
+Rule 78    expression -> INT
+Rule 79    expression -> FLOAT
+Rule 80    expression -> HEX_INT
+Rule 81    expression -> var
+Rule 82    expression -> LPARENT expression RPARENT
+Rule 83    empty -> NEWLINE
+Rule 84    empty -> <empty>
+Rule 85    empty -> empty
+
+Terminals, with rules where they appear
+
+ADD                  : 
+ADDF                 : 
+ADDR                 : 
+AND                  : 
+AND_G                : 75
+ARROBA               : 
+AT                   : 54 55
+BASE                 : 37
+BYTE                 : 33
+CLEAR                : 
+CODOP                : 19 53 54 55 56 57 58 59 60 61 62
+COMA                 : 49 50 51 52 60 61
+COMF                 : 
+COMMENT_ML           : 
+COMP                 : 
+COMPR                : 
+C_TEXT               : 
+DIRECTIV             : 
+DIV                  : 
+DIVF                 : 
+DIVIDE               : 68
+DIVR                 : 
+END                  : 12
+EQUALS               : 76
+EXTENDED             : 
+FACTORIAL            : 64
+FINL                 : 
+FIX                  : 
+FLOAT                : 79
+FLOAT_NUM            : 
+HEX_INT              : 11 80
+HIO                  : 
+INT                  : 10 78
+J                    : 
+JEQ                  : 
+JGT                  : 
+JLT                  : 
+JSUB                 : 
+LDA                  : 
+LDB                  : 
+LDCH                 : 
+LDF                  : 
+LDL                  : 
+LDS                  : 
+LDT                  : 
+LDX                  : 
+LESSEQ               : 72
+LESST                : 70
+LPARENT              : 82
+LPS                  : 
+MINUS                : 63 66
+MOD                  : 69
+MODIF                : 
+MOREEQ               : 73
+MORET                : 71
+MUL                  : 
+MULF                 : 
+MULR                 : 
+MULTIPLY             : 67
+NAME                 : 13 31 38 39 76 77
+NEWLINE              : 6 7 8 9 17 25 26 27 83
+NORM                 : 
+NUM                  : 30
+OPERANDO             : 
+OR                   : 
+OR_G                 : 74
+PLUS                 : 44 65
+RD                   : 
+REG                  : 49 50 51 52 59 60 60 61
+RESB                 : 35
+RESW                 : 36
+RMO                  : 
+RPARENT              : 82
+RSUB                 : 48
+SHARP                : 56 57
+SHIFTL               : 
+SHIFTR               : 
+SIO                  : 
+SSK                  : 
+STA                  : 
+START                : 6 7 8 9
+STB                  : 
+STCH                 : 
+STF                  : 
+STI                  : 
+STL                  : 
+STS                  : 
+STSW                 : 
+STT                  : 
+STX                  : 
+SUB                  : 
+SUBF                 : 
+SUBR                 : 
+SVC                  : 
+TD                   : 
+TIO                  : 
+TIX                  : 
+TIXR                 : 
+UMINUS               : 
+WD                   : 
+WORD                 : 34
+X_HEX                : 
+error                : 7 8 9 9 27
+
+Nonterminals, with rules where they appear
+
+COMMENT_IL           : 22
+directiva            : 25
+empty                : 2 3 3 4 23 24 24 50 51 51 52 53 54 55 55 56 57 57 85
+entrada              : 12
+etiqueta             : 16 18
+expression           : 21 32 53 54 55 56 57 58 61 63 64 65 65 66 66 67 67 68 68 69 69 70 70 71 71 72 72 73 73 74 74 75 75 76 82
+f1                   : 43
+f2                   : 42
+f3                   : 41 44
+f4                   : 40
+f_column             : 17
+fin                  : 5
+four_column          : 
+indirecto3           : 46
+inicio               : 5
+inmediato3           : 47
+instruccion          : 26
+linea                : 
+nombre_programa      : 6 7
+numero               : 6 8
+opdirectiva          : 29
+opformato            : 28
+programa             : 1 2 3 4
+proposicion          : 14 15 16 24
+proposiciones        : 5 14
+s_column             : 17
+sicxe_file           : 0
+simple3              : 45 49 50 51 52
+t_column             : 17
+tipodirectiva        : 20 29
+var                  : 81
+

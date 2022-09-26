@@ -108,9 +108,13 @@ tokens = [
     'FINL',
     'COMA',
     'REG',
+    'REG_X',
     'COMMENT_ML',
     'COMMENT_IL',
     'CODOP',
+    'CODOP1',
+    'CODOP2',
+    'CODOP3',
     'NAME',
     'DIRECTIV',
     'PLUS',
@@ -193,9 +197,15 @@ def t_NAME(t):
     if(t.value in SICXE_Dictionary_Directives or t.value == 'RSUB'):
         t.type = t.value
     elif(t.value in SICXE_Dictionary_CodOp):
-        t.type = 'CODOP'
+        if(t.value == 'RSUB' or t.value == 'SHIFTL' or t.value == 'SHIFTR' or t.value == 'TIXR' or t.value == 'CLEAR'):
+            t.type = t.value
+        else:
+            t.type = 'CODOP' + str(SICXE_Dictionary_CodOp[t.value][1])
     elif(t.value in SIXE_Registers):
-        t.type = 'REG'
+        if(t.value == 'X'):
+            t.type = 'REG_X'
+        else:
+            t.type = 'REG'
     else:
         t.type = 'NAME'
     return t
@@ -273,8 +283,11 @@ SALTO       ADD		VALOR,X
 AREA        RESB	64
 	        STA		SALTO
 	        +SUB	350
-	        J		CADENA, X
-	        +TIX	TABLA,X
+	        J		CADENA, X /*esto es un comentario 
+            
+            
+            como la vez*/ 
+            +TIX	TABLA,X 
             END     INICIO'''
 
 lexer = lex.lex()
@@ -286,11 +299,20 @@ while True:
     print(tok)
 
 
+# opcional
+start = 'sicxe_file'
+
+
 def p_sicxe_file(p):
     """sicxe_file : programa
-    | empty programa
-    | empty programa empty
-    | programa empty"""
+    | empty_nl programa
+    | empty_nl programa empty_nl
+    | programa empty_nl"""
+
+
+def p_reserved_operand(p):
+    """
+    """
 
 
 def p_programa(p):
@@ -309,22 +331,98 @@ def p_fin(p):
 
 
 def p_entrada(p):
-    """entrada : """
+    """entrada : etiqueta"""
+
+
+def p_proposiciones(p):
+    """proposiciones : linea
+    | proposiciones linea"""
 
 
 def p_linea(p):
-    """linea : f_column s_column t_column il_comment NEWLINE
-    | inicio
-    | fin"""
+    """linea : f_column s_column t_column il_comment NEWLINE"""
 
 
 def p_first_column(p):
-    """f_column : etiqueta"""
+    """f_column : etiqueta
+    | empty"""
 
 
 def p_second_column(p):
     """s_column : CODOP
     | tipodirectiva"""
+
+
+def p_line_core(p):
+    """line_core : instruccion
+    | directiva"""
+
+
+def p_instruccion(p):
+    """instruccion : CODOP1
+    | CODOP2 REG 
+    """
+
+
+def p_f1(p):
+    """
+    CODOP1
+    """
+
+
+def p_f2(p):
+    """"""
+
+
+def p_f3(p):
+    """"""
+
+
+def p_f4(p):
+    """"""
+
+
+def p_directiva(p):
+    """
+    """
+
+# c indica una constante entre 0 y 4095
+# m indica una direccion de memoria o un valor mayor que 4095
+
+
+def p_third_column(p):
+    """t_column : indexado3
+    | simple3
+    | indirecto3
+    | inmediato3"""
+
+
+def p_simple3_indexado3(p):
+    """indexado3 : simple3 COMA REG_X"""
+
+
+def simple3(p):
+    """simple3 : expression"""
+
+
+def indirecto3(p):
+    """indirecto3 : AT expression"""
+
+
+def inmediato3(p):
+    """inmediato3 : SHARP expression"""
+
+
+def p_opformato(p):
+    """opformato : f4
+    | f3
+    | f2
+    | f1"""
+    p[0] = p[1]
+
+
+def p_third_column(p):
+    """t_column : """
 
 
 def p_tipodirectiva(p):
@@ -336,10 +434,6 @@ def p_tipodirectiva(p):
     p[0] = p[1]
 
 
-def p_third_column(p):
-    """t_column : expression"""
-
-
 def p_il_comment(p):
     """il_comment : COMMENT_IL
     | empty"""
@@ -347,7 +441,8 @@ def p_il_comment(p):
 
 def empty(p):
     """empty : 
-    | empty"""
+    | empty
+    | """
 
 
 def empty_nl(p):
@@ -356,11 +451,67 @@ def empty_nl(p):
     | empty_nl"""
 
 
-def empty_snl(p):
-    """ empty_nl : empty
-    | NEWLINE"""
+def empty_single_nl(p):
+    """ empty_single_nl : empty
+    | NEWLINE
+    |"""
 
 
-def p_comment_il(p):
-    """comment_il : 
-    """
+def p_expression_uminus(p):
+    '''expression : MINUS expression %prec UMINUS'''
+    p[0] = -p[2]
+
+
+def p_expression_uni(p):
+    '''
+    expression : FACTORIAL expression
+    '''
+    p[0] = (p[1], p[2])
+
+
+def p_expression_bin(p):
+    '''
+    expression : expression PLUS expression
+               | expression MINUS expression
+               | expression MULTIPLY expression
+               | expression DIVIDE expression
+               | expression MOD expression
+               | expression LESST expression
+               | expression MORET expression
+               | expression LESSEQ expression
+               | expression MOREEQ expression
+               | expression OR_G expression
+               | expression AND_G expression
+
+    '''
+    p[0] = (p[2], p[1], p[3])
+
+
+def p_expression_assign(p):
+    '''
+    expression : NAME EQUALS expression
+    '''
+    p[0] = ('=', p[1], p[3])
+
+
+def p_var_expression(p):
+    '''
+    var : NAME
+    '''
+    p[0] = ('var', p[1])
+
+
+def p_expression_int_float_name(p):
+    '''
+    expression : INT
+               | HEX_INT
+               | var
+    '''
+    p[0] = p[1]
+
+
+def p_expression_parent(p):
+    '''
+    expression : LPARENT expression RPARENT
+    '''
+    p[0] = p[2]
