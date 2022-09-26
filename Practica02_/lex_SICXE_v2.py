@@ -165,24 +165,22 @@ t_AT = r'''\@'''
 t_SHARP = r'''\#'''
 
 
-def t_COMMENT_ML(t):
-    r'''\/\*[a-zA-Z0-9\s]+\*\/'''
-    pass
-    # t.type = 'COMMENT_ML'
-    # return t
-
-
-def t_COMMENT_IL(t):
-    r'''[a-zA-Z0-9\s]+'''
-    pass
-    # t.type = 'COMMENT_ML'
-    # return t
-
-
 def t_NEWLINE(t):
     r'''\n+'''
     t.type = 'NEWLINE'
     t.lexer.lineno += len(t.value)
+    return t
+
+
+def t_C_TEXT(t):
+    r"(C|c)\'[a-zA-Z0-9]*\'"
+    t.type = 'C_TEXT'
+    return t
+
+
+def t_X_HEX(t):
+    r"(X|x)\'[0-9a-fA-F]+\'"
+    t.type = 'X_HEX'
     return t
 
 # A NAME is a variable name. A variable can be 1 or more characters in length.
@@ -227,16 +225,18 @@ def t_FLOAT_NUM(t):
     return t
 
 
-def t_C_TEXT(t):
-    r"(C|c)\'[a-zA-Z0-9]*\'"
-    t.type = 'C_TEXT'
-    return t
+def t_COMMENT_ML(t):
+    r'''\/\*[a-zA-Z0-9\s]+\*\/'''
+    pass
+    # t.type = 'COMMENT_ML'
+    # return t
 
 
-def t_X_HEX(t):
-    r"(X|x)\'[0-9a-fA-F]+\'"
-    t.type = 'X_HEX'
-    return t
+def t_COMMENT_IL(t):
+    r'''[a-zA-Z0-9]+[\s]*'''
+    pass
+    # t.type = 'COMMENT_ML'
+    # return t
 
 
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
@@ -276,6 +276,14 @@ AREA        RESB	64
 	        J		CADENA, X
 	        +TIX	TABLA,X
             END     INICIO'''
+
+lexer = lex.lex()
+lexer.input(ejerFinal)
+while True:
+    tok = lexer.token()
+    if not tok:
+        break
+    print(tok)
 
 
 def p_sicxe_file(p):
