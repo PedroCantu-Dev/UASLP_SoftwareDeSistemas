@@ -422,20 +422,17 @@ VALOR	    WORD    140
             END     INICIO'''
 
 input = '''EJERCFINAL  START   0H
-             SIO
-             TIO
   VARIABLE            +LDX    @TABLA
  VALOR	    WORD    140
  	   	    BASE    CAD
- TABLA  	    RESW	20
-     	    +LDS	VALOR, X
- 	   	    SHIFTL	S,6
- SIMBOLO     LDD		#VALOR
+    	    +LDS	VALOR, X
+SIMBO	        LDA		#TABLA  	    
+ SIMBOLLLO LDD #VALORA
  	        +LDA	1010H ,X
  CAD	        BYTE	C'FINAL'
- 	        LDA		#TABLA
+
      	    SUBR	S, X
- 	   	    RESW	2500H
+
  SALTO       ADD		VALOR,X
  	        STCH	@TABLA
  	        JGT	    SALTO , X
@@ -631,44 +628,51 @@ def p_f3(p):
 
 
 def p_f3_Indexado(p):
-    """f3 : simple3 COMA 'X'
-    | simple3 empty COMA 'X'
-    | simple3 empty COMA empty 'X'
-    | simple3 COMA empty 'X'"""
-    p[0] = ('f3,X', p[1], p[2], p[3])
+    """f3 : simple3 COMA REG
+    | simple3 empty COMA REG
+    | simple3 empty COMA empty REG
+    | simple3 COMA empty REG"""
+
+    p[0] = ('f3,X', p[1])
     # test run
     # run(p[0])
 
 
 def p_simple3(p):
-    """simple3 : CODOP NAME
-    | CODOP NUM
-    | CODOP expression"""
-    p[0] = ('simple3', p[1], p[2])
+    """simple3 : CODOP empty expression"""
+    p[0] = ('simple3', p[1], p[3])
     # test run
     # run(p[0])
 
 
 def p_indirecto3(p):
-    """indirecto3 : CODOP AT NUM
-    | CODOP AT expression"""
-    p[0] = ('indirecto3', p[1], p[3])
+    """indirecto3 : CODOP empty AT expression"""
+    p[0] = ('indirecto3', p[1], p[4])
+
+
+def p_indirecto3_(p):
+    """indirecto3 : CODOP empty AT empty expression"""
+    p[0] = ('indirecto3', p[1], p[5])
 
 
 def p_inmediato3(p):
-    """inmediato3 : CODOP SHARP NUM
-    | CODOP SHARP expression"""
-    p[0] = ('inmediato3', p[1], p[3])
+    """inmediato3 :  CODOP empty SHARP expression"""
+    p[0] = ('inmediato3', p[1], p[4])
+
+
+def p_inmediato3_(p):
+    """inmediato3 :  CODOP empty SHARP empty expression"""
+    p[0] = ('inmediato3', p[1], p[5])
 
 
 def p_f2(p):
-    """f2 : CODOP NUM
+    """f2 : CODOP expression
     | CODOP REG
     | CODOP REG COMA REG
-    | CODOP REG COMA NUM"""
+    | CODOP REG COMA expression"""
     if(len(p) == 3):
         p[0] = ('f2', p[1], p[2])
-    elif(len(p) == 4):
+    elif(len(p) > 4):
         p[0] = ('f2_3', p[1], p[2], p[4])
 
 
@@ -731,6 +735,7 @@ def p_expression_int_float_name(p):
     '''
     expression : INT
                | FLOAT
+               | HEX_INT
                | var
     '''
     p[0] = p[1]
@@ -747,6 +752,7 @@ def p_empty(p):
     '''
     empty : NEWLINE
     |
+    | empty
     '''
     p[0] = None
 
@@ -860,12 +866,17 @@ oneSpace = " "
 newLine = "\n"
 archivoIntermedio = ""
 
+auxCount = "-"
+
 
 def run(p):
+    global auxCount += "-"
     if(hasattr(p, 'value')):
         p_aux_value = p.value
         if type(p_aux_value) == tuple:
             firstElement = p_aux_value[0]
+            print(auxCount + firstElement + auxCount)
+            auxCount = auxCount.rstrip(auxCount[-1])
         # de la parte del programa
             if firstElement == 'programa':
                 inicio = run(p_aux_value[1])
@@ -904,7 +915,9 @@ def run(p):
                 print(prop)
                 return prop + newLine
             elif firstElement == 'proposicion_con_etiqueta':
-                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
+                prop = run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
+                print(prop)
+                return prop
             elif firstElement == 'proposiciones':
                 prop = run(p_aux_value[1])
                 return prop
@@ -912,7 +925,7 @@ def run(p):
                 prop = run(p_aux_value[1]) + run(p_aux_value[2])
                 return prop
             elif firstElement == 'directiva':
-                return run(p_aux_value[1])
+                return run(p_aux_value[1]) + oneSpace + run(p_aux_value[2])
             elif firstElement == 'instruccion':
                 return run(p_aux_value[1])
             elif firstElement == 'error':
@@ -923,9 +936,14 @@ def run(p):
                 return run(p_aux_value[1])
             elif firstElement == 'f2':
                 return run(p_aux_value[1])
+            elif firstElement == 'f2_3':
+                return run(p_aux_value[1]) + ' ' + run(p_aux_value[2]) + ',' + run(p_aux_value[3])
             elif firstElement == 'f3':
                 # suma 3 bytes
                 return run(p_aux_value[1])
+            elif firstElement == 'f3,X':
+                # suma 3 bytes
+                return run(p_aux_value[1])+",X"
             elif firstElement == '+f3':
                 # suma 4 bytes
                 return run(p_aux_value[1]) + run(p_aux_value[2])
@@ -960,9 +978,10 @@ def run(p):
 
             else:
                 {}  # this should not hapend
+
         else:
             if(p.type == 'error'):
-                {}
+                return 'error'
             if(p.type == 'NUM'):
                 # la logica que permite determinar el numero
                 {}
@@ -970,6 +989,10 @@ def run(p):
                 return run(p.value)
     else:
         if(p):
+            if(p == 'SIMBO'):
+                {}
+            if(p == 'SIMBOLLLO'):
+                {}
             return str(p)
         else:
             return ""
