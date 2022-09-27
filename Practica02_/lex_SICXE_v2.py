@@ -201,9 +201,7 @@ def t_NAME(t):
     if tDotValue in SICXE_Dictionary_Directives or tDotValue == 'RSUB':
         t.type = tDotValue
     elif tDotValue in SICXE_Dictionary_CodOp:
-        if tDotValue == 'RSUB':
-            t.type = tDotValue
-        elif tDotValue == 'SHIFTL' or tDotValue == 'SHIFTR':
+        if tDotValue == 'SHIFTL' or tDotValue == 'SHIFTR':
             t.type = 'CODOP2_R_N'
         elif tDotValue == 'TIXR' or tDotValue == 'CLEAR':
             t.type = 'CODOP2_R'
@@ -303,6 +301,25 @@ while True:
         break
     print(tok)
 
+###########################
+# definicion del parser
+#
+##############################
+
+precedence = (
+    ('left', 'NEWLINE'),
+    ('left', 'OR_G', 'AND_G'),
+    ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
+    ('left', 'PLUS', 'MINUS'),
+    ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
+    ('right', 'UMINUS', 'EXTENDED', 'FACTORIAL'),
+    ('right', 'AT', 'SHARP', 'EXTENDED'),
+    ('right', 'NUM'),
+    ('left', 'NAME'),
+    ('left', 'CODOP'),
+    ('left', 'REG'),
+)
+
 
 # opcional
 start = 'sicxe_file'
@@ -315,19 +332,18 @@ def p_sicxe_file(p):
     | programa empty_nl"""
 
 
-def p_reserved_operand(p):
-    """
-    """
-
-
 def p_programa(p):
     """programa : inicio proposiciones fin"""
     p[0] = ('programa', p[1], p[2], p[3])
 
 
 def p_inicio(p):
-    """inicio : nombre_programa START numero NEWLINE"""
+    """inicio : nombre_programa START int_type NEWLINE"""
     p[0] = ("inicio", p[1], p[2], p[3])
+
+
+def p_nombre_programa(p):
+    """nombre_programa : etiqueta"""
 
 
 def p_fin(p):
@@ -345,7 +361,7 @@ def p_proposiciones(p):
 
 
 def p_linea(p):
-    """linea : f_column s_column t_column il_comment NEWLINE"""
+    """linea : f_column line_core il_comment NEWLINE"""
 
 
 def p_first_column(p):
@@ -353,21 +369,12 @@ def p_first_column(p):
     | empty"""
 
 
-def p_second_column(p):
-    """s_column : CODOP
-    | tipodirectiva"""
-
-
 def p_line_core(p):
     """line_core : instruccion
     | directiva"""
 
-    # c indica una constante entre 0 y 4095
+# c indica una constante entre 0 y 4095
 # m indica una direccion de memoria o un valor mayor que 4095
-
-
-def p_third_column(p):
-    """t_column: """
 
 
 def p_instruccion(p):
@@ -395,28 +402,50 @@ def p_f2(p):
     """
 
 
+def p_f2_error_(p):
+    """f2 : CODOP2 error COMA REG
+    | CODOP2 REG COMA error
+    | CODOP2 error COMA error
+    | CODOP2 error 
+    | CODOP2_R_N REG COMA error
+    | CODOP2_R_N error COMA INT"""
+
+
 def p_f3(p):
     """f3 : CODOP3 simple3
     | CODOP3 indexado3
     | CODOP3 indirecto3
     | CODOP3 inmediato3
+    | RSUB
     """
 
 
-def simple3(p):
-    """simple3: expression"""
+def p_f3_error_codop(p):
+    """f3_error_codop : error simple3
+    | error indexado3
+    | error indirecto3
+    | error inmediato3"""
+
+
+def p_f3_error_operando(p):
+    """f3_error_operando : CODOP3 error
+    | RSUB error"""
+
+
+def p_simple3(p):
+    """simple3 : expression"""
 
 
 def p_simple3_indexado3(p):
-    """indexado3: simple3 COMA REG_X"""
+    """indexado3 : simple3 COMA REG"""
 
 
-def indirecto3(p):
-    """indirecto3: AT expression"""
+def p_indirecto3(p):
+    """indirecto3 : AT expression"""
 
 
-def inmediato3(p):
-    """inmediato3: SHARP expression"""
+def p_inmediato3(p):
+    """inmediato3 : SHARP expression"""
 
 
 def p_f4(p):
@@ -425,40 +454,58 @@ def p_f4(p):
 
 
 def p_directiva(p):
-    """
+    """directiva : empty BYTE C_TEXT
+    | empty BYTE X_HEX
+    | empty WORD int_type
+    | empty RESB int_type
+    | BASE etiqueta
     """
 
 
-def p_tipodirectiva(p):
-    """tipodirectiva: BYTE
-    | WORD
-    | RESB
-    | RESW
-    | BASE"""
-    p[0] = p[1]
+def p_directiva_empty(p):
+    """directiva :  BYTE empty C_TEXT
+    | BYTE empty X_HEX
+    | WORD empty int_type
+    | RESB empty int_type
+    | BASE empty etiqueta
+    """
+
+
+def p_int_type(p):
+    """int_type : INT
+    | HEX_INT
+    """
 
 
 def p_il_comment(p):
-    """il_comment: COMMENT_IL
+    """il_comment : COMMENT_IL
     | empty"""
 
 
-def empty(p):
-    """empty:
-    | empty
-    | """
+def p_empty(p):
+    """empty :
+    | empty"""
 
 
-def empty_nl(p):
-    """ empty_nl: empty
+def p_empty_nl(p):
+    """ empty_nl : empty
     | NEWLINE
     | empty_nl"""
 
 
-def empty_single_nl(p):
-    """ empty_single_nl: empty
-    | NEWLINE
-    |"""
+def p_empty_single_nl(p):
+    """ empty_single_nl : empty
+    | NEWLINE"""
+
+
+def p_etiqueta(p):
+    """etiqueta : NAME """
+    p[0] = p[1]
+
+##########################################
+# La parte de la calculadora de expresiones
+#
+##########################################
 
 
 def p_expression_uminus(p):
@@ -519,3 +566,7 @@ def p_expression_parent(p):
     expression : LPARENT expression RPARENT
     '''
     p[0] = p[2]
+
+
+parser = yacc.yacc()
+# par = parser.parse(input, debug=False)

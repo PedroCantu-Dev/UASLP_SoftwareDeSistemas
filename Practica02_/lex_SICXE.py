@@ -1029,7 +1029,7 @@ def run(p):
             return ""
 
 
-par = parser.parse(input, debug=True)
+par = parser.parse(input, debug=False)
 # par = parser.parse(data, debug=1)
 
 

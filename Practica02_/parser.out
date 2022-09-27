@@ -8,11 +8,12 @@ Unused terminals:
     AND
     ARROBA
     CLEAR
+    CODOP
+    CODOP2_N
     COMF
     COMMENT_ML
     COMP
     COMPR
-    C_TEXT
     DIRECTIV
     DIV
     DIVF
@@ -20,6 +21,7 @@ Unused terminals:
     EXTENDED
     FINL
     FIX
+    FLOAT
     FLOAT_NUM
     HIO
     J
@@ -41,9 +43,11 @@ Unused terminals:
     MULF
     MULR
     NORM
+    NUM
     OPERANDO
     OR
     RD
+    RESW
     RMO
     SHIFTL
     SHIFTR
@@ -69,96 +73,98 @@ Unused terminals:
     TIXR
     UMINUS
     WD
-    X_HEX
 
 Grammar
 
 Rule 0     S' -> sicxe_file
 Rule 1     sicxe_file -> programa
-Rule 2     sicxe_file -> empty programa
-Rule 3     sicxe_file -> empty programa empty
-Rule 4     sicxe_file -> programa empty
+Rule 2     sicxe_file -> empty_nl programa
+Rule 3     sicxe_file -> empty_nl programa empty_nl
+Rule 4     sicxe_file -> programa empty_nl
 Rule 5     programa -> inicio proposiciones fin
-Rule 6     inicio -> nombre_programa START numero NEWLINE
-Rule 7     inicio -> nombre_programa START error NEWLINE
-Rule 8     inicio -> error START numero NEWLINE
-Rule 9     inicio -> error START error NEWLINE
-Rule 10    numero -> INT
-Rule 11    numero -> HEX_INT
-Rule 12    fin -> END entrada
-Rule 13    entrada -> NAME
-Rule 14    proposiciones -> proposiciones proposicion
-Rule 15    proposiciones -> proposicion
-Rule 16    proposicion -> etiqueta proposicion
-Rule 17    linea -> f_column s_column t_column NEWLINE
-Rule 18    f_column -> etiqueta
-Rule 19    s_column -> CODOP
-Rule 20    s_column -> tipodirectiva
-Rule 21    t_column -> expression
-Rule 22    four_column -> COMMENT_IL
-Rule 23    four_column -> empty
-Rule 24    proposicion -> empty proposicion empty
-Rule 25    proposicion -> directiva NEWLINE
-Rule 26    proposicion -> instruccion NEWLINE
-Rule 27    proposicion -> error NEWLINE
-Rule 28    instruccion -> opformato
-Rule 29    directiva -> tipodirectiva opdirectiva
-Rule 30    opdirectiva -> NUM
-Rule 31    opdirectiva -> NAME
-Rule 32    opdirectiva -> expression
-Rule 33    tipodirectiva -> BYTE
-Rule 34    tipodirectiva -> WORD
-Rule 35    tipodirectiva -> RESB
-Rule 36    tipodirectiva -> RESW
-Rule 37    tipodirectiva -> BASE
-Rule 38    etiqueta -> NAME
-Rule 39    nombre_programa -> NAME
-Rule 40    opformato -> f4
-Rule 41    opformato -> f3
-Rule 42    opformato -> f2
-Rule 43    opformato -> f1
-Rule 44    f4 -> PLUS f3
-Rule 45    f3 -> simple3
-Rule 46    f3 -> indirecto3
-Rule 47    f3 -> inmediato3
-Rule 48    f3 -> RSUB
-Rule 49    f3 -> simple3 COMA REG
-Rule 50    f3 -> simple3 empty COMA REG
-Rule 51    f3 -> simple3 empty COMA empty REG
-Rule 52    f3 -> simple3 COMA empty REG
-Rule 53    simple3 -> CODOP empty expression
-Rule 54    indirecto3 -> CODOP empty AT expression
-Rule 55    indirecto3 -> CODOP empty AT empty expression
-Rule 56    inmediato3 -> CODOP empty SHARP expression
-Rule 57    inmediato3 -> CODOP empty SHARP empty expression
-Rule 58    f2 -> CODOP expression
-Rule 59    f2 -> CODOP REG
-Rule 60    f2 -> CODOP REG COMA REG
-Rule 61    f2 -> CODOP REG COMA expression
-Rule 62    f1 -> CODOP
-Rule 63    expression -> MINUS expression
-Rule 64    expression -> FACTORIAL expression
-Rule 65    expression -> expression PLUS expression
-Rule 66    expression -> expression MINUS expression
-Rule 67    expression -> expression MULTIPLY expression
-Rule 68    expression -> expression DIVIDE expression
-Rule 69    expression -> expression MOD expression
-Rule 70    expression -> expression LESST expression
-Rule 71    expression -> expression MORET expression
-Rule 72    expression -> expression LESSEQ expression
-Rule 73    expression -> expression MOREEQ expression
-Rule 74    expression -> expression OR_G expression
-Rule 75    expression -> expression AND_G expression
-Rule 76    expression -> NAME EQUALS expression
-Rule 77    var -> NAME
-Rule 78    expression -> INT
-Rule 79    expression -> FLOAT
-Rule 80    expression -> HEX_INT
-Rule 81    expression -> var
-Rule 82    expression -> LPARENT expression RPARENT
-Rule 83    empty -> NEWLINE
-Rule 84    empty -> <empty>
-Rule 85    empty -> empty
+Rule 6     inicio -> nombre_programa START int_type NEWLINE
+Rule 7     nombre_programa -> etiqueta
+Rule 8     fin -> END entrada
+Rule 9     entrada -> etiqueta
+Rule 10    proposiciones -> linea
+Rule 11    proposiciones -> proposiciones linea
+Rule 12    linea -> f_column line_core il_comment NEWLINE
+Rule 13    f_column -> etiqueta
+Rule 14    f_column -> empty
+Rule 15    line_core -> instruccion
+Rule 16    line_core -> directiva
+Rule 17    instruccion -> f4
+Rule 18    instruccion -> f3
+Rule 19    instruccion -> f2
+Rule 20    instruccion -> f1
+Rule 21    f1 -> CODOP1
+Rule 22    f2 -> CODOP2 REG COMA REG
+Rule 23    f2 -> CODOP2_R_N REG COMA INT
+Rule 24    f2 -> CODOP2_R REG
+Rule 25    f2 -> CODOP2_R
+Rule 26    f2 -> CODOP2 error COMA REG
+Rule 27    f2 -> CODOP2 REG COMA error
+Rule 28    f2 -> CODOP2 error COMA error
+Rule 29    f2 -> CODOP2 error
+Rule 30    f2 -> CODOP2_R_N REG COMA error
+Rule 31    f2 -> CODOP2_R_N error COMA INT
+Rule 32    f3 -> CODOP3 simple3
+Rule 33    f3 -> CODOP3 indexado3
+Rule 34    f3 -> CODOP3 indirecto3
+Rule 35    f3 -> CODOP3 inmediato3
+Rule 36    f3 -> RSUB
+Rule 37    f3_error_codop -> error simple3
+Rule 38    f3_error_codop -> error indexado3
+Rule 39    f3_error_codop -> error indirecto3
+Rule 40    f3_error_codop -> error inmediato3
+Rule 41    f3_error_operando -> CODOP3 error
+Rule 42    f3_error_operando -> RSUB error
+Rule 43    simple3 -> expression
+Rule 44    indexado3 -> simple3 COMA REG
+Rule 45    indirecto3 -> AT expression
+Rule 46    inmediato3 -> SHARP expression
+Rule 47    f4 -> PLUS f3
+Rule 48    directiva -> empty BYTE C_TEXT
+Rule 49    directiva -> empty BYTE X_HEX
+Rule 50    directiva -> empty WORD int_type
+Rule 51    directiva -> empty RESB int_type
+Rule 52    directiva -> BASE etiqueta
+Rule 53    directiva -> BYTE empty C_TEXT
+Rule 54    directiva -> BYTE empty X_HEX
+Rule 55    directiva -> WORD empty int_type
+Rule 56    directiva -> RESB empty int_type
+Rule 57    directiva -> BASE empty etiqueta
+Rule 58    int_type -> INT
+Rule 59    int_type -> HEX_INT
+Rule 60    il_comment -> COMMENT_IL
+Rule 61    il_comment -> empty
+Rule 62    empty -> <empty>
+Rule 63    empty -> empty
+Rule 64    empty_nl -> empty
+Rule 65    empty_nl -> NEWLINE
+Rule 66    empty_nl -> empty_nl
+Rule 67    empty_single_nl -> empty
+Rule 68    empty_single_nl -> NEWLINE
+Rule 69    etiqueta -> NAME
+Rule 70    expression -> MINUS expression
+Rule 71    expression -> FACTORIAL expression
+Rule 72    expression -> expression PLUS expression
+Rule 73    expression -> expression MINUS expression
+Rule 74    expression -> expression MULTIPLY expression
+Rule 75    expression -> expression DIVIDE expression
+Rule 76    expression -> expression MOD expression
+Rule 77    expression -> expression LESST expression
+Rule 78    expression -> expression MORET expression
+Rule 79    expression -> expression LESSEQ expression
+Rule 80    expression -> expression MOREEQ expression
+Rule 81    expression -> expression OR_G expression
+Rule 82    expression -> expression AND_G expression
+Rule 83    expression -> NAME EQUALS expression
+Rule 84    var -> NAME
+Rule 85    expression -> INT
+Rule 86    expression -> HEX_INT
+Rule 87    expression -> var
+Rule 88    expression -> LPARENT expression RPARENT
 
 Terminals, with rules where they appear
 
@@ -166,35 +172,42 @@ ADD                  :
 ADDF                 : 
 ADDR                 : 
 AND                  : 
-AND_G                : 75
+AND_G                : 82
 ARROBA               : 
-AT                   : 54 55
-BASE                 : 37
-BYTE                 : 33
+AT                   : 45
+BASE                 : 52 57
+BYTE                 : 48 49 53 54
 CLEAR                : 
-CODOP                : 19 53 54 55 56 57 58 59 60 61 62
-COMA                 : 49 50 51 52 60 61
+CODOP                : 
+CODOP1               : 21
+CODOP2               : 22 26 27 28 29
+CODOP2_N             : 
+CODOP2_R             : 24 25
+CODOP2_R_N           : 23 30 31
+CODOP3               : 32 33 34 35 41
+COMA                 : 22 23 26 27 28 30 31 44
 COMF                 : 
+COMMENT_IL           : 60
 COMMENT_ML           : 
 COMP                 : 
 COMPR                : 
-C_TEXT               : 
+C_TEXT               : 48 53
 DIRECTIV             : 
 DIV                  : 
 DIVF                 : 
-DIVIDE               : 68
+DIVIDE               : 75
 DIVR                 : 
-END                  : 12
-EQUALS               : 76
+END                  : 8
+EQUALS               : 83
 EXTENDED             : 
-FACTORIAL            : 64
+FACTORIAL            : 71
 FINL                 : 
 FIX                  : 
-FLOAT                : 79
+FLOAT                : 
 FLOAT_NUM            : 
-HEX_INT              : 11 80
+HEX_INT              : 59 86
 HIO                  : 
-INT                  : 10 78
+INT                  : 23 31 58 85
 J                    : 
 JEQ                  : 
 JGT                  : 
@@ -208,41 +221,41 @@ LDL                  :
 LDS                  : 
 LDT                  : 
 LDX                  : 
-LESSEQ               : 72
-LESST                : 70
-LPARENT              : 82
+LESSEQ               : 79
+LESST                : 77
+LPARENT              : 88
 LPS                  : 
-MINUS                : 63 66
-MOD                  : 69
+MINUS                : 70 73
+MOD                  : 76
 MODIF                : 
-MOREEQ               : 73
-MORET                : 71
+MOREEQ               : 80
+MORET                : 78
 MUL                  : 
 MULF                 : 
 MULR                 : 
-MULTIPLY             : 67
-NAME                 : 13 31 38 39 76 77
-NEWLINE              : 6 7 8 9 17 25 26 27 83
+MULTIPLY             : 74
+NAME                 : 69 83 84
+NEWLINE              : 6 12 65 68
 NORM                 : 
-NUM                  : 30
+NUM                  : 
 OPERANDO             : 
 OR                   : 
-OR_G                 : 74
-PLUS                 : 44 65
+OR_G                 : 81
+PLUS                 : 47 72
 RD                   : 
-REG                  : 49 50 51 52 59 60 60 61
-RESB                 : 35
-RESW                 : 36
+REG                  : 22 22 23 24 26 27 30 44
+RESB                 : 51 56
+RESW                 : 
 RMO                  : 
-RPARENT              : 82
-RSUB                 : 48
-SHARP                : 56 57
+RPARENT              : 88
+RSUB                 : 36 42
+SHARP                : 46
 SHIFTL               : 
 SHIFTR               : 
 SIO                  : 
 SSK                  : 
 STA                  : 
-START                : 6 7 8 9
+START                : 6
 STB                  : 
 STCH                 : 
 STF                  : 
@@ -262,41 +275,2635 @@ TIX                  :
 TIXR                 : 
 UMINUS               : 
 WD                   : 
-WORD                 : 34
-X_HEX                : 
-error                : 7 8 9 9 27
+WORD                 : 50 55
+X_HEX                : 49 54
+error                : 26 27 28 28 29 30 31 37 38 39 40 41 42
 
 Nonterminals, with rules where they appear
 
-COMMENT_IL           : 22
-directiva            : 25
-empty                : 2 3 3 4 23 24 24 50 51 51 52 53 54 55 55 56 57 57 85
-entrada              : 12
-etiqueta             : 16 18
-expression           : 21 32 53 54 55 56 57 58 61 63 64 65 65 66 66 67 67 68 68 69 69 70 70 71 71 72 72 73 73 74 74 75 75 76 82
-f1                   : 43
-f2                   : 42
-f3                   : 41 44
-f4                   : 40
-f_column             : 17
+directiva            : 16
+empty                : 14 48 49 50 51 53 54 55 56 57 61 63 64 67
+empty_nl             : 2 3 3 4 66
+empty_single_nl      : 
+entrada              : 8
+etiqueta             : 7 9 13 52 57
+expression           : 43 45 46 70 71 72 72 73 73 74 74 75 75 76 76 77 77 78 78 79 79 80 80 81 81 82 82 83 88
+f1                   : 20
+f2                   : 19
+f3                   : 18 47
+f3_error_codop       : 
+f3_error_operando    : 
+f4                   : 17
+f_column             : 12
 fin                  : 5
-four_column          : 
-indirecto3           : 46
+il_comment           : 12
+indexado3            : 33 38
+indirecto3           : 34 39
 inicio               : 5
-inmediato3           : 47
-instruccion          : 26
-linea                : 
-nombre_programa      : 6 7
-numero               : 6 8
-opdirectiva          : 29
-opformato            : 28
+inmediato3           : 35 40
+instruccion          : 15
+int_type             : 6 50 51 55 56
+line_core            : 12
+linea                : 10 11
+nombre_programa      : 6
 programa             : 1 2 3 4
-proposicion          : 14 15 16 24
-proposiciones        : 5 14
-s_column             : 17
+proposiciones        : 5 11
 sicxe_file           : 0
-simple3              : 45 49 50 51 52
-t_column             : 17
-tipodirectiva        : 20 29
-var                  : 81
+simple3              : 32 37 44
+var                  : 87
 
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . sicxe_file
+    (1) sicxe_file -> . programa
+    (2) sicxe_file -> . empty_nl programa
+    (3) sicxe_file -> . empty_nl programa empty_nl
+    (4) sicxe_file -> . programa empty_nl
+    (5) programa -> . inicio proposiciones fin
+    (64) empty_nl -> . empty
+    (65) empty_nl -> . NEWLINE
+    (66) empty_nl -> . empty_nl
+    (6) inicio -> . nombre_programa START int_type NEWLINE
+    (62) empty -> .
+    (63) empty -> . empty
+    (7) nombre_programa -> . etiqueta
+    (69) etiqueta -> . NAME
+
+  ! shift/reduce conflict for NAME resolved as shift
+    NEWLINE         shift and go to state 6
+    NAME            shift and go to state 9
+
+  ! NAME            [ reduce using rule 62 (empty -> .) ]
+
+    sicxe_file                     shift and go to state 1
+    programa                       shift and go to state 2
+    empty_nl                       shift and go to state 3
+    inicio                         shift and go to state 4
+    empty                          shift and go to state 5
+    nombre_programa                shift and go to state 7
+    etiqueta                       shift and go to state 8
+
+state 1
+
+    (0) S' -> sicxe_file .
+
+
+
+state 2
+
+    (1) sicxe_file -> programa .
+    (4) sicxe_file -> programa . empty_nl
+    (64) empty_nl -> . empty
+    (65) empty_nl -> . NEWLINE
+    (66) empty_nl -> . empty_nl
+    (62) empty -> .
+    (63) empty -> . empty
+
+  ! reduce/reduce conflict for $end resolved using rule 1 (sicxe_file -> programa .)
+    $end            reduce using rule 1 (sicxe_file -> programa .)
+    NEWLINE         shift and go to state 6
+
+  ! $end            [ reduce using rule 62 (empty -> .) ]
+
+    empty_nl                       shift and go to state 10
+    empty                          shift and go to state 5
+
+state 3
+
+    (2) sicxe_file -> empty_nl . programa
+    (3) sicxe_file -> empty_nl . programa empty_nl
+    (66) empty_nl -> empty_nl .
+    (5) programa -> . inicio proposiciones fin
+    (6) inicio -> . nombre_programa START int_type NEWLINE
+    (7) nombre_programa -> . etiqueta
+    (69) etiqueta -> . NAME
+
+  ! shift/reduce conflict for NAME resolved as shift
+    NAME            shift and go to state 9
+
+  ! NAME            [ reduce using rule 66 (empty_nl -> empty_nl .) ]
+
+    programa                       shift and go to state 11
+    inicio                         shift and go to state 4
+    nombre_programa                shift and go to state 7
+    etiqueta                       shift and go to state 8
+
+state 4
+
+    (5) programa -> inicio . proposiciones fin
+    (10) proposiciones -> . linea
+    (11) proposiciones -> . proposiciones linea
+    (12) linea -> . f_column line_core il_comment NEWLINE
+    (13) f_column -> . etiqueta
+    (14) f_column -> . empty
+    (69) etiqueta -> . NAME
+    (62) empty -> .
+    (63) empty -> . empty
+
+    NAME            shift and go to state 9
+    BASE            reduce using rule 62 (empty -> .)
+    BYTE            reduce using rule 62 (empty -> .)
+    WORD            reduce using rule 62 (empty -> .)
+    RESB            reduce using rule 62 (empty -> .)
+    PLUS            reduce using rule 62 (empty -> .)
+    CODOP3          reduce using rule 62 (empty -> .)
+    RSUB            reduce using rule 62 (empty -> .)
+    CODOP2          reduce using rule 62 (empty -> .)
+    CODOP2_R_N      reduce using rule 62 (empty -> .)
+    CODOP2_R        reduce using rule 62 (empty -> .)
+    CODOP1          reduce using rule 62 (empty -> .)
+
+    proposiciones                  shift and go to state 12
+    linea                          shift and go to state 13
+    f_column                       shift and go to state 14
+    etiqueta                       shift and go to state 15
+    empty                          shift and go to state 16
+
+state 5
+
+    (64) empty_nl -> empty .
+    (63) empty -> empty .
+
+  ! reduce/reduce conflict for NAME resolved using rule 63 (empty -> empty .)
+  ! reduce/reduce conflict for $end resolved using rule 63 (empty -> empty .)
+    NAME            reduce using rule 63 (empty -> empty .)
+    $end            reduce using rule 63 (empty -> empty .)
+
+  ! NAME            [ reduce using rule 64 (empty_nl -> empty .) ]
+  ! $end            [ reduce using rule 64 (empty_nl -> empty .) ]
+
+
+state 6
+
+    (65) empty_nl -> NEWLINE .
+
+    NAME            reduce using rule 65 (empty_nl -> NEWLINE .)
+    $end            reduce using rule 65 (empty_nl -> NEWLINE .)
+
+
+state 7
+
+    (6) inicio -> nombre_programa . START int_type NEWLINE
+
+    START           shift and go to state 17
+
+
+state 8
+
+    (7) nombre_programa -> etiqueta .
+
+    START           reduce using rule 7 (nombre_programa -> etiqueta .)
+
+
+state 9
+
+    (69) etiqueta -> NAME .
+
+    START           reduce using rule 69 (etiqueta -> NAME .)
+    BASE            reduce using rule 69 (etiqueta -> NAME .)
+    BYTE            reduce using rule 69 (etiqueta -> NAME .)
+    WORD            reduce using rule 69 (etiqueta -> NAME .)
+    RESB            reduce using rule 69 (etiqueta -> NAME .)
+    PLUS            reduce using rule 69 (etiqueta -> NAME .)
+    CODOP3          reduce using rule 69 (etiqueta -> NAME .)
+    RSUB            reduce using rule 69 (etiqueta -> NAME .)
+    CODOP2          reduce using rule 69 (etiqueta -> NAME .)
+    CODOP2_R_N      reduce using rule 69 (etiqueta -> NAME .)
+    CODOP2_R        reduce using rule 69 (etiqueta -> NAME .)
+    CODOP1          reduce using rule 69 (etiqueta -> NAME .)
+    NEWLINE         reduce using rule 69 (etiqueta -> NAME .)
+    $end            reduce using rule 69 (etiqueta -> NAME .)
+    COMMENT_IL      reduce using rule 69 (etiqueta -> NAME .)
+
+
+state 10
+
+    (4) sicxe_file -> programa empty_nl .
+    (66) empty_nl -> empty_nl .
+
+  ! reduce/reduce conflict for $end resolved using rule 4 (sicxe_file -> programa empty_nl .)
+    $end            reduce using rule 4 (sicxe_file -> programa empty_nl .)
+
+  ! $end            [ reduce using rule 66 (empty_nl -> empty_nl .) ]
+
+
+state 11
+
+    (2) sicxe_file -> empty_nl programa .
+    (3) sicxe_file -> empty_nl programa . empty_nl
+    (64) empty_nl -> . empty
+    (65) empty_nl -> . NEWLINE
+    (66) empty_nl -> . empty_nl
+    (62) empty -> .
+    (63) empty -> . empty
+
+  ! reduce/reduce conflict for $end resolved using rule 2 (sicxe_file -> empty_nl programa .)
+    $end            reduce using rule 2 (sicxe_file -> empty_nl programa .)
+    NEWLINE         shift and go to state 6
+
+  ! $end            [ reduce using rule 62 (empty -> .) ]
+
+    empty_nl                       shift and go to state 18
+    empty                          shift and go to state 5
+
+state 12
+
+    (5) programa -> inicio proposiciones . fin
+    (11) proposiciones -> proposiciones . linea
+    (8) fin -> . END entrada
+    (12) linea -> . f_column line_core il_comment NEWLINE
+    (13) f_column -> . etiqueta
+    (14) f_column -> . empty
+    (69) etiqueta -> . NAME
+    (62) empty -> .
+    (63) empty -> . empty
+
+    END             shift and go to state 21
+    NAME            shift and go to state 9
+    BASE            reduce using rule 62 (empty -> .)
+    BYTE            reduce using rule 62 (empty -> .)
+    WORD            reduce using rule 62 (empty -> .)
+    RESB            reduce using rule 62 (empty -> .)
+    PLUS            reduce using rule 62 (empty -> .)
+    CODOP3          reduce using rule 62 (empty -> .)
+    RSUB            reduce using rule 62 (empty -> .)
+    CODOP2          reduce using rule 62 (empty -> .)
+    CODOP2_R_N      reduce using rule 62 (empty -> .)
+    CODOP2_R        reduce using rule 62 (empty -> .)
+    CODOP1          reduce using rule 62 (empty -> .)
+
+    fin                            shift and go to state 19
+    linea                          shift and go to state 20
+    f_column                       shift and go to state 14
+    etiqueta                       shift and go to state 15
+    empty                          shift and go to state 16
+
+state 13
+
+    (10) proposiciones -> linea .
+
+    END             reduce using rule 10 (proposiciones -> linea .)
+    NAME            reduce using rule 10 (proposiciones -> linea .)
+    BASE            reduce using rule 10 (proposiciones -> linea .)
+    BYTE            reduce using rule 10 (proposiciones -> linea .)
+    WORD            reduce using rule 10 (proposiciones -> linea .)
+    RESB            reduce using rule 10 (proposiciones -> linea .)
+    PLUS            reduce using rule 10 (proposiciones -> linea .)
+    CODOP3          reduce using rule 10 (proposiciones -> linea .)
+    RSUB            reduce using rule 10 (proposiciones -> linea .)
+    CODOP2          reduce using rule 10 (proposiciones -> linea .)
+    CODOP2_R_N      reduce using rule 10 (proposiciones -> linea .)
+    CODOP2_R        reduce using rule 10 (proposiciones -> linea .)
+    CODOP1          reduce using rule 10 (proposiciones -> linea .)
+
+
+state 14
+
+    (12) linea -> f_column . line_core il_comment NEWLINE
+    (15) line_core -> . instruccion
+    (16) line_core -> . directiva
+    (17) instruccion -> . f4
+    (18) instruccion -> . f3
+    (19) instruccion -> . f2
+    (20) instruccion -> . f1
+    (48) directiva -> . empty BYTE C_TEXT
+    (49) directiva -> . empty BYTE X_HEX
+    (50) directiva -> . empty WORD int_type
+    (51) directiva -> . empty RESB int_type
+    (52) directiva -> . BASE etiqueta
+    (53) directiva -> . BYTE empty C_TEXT
+    (54) directiva -> . BYTE empty X_HEX
+    (55) directiva -> . WORD empty int_type
+    (56) directiva -> . RESB empty int_type
+    (57) directiva -> . BASE empty etiqueta
+    (47) f4 -> . PLUS f3
+    (32) f3 -> . CODOP3 simple3
+    (33) f3 -> . CODOP3 indexado3
+    (34) f3 -> . CODOP3 indirecto3
+    (35) f3 -> . CODOP3 inmediato3
+    (36) f3 -> . RSUB
+    (22) f2 -> . CODOP2 REG COMA REG
+    (23) f2 -> . CODOP2_R_N REG COMA INT
+    (24) f2 -> . CODOP2_R REG
+    (25) f2 -> . CODOP2_R
+    (26) f2 -> . CODOP2 error COMA REG
+    (27) f2 -> . CODOP2 REG COMA error
+    (28) f2 -> . CODOP2 error COMA error
+    (29) f2 -> . CODOP2 error
+    (30) f2 -> . CODOP2_R_N REG COMA error
+    (31) f2 -> . CODOP2_R_N error COMA INT
+    (21) f1 -> . CODOP1
+    (62) empty -> .
+    (63) empty -> . empty
+
+  ! shift/reduce conflict for BYTE resolved as shift
+  ! shift/reduce conflict for WORD resolved as shift
+  ! shift/reduce conflict for RESB resolved as shift
+    BASE            shift and go to state 33
+    BYTE            shift and go to state 30
+    WORD            shift and go to state 31
+    RESB            shift and go to state 32
+    PLUS            shift and go to state 34
+    CODOP3          shift and go to state 35
+    RSUB            shift and go to state 36
+    CODOP2          shift and go to state 37
+    CODOP2_R_N      shift and go to state 38
+    CODOP2_R        shift and go to state 39
+    CODOP1          shift and go to state 40
+
+  ! BYTE            [ reduce using rule 62 (empty -> .) ]
+  ! WORD            [ reduce using rule 62 (empty -> .) ]
+  ! RESB            [ reduce using rule 62 (empty -> .) ]
+
+    line_core                      shift and go to state 22
+    instruccion                    shift and go to state 23
+    directiva                      shift and go to state 24
+    f4                             shift and go to state 25
+    f3                             shift and go to state 26
+    f2                             shift and go to state 27
+    f1                             shift and go to state 28
+    empty                          shift and go to state 29
+
+state 15
+
+    (13) f_column -> etiqueta .
+
+    BASE            reduce using rule 13 (f_column -> etiqueta .)
+    BYTE            reduce using rule 13 (f_column -> etiqueta .)
+    WORD            reduce using rule 13 (f_column -> etiqueta .)
+    RESB            reduce using rule 13 (f_column -> etiqueta .)
+    PLUS            reduce using rule 13 (f_column -> etiqueta .)
+    CODOP3          reduce using rule 13 (f_column -> etiqueta .)
+    RSUB            reduce using rule 13 (f_column -> etiqueta .)
+    CODOP2          reduce using rule 13 (f_column -> etiqueta .)
+    CODOP2_R_N      reduce using rule 13 (f_column -> etiqueta .)
+    CODOP2_R        reduce using rule 13 (f_column -> etiqueta .)
+    CODOP1          reduce using rule 13 (f_column -> etiqueta .)
+
+
+state 16
+
+    (14) f_column -> empty .
+    (63) empty -> empty .
+
+  ! reduce/reduce conflict for BASE resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for BYTE resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for WORD resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for RESB resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for PLUS resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for CODOP3 resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for RSUB resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for CODOP2 resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for CODOP2_R_N resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for CODOP2_R resolved using rule 14 (f_column -> empty .)
+  ! reduce/reduce conflict for CODOP1 resolved using rule 14 (f_column -> empty .)
+    BASE            reduce using rule 14 (f_column -> empty .)
+    BYTE            reduce using rule 14 (f_column -> empty .)
+    WORD            reduce using rule 14 (f_column -> empty .)
+    RESB            reduce using rule 14 (f_column -> empty .)
+    PLUS            reduce using rule 14 (f_column -> empty .)
+    CODOP3          reduce using rule 14 (f_column -> empty .)
+    RSUB            reduce using rule 14 (f_column -> empty .)
+    CODOP2          reduce using rule 14 (f_column -> empty .)
+    CODOP2_R_N      reduce using rule 14 (f_column -> empty .)
+    CODOP2_R        reduce using rule 14 (f_column -> empty .)
+    CODOP1          reduce using rule 14 (f_column -> empty .)
+
+  ! BASE            [ reduce using rule 63 (empty -> empty .) ]
+  ! BYTE            [ reduce using rule 63 (empty -> empty .) ]
+  ! WORD            [ reduce using rule 63 (empty -> empty .) ]
+  ! RESB            [ reduce using rule 63 (empty -> empty .) ]
+  ! PLUS            [ reduce using rule 63 (empty -> empty .) ]
+  ! CODOP3          [ reduce using rule 63 (empty -> empty .) ]
+  ! RSUB            [ reduce using rule 63 (empty -> empty .) ]
+  ! CODOP2          [ reduce using rule 63 (empty -> empty .) ]
+  ! CODOP2_R_N      [ reduce using rule 63 (empty -> empty .) ]
+  ! CODOP2_R        [ reduce using rule 63 (empty -> empty .) ]
+  ! CODOP1          [ reduce using rule 63 (empty -> empty .) ]
+
+
+state 17
+
+    (6) inicio -> nombre_programa START . int_type NEWLINE
+    (58) int_type -> . INT
+    (59) int_type -> . HEX_INT
+
+    INT             shift and go to state 42
+    HEX_INT         shift and go to state 43
+
+    int_type                       shift and go to state 41
+
+state 18
+
+    (3) sicxe_file -> empty_nl programa empty_nl .
+    (66) empty_nl -> empty_nl .
+
+  ! reduce/reduce conflict for $end resolved using rule 3 (sicxe_file -> empty_nl programa empty_nl .)
+    $end            reduce using rule 3 (sicxe_file -> empty_nl programa empty_nl .)
+
+  ! $end            [ reduce using rule 66 (empty_nl -> empty_nl .) ]
+
+
+state 19
+
+    (5) programa -> inicio proposiciones fin .
+
+    NEWLINE         reduce using rule 5 (programa -> inicio proposiciones fin .)
+    $end            reduce using rule 5 (programa -> inicio proposiciones fin .)
+
+
+state 20
+
+    (11) proposiciones -> proposiciones linea .
+
+    END             reduce using rule 11 (proposiciones -> proposiciones linea .)
+    NAME            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    BASE            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    BYTE            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    WORD            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    RESB            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    PLUS            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    CODOP3          reduce using rule 11 (proposiciones -> proposiciones linea .)
+    RSUB            reduce using rule 11 (proposiciones -> proposiciones linea .)
+    CODOP2          reduce using rule 11 (proposiciones -> proposiciones linea .)
+    CODOP2_R_N      reduce using rule 11 (proposiciones -> proposiciones linea .)
+    CODOP2_R        reduce using rule 11 (proposiciones -> proposiciones linea .)
+    CODOP1          reduce using rule 11 (proposiciones -> proposiciones linea .)
+
+
+state 21
+
+    (8) fin -> END . entrada
+    (9) entrada -> . etiqueta
+    (69) etiqueta -> . NAME
+
+    NAME            shift and go to state 9
+
+    entrada                        shift and go to state 44
+    etiqueta                       shift and go to state 45
+
+state 22
+
+    (12) linea -> f_column line_core . il_comment NEWLINE
+    (60) il_comment -> . COMMENT_IL
+    (61) il_comment -> . empty
+    (62) empty -> .
+    (63) empty -> . empty
+
+    COMMENT_IL      shift and go to state 47
+    NEWLINE         reduce using rule 62 (empty -> .)
+
+    il_comment                     shift and go to state 46
+    empty                          shift and go to state 48
+
+state 23
+
+    (15) line_core -> instruccion .
+
+    COMMENT_IL      reduce using rule 15 (line_core -> instruccion .)
+    NEWLINE         reduce using rule 15 (line_core -> instruccion .)
+
+
+state 24
+
+    (16) line_core -> directiva .
+
+    COMMENT_IL      reduce using rule 16 (line_core -> directiva .)
+    NEWLINE         reduce using rule 16 (line_core -> directiva .)
+
+
+state 25
+
+    (17) instruccion -> f4 .
+
+    COMMENT_IL      reduce using rule 17 (instruccion -> f4 .)
+    NEWLINE         reduce using rule 17 (instruccion -> f4 .)
+
+
+state 26
+
+    (18) instruccion -> f3 .
+
+    COMMENT_IL      reduce using rule 18 (instruccion -> f3 .)
+    NEWLINE         reduce using rule 18 (instruccion -> f3 .)
+
+
+state 27
+
+    (19) instruccion -> f2 .
+
+    COMMENT_IL      reduce using rule 19 (instruccion -> f2 .)
+    NEWLINE         reduce using rule 19 (instruccion -> f2 .)
+
+
+state 28
+
+    (20) instruccion -> f1 .
+
+    COMMENT_IL      reduce using rule 20 (instruccion -> f1 .)
+    NEWLINE         reduce using rule 20 (instruccion -> f1 .)
+
+
+state 29
+
+    (48) directiva -> empty . BYTE C_TEXT
+    (49) directiva -> empty . BYTE X_HEX
+    (50) directiva -> empty . WORD int_type
+    (51) directiva -> empty . RESB int_type
+    (63) empty -> empty .
+
+  ! shift/reduce conflict for BYTE resolved as shift
+  ! shift/reduce conflict for WORD resolved as shift
+  ! shift/reduce conflict for RESB resolved as shift
+    BYTE            shift and go to state 49
+    WORD            shift and go to state 50
+    RESB            shift and go to state 51
+
+  ! BYTE            [ reduce using rule 63 (empty -> empty .) ]
+  ! WORD            [ reduce using rule 63 (empty -> empty .) ]
+  ! RESB            [ reduce using rule 63 (empty -> empty .) ]
+
+
+state 30
+
+    (53) directiva -> BYTE . empty C_TEXT
+    (54) directiva -> BYTE . empty X_HEX
+    (62) empty -> .
+    (63) empty -> . empty
+
+    C_TEXT          reduce using rule 62 (empty -> .)
+    X_HEX           reduce using rule 62 (empty -> .)
+
+    empty                          shift and go to state 52
+
+state 31
+
+    (55) directiva -> WORD . empty int_type
+    (62) empty -> .
+    (63) empty -> . empty
+
+    INT             reduce using rule 62 (empty -> .)
+    HEX_INT         reduce using rule 62 (empty -> .)
+
+    empty                          shift and go to state 53
+
+state 32
+
+    (56) directiva -> RESB . empty int_type
+    (62) empty -> .
+    (63) empty -> . empty
+
+    INT             reduce using rule 62 (empty -> .)
+    HEX_INT         reduce using rule 62 (empty -> .)
+
+    empty                          shift and go to state 54
+
+state 33
+
+    (52) directiva -> BASE . etiqueta
+    (57) directiva -> BASE . empty etiqueta
+    (69) etiqueta -> . NAME
+    (62) empty -> .
+    (63) empty -> . empty
+
+  ! shift/reduce conflict for NAME resolved as shift
+    NAME            shift and go to state 9
+
+  ! NAME            [ reduce using rule 62 (empty -> .) ]
+
+    etiqueta                       shift and go to state 55
+    empty                          shift and go to state 56
+
+state 34
+
+    (47) f4 -> PLUS . f3
+    (32) f3 -> . CODOP3 simple3
+    (33) f3 -> . CODOP3 indexado3
+    (34) f3 -> . CODOP3 indirecto3
+    (35) f3 -> . CODOP3 inmediato3
+    (36) f3 -> . RSUB
+
+    CODOP3          shift and go to state 35
+    RSUB            shift and go to state 36
+
+    f3                             shift and go to state 57
+
+state 35
+
+    (32) f3 -> CODOP3 . simple3
+    (33) f3 -> CODOP3 . indexado3
+    (34) f3 -> CODOP3 . indirecto3
+    (35) f3 -> CODOP3 . inmediato3
+    (43) simple3 -> . expression
+    (44) indexado3 -> . simple3 COMA REG
+    (45) indirecto3 -> . AT expression
+    (46) inmediato3 -> . SHARP expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    AT              shift and go to state 63
+    SHARP           shift and go to state 64
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    simple3                        shift and go to state 58
+    indexado3                      shift and go to state 59
+    indirecto3                     shift and go to state 60
+    inmediato3                     shift and go to state 61
+    expression                     shift and go to state 62
+    var                            shift and go to state 70
+
+state 36
+
+    (36) f3 -> RSUB .
+
+    COMMENT_IL      reduce using rule 36 (f3 -> RSUB .)
+    NEWLINE         reduce using rule 36 (f3 -> RSUB .)
+
+
+state 37
+
+    (22) f2 -> CODOP2 . REG COMA REG
+    (26) f2 -> CODOP2 . error COMA REG
+    (27) f2 -> CODOP2 . REG COMA error
+    (28) f2 -> CODOP2 . error COMA error
+    (29) f2 -> CODOP2 . error
+
+    REG             shift and go to state 72
+    error           shift and go to state 73
+
+
+state 38
+
+    (23) f2 -> CODOP2_R_N . REG COMA INT
+    (30) f2 -> CODOP2_R_N . REG COMA error
+    (31) f2 -> CODOP2_R_N . error COMA INT
+
+    REG             shift and go to state 74
+    error           shift and go to state 75
+
+
+state 39
+
+    (24) f2 -> CODOP2_R . REG
+    (25) f2 -> CODOP2_R .
+
+    REG             shift and go to state 76
+    COMMENT_IL      reduce using rule 25 (f2 -> CODOP2_R .)
+    NEWLINE         reduce using rule 25 (f2 -> CODOP2_R .)
+
+
+state 40
+
+    (21) f1 -> CODOP1 .
+
+    COMMENT_IL      reduce using rule 21 (f1 -> CODOP1 .)
+    NEWLINE         reduce using rule 21 (f1 -> CODOP1 .)
+
+
+state 41
+
+    (6) inicio -> nombre_programa START int_type . NEWLINE
+
+    NEWLINE         shift and go to state 77
+
+
+state 42
+
+    (58) int_type -> INT .
+
+    NEWLINE         reduce using rule 58 (int_type -> INT .)
+    COMMENT_IL      reduce using rule 58 (int_type -> INT .)
+
+
+state 43
+
+    (59) int_type -> HEX_INT .
+
+    NEWLINE         reduce using rule 59 (int_type -> HEX_INT .)
+    COMMENT_IL      reduce using rule 59 (int_type -> HEX_INT .)
+
+
+state 44
+
+    (8) fin -> END entrada .
+
+    NEWLINE         reduce using rule 8 (fin -> END entrada .)
+    $end            reduce using rule 8 (fin -> END entrada .)
+
+
+state 45
+
+    (9) entrada -> etiqueta .
+
+    NEWLINE         reduce using rule 9 (entrada -> etiqueta .)
+    $end            reduce using rule 9 (entrada -> etiqueta .)
+
+
+state 46
+
+    (12) linea -> f_column line_core il_comment . NEWLINE
+
+    NEWLINE         shift and go to state 78
+
+
+state 47
+
+    (60) il_comment -> COMMENT_IL .
+
+    NEWLINE         reduce using rule 60 (il_comment -> COMMENT_IL .)
+
+
+state 48
+
+    (61) il_comment -> empty .
+    (63) empty -> empty .
+
+  ! reduce/reduce conflict for NEWLINE resolved using rule 61 (il_comment -> empty .)
+    NEWLINE         reduce using rule 61 (il_comment -> empty .)
+
+  ! NEWLINE         [ reduce using rule 63 (empty -> empty .) ]
+
+
+state 49
+
+    (48) directiva -> empty BYTE . C_TEXT
+    (49) directiva -> empty BYTE . X_HEX
+
+    C_TEXT          shift and go to state 79
+    X_HEX           shift and go to state 80
+
+
+state 50
+
+    (50) directiva -> empty WORD . int_type
+    (58) int_type -> . INT
+    (59) int_type -> . HEX_INT
+
+    INT             shift and go to state 42
+    HEX_INT         shift and go to state 43
+
+    int_type                       shift and go to state 81
+
+state 51
+
+    (51) directiva -> empty RESB . int_type
+    (58) int_type -> . INT
+    (59) int_type -> . HEX_INT
+
+    INT             shift and go to state 42
+    HEX_INT         shift and go to state 43
+
+    int_type                       shift and go to state 82
+
+state 52
+
+    (53) directiva -> BYTE empty . C_TEXT
+    (54) directiva -> BYTE empty . X_HEX
+    (63) empty -> empty .
+
+  ! shift/reduce conflict for C_TEXT resolved as shift
+  ! shift/reduce conflict for X_HEX resolved as shift
+    C_TEXT          shift and go to state 83
+    X_HEX           shift and go to state 84
+
+  ! C_TEXT          [ reduce using rule 63 (empty -> empty .) ]
+  ! X_HEX           [ reduce using rule 63 (empty -> empty .) ]
+
+
+state 53
+
+    (55) directiva -> WORD empty . int_type
+    (63) empty -> empty .
+    (58) int_type -> . INT
+    (59) int_type -> . HEX_INT
+
+  ! shift/reduce conflict for INT resolved as shift
+  ! shift/reduce conflict for HEX_INT resolved as shift
+    INT             shift and go to state 42
+    HEX_INT         shift and go to state 43
+
+  ! INT             [ reduce using rule 63 (empty -> empty .) ]
+  ! HEX_INT         [ reduce using rule 63 (empty -> empty .) ]
+
+    int_type                       shift and go to state 85
+
+state 54
+
+    (56) directiva -> RESB empty . int_type
+    (63) empty -> empty .
+    (58) int_type -> . INT
+    (59) int_type -> . HEX_INT
+
+  ! shift/reduce conflict for INT resolved as shift
+  ! shift/reduce conflict for HEX_INT resolved as shift
+    INT             shift and go to state 42
+    HEX_INT         shift and go to state 43
+
+  ! INT             [ reduce using rule 63 (empty -> empty .) ]
+  ! HEX_INT         [ reduce using rule 63 (empty -> empty .) ]
+
+    int_type                       shift and go to state 86
+
+state 55
+
+    (52) directiva -> BASE etiqueta .
+
+    COMMENT_IL      reduce using rule 52 (directiva -> BASE etiqueta .)
+    NEWLINE         reduce using rule 52 (directiva -> BASE etiqueta .)
+
+
+state 56
+
+    (57) directiva -> BASE empty . etiqueta
+    (63) empty -> empty .
+    (69) etiqueta -> . NAME
+
+  ! shift/reduce conflict for NAME resolved as shift
+    NAME            shift and go to state 9
+
+  ! NAME            [ reduce using rule 63 (empty -> empty .) ]
+
+    etiqueta                       shift and go to state 87
+
+state 57
+
+    (47) f4 -> PLUS f3 .
+
+    COMMENT_IL      reduce using rule 47 (f4 -> PLUS f3 .)
+    NEWLINE         reduce using rule 47 (f4 -> PLUS f3 .)
+
+
+state 58
+
+    (32) f3 -> CODOP3 simple3 .
+    (44) indexado3 -> simple3 . COMA REG
+
+    COMMENT_IL      reduce using rule 32 (f3 -> CODOP3 simple3 .)
+    NEWLINE         reduce using rule 32 (f3 -> CODOP3 simple3 .)
+    COMA            shift and go to state 88
+
+
+state 59
+
+    (33) f3 -> CODOP3 indexado3 .
+
+    COMMENT_IL      reduce using rule 33 (f3 -> CODOP3 indexado3 .)
+    NEWLINE         reduce using rule 33 (f3 -> CODOP3 indexado3 .)
+
+
+state 60
+
+    (34) f3 -> CODOP3 indirecto3 .
+
+    COMMENT_IL      reduce using rule 34 (f3 -> CODOP3 indirecto3 .)
+    NEWLINE         reduce using rule 34 (f3 -> CODOP3 indirecto3 .)
+
+
+state 61
+
+    (35) f3 -> CODOP3 inmediato3 .
+
+    COMMENT_IL      reduce using rule 35 (f3 -> CODOP3 inmediato3 .)
+    NEWLINE         reduce using rule 35 (f3 -> CODOP3 inmediato3 .)
+
+
+state 62
+
+    (43) simple3 -> expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    COMA            reduce using rule 43 (simple3 -> expression .)
+    COMMENT_IL      reduce using rule 43 (simple3 -> expression .)
+    NEWLINE         reduce using rule 43 (simple3 -> expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+    OR_G            shift and go to state 98
+    AND_G           shift and go to state 99
+
+
+state 63
+
+    (45) indirecto3 -> AT . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 100
+    var                            shift and go to state 70
+
+state 64
+
+    (46) inmediato3 -> SHARP . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 101
+    var                            shift and go to state 70
+
+state 65
+
+    (70) expression -> MINUS . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 102
+    var                            shift and go to state 70
+
+state 66
+
+    (71) expression -> FACTORIAL . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 103
+    var                            shift and go to state 70
+
+state 67
+
+    (83) expression -> NAME . EQUALS expression
+    (84) var -> NAME .
+
+    EQUALS          shift and go to state 104
+    PLUS            reduce using rule 84 (var -> NAME .)
+    MINUS           reduce using rule 84 (var -> NAME .)
+    MULTIPLY        reduce using rule 84 (var -> NAME .)
+    DIVIDE          reduce using rule 84 (var -> NAME .)
+    MOD             reduce using rule 84 (var -> NAME .)
+    LESST           reduce using rule 84 (var -> NAME .)
+    MORET           reduce using rule 84 (var -> NAME .)
+    LESSEQ          reduce using rule 84 (var -> NAME .)
+    MOREEQ          reduce using rule 84 (var -> NAME .)
+    OR_G            reduce using rule 84 (var -> NAME .)
+    AND_G           reduce using rule 84 (var -> NAME .)
+    COMA            reduce using rule 84 (var -> NAME .)
+    COMMENT_IL      reduce using rule 84 (var -> NAME .)
+    NEWLINE         reduce using rule 84 (var -> NAME .)
+    RPARENT         reduce using rule 84 (var -> NAME .)
+
+
+state 68
+
+    (85) expression -> INT .
+
+    PLUS            reduce using rule 85 (expression -> INT .)
+    MINUS           reduce using rule 85 (expression -> INT .)
+    MULTIPLY        reduce using rule 85 (expression -> INT .)
+    DIVIDE          reduce using rule 85 (expression -> INT .)
+    MOD             reduce using rule 85 (expression -> INT .)
+    LESST           reduce using rule 85 (expression -> INT .)
+    MORET           reduce using rule 85 (expression -> INT .)
+    LESSEQ          reduce using rule 85 (expression -> INT .)
+    MOREEQ          reduce using rule 85 (expression -> INT .)
+    OR_G            reduce using rule 85 (expression -> INT .)
+    AND_G           reduce using rule 85 (expression -> INT .)
+    COMA            reduce using rule 85 (expression -> INT .)
+    COMMENT_IL      reduce using rule 85 (expression -> INT .)
+    NEWLINE         reduce using rule 85 (expression -> INT .)
+    RPARENT         reduce using rule 85 (expression -> INT .)
+
+
+state 69
+
+    (86) expression -> HEX_INT .
+
+    PLUS            reduce using rule 86 (expression -> HEX_INT .)
+    MINUS           reduce using rule 86 (expression -> HEX_INT .)
+    MULTIPLY        reduce using rule 86 (expression -> HEX_INT .)
+    DIVIDE          reduce using rule 86 (expression -> HEX_INT .)
+    MOD             reduce using rule 86 (expression -> HEX_INT .)
+    LESST           reduce using rule 86 (expression -> HEX_INT .)
+    MORET           reduce using rule 86 (expression -> HEX_INT .)
+    LESSEQ          reduce using rule 86 (expression -> HEX_INT .)
+    MOREEQ          reduce using rule 86 (expression -> HEX_INT .)
+    OR_G            reduce using rule 86 (expression -> HEX_INT .)
+    AND_G           reduce using rule 86 (expression -> HEX_INT .)
+    COMA            reduce using rule 86 (expression -> HEX_INT .)
+    COMMENT_IL      reduce using rule 86 (expression -> HEX_INT .)
+    NEWLINE         reduce using rule 86 (expression -> HEX_INT .)
+    RPARENT         reduce using rule 86 (expression -> HEX_INT .)
+
+
+state 70
+
+    (87) expression -> var .
+
+    PLUS            reduce using rule 87 (expression -> var .)
+    MINUS           reduce using rule 87 (expression -> var .)
+    MULTIPLY        reduce using rule 87 (expression -> var .)
+    DIVIDE          reduce using rule 87 (expression -> var .)
+    MOD             reduce using rule 87 (expression -> var .)
+    LESST           reduce using rule 87 (expression -> var .)
+    MORET           reduce using rule 87 (expression -> var .)
+    LESSEQ          reduce using rule 87 (expression -> var .)
+    MOREEQ          reduce using rule 87 (expression -> var .)
+    OR_G            reduce using rule 87 (expression -> var .)
+    AND_G           reduce using rule 87 (expression -> var .)
+    COMA            reduce using rule 87 (expression -> var .)
+    COMMENT_IL      reduce using rule 87 (expression -> var .)
+    NEWLINE         reduce using rule 87 (expression -> var .)
+    RPARENT         reduce using rule 87 (expression -> var .)
+
+
+state 71
+
+    (88) expression -> LPARENT . expression RPARENT
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 105
+    var                            shift and go to state 70
+
+state 72
+
+    (22) f2 -> CODOP2 REG . COMA REG
+    (27) f2 -> CODOP2 REG . COMA error
+
+    COMA            shift and go to state 106
+
+
+state 73
+
+    (26) f2 -> CODOP2 error . COMA REG
+    (28) f2 -> CODOP2 error . COMA error
+    (29) f2 -> CODOP2 error .
+
+    COMA            shift and go to state 107
+    COMMENT_IL      reduce using rule 29 (f2 -> CODOP2 error .)
+    NEWLINE         reduce using rule 29 (f2 -> CODOP2 error .)
+
+
+state 74
+
+    (23) f2 -> CODOP2_R_N REG . COMA INT
+    (30) f2 -> CODOP2_R_N REG . COMA error
+
+    COMA            shift and go to state 108
+
+
+state 75
+
+    (31) f2 -> CODOP2_R_N error . COMA INT
+
+    COMA            shift and go to state 109
+
+
+state 76
+
+    (24) f2 -> CODOP2_R REG .
+
+    COMMENT_IL      reduce using rule 24 (f2 -> CODOP2_R REG .)
+    NEWLINE         reduce using rule 24 (f2 -> CODOP2_R REG .)
+
+
+state 77
+
+    (6) inicio -> nombre_programa START int_type NEWLINE .
+
+    NAME            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    BASE            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    BYTE            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    WORD            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    RESB            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    PLUS            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    CODOP3          reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    RSUB            reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    CODOP2          reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    CODOP2_R_N      reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    CODOP2_R        reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+    CODOP1          reduce using rule 6 (inicio -> nombre_programa START int_type NEWLINE .)
+
+
+state 78
+
+    (12) linea -> f_column line_core il_comment NEWLINE .
+
+    END             reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    NAME            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    BASE            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    BYTE            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    WORD            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    RESB            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    PLUS            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    CODOP3          reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    RSUB            reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    CODOP2          reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    CODOP2_R_N      reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    CODOP2_R        reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+    CODOP1          reduce using rule 12 (linea -> f_column line_core il_comment NEWLINE .)
+
+
+state 79
+
+    (48) directiva -> empty BYTE C_TEXT .
+
+    COMMENT_IL      reduce using rule 48 (directiva -> empty BYTE C_TEXT .)
+    NEWLINE         reduce using rule 48 (directiva -> empty BYTE C_TEXT .)
+
+
+state 80
+
+    (49) directiva -> empty BYTE X_HEX .
+
+    COMMENT_IL      reduce using rule 49 (directiva -> empty BYTE X_HEX .)
+    NEWLINE         reduce using rule 49 (directiva -> empty BYTE X_HEX .)
+
+
+state 81
+
+    (50) directiva -> empty WORD int_type .
+
+    COMMENT_IL      reduce using rule 50 (directiva -> empty WORD int_type .)
+    NEWLINE         reduce using rule 50 (directiva -> empty WORD int_type .)
+
+
+state 82
+
+    (51) directiva -> empty RESB int_type .
+
+    COMMENT_IL      reduce using rule 51 (directiva -> empty RESB int_type .)
+    NEWLINE         reduce using rule 51 (directiva -> empty RESB int_type .)
+
+
+state 83
+
+    (53) directiva -> BYTE empty C_TEXT .
+
+    COMMENT_IL      reduce using rule 53 (directiva -> BYTE empty C_TEXT .)
+    NEWLINE         reduce using rule 53 (directiva -> BYTE empty C_TEXT .)
+
+
+state 84
+
+    (54) directiva -> BYTE empty X_HEX .
+
+    COMMENT_IL      reduce using rule 54 (directiva -> BYTE empty X_HEX .)
+    NEWLINE         reduce using rule 54 (directiva -> BYTE empty X_HEX .)
+
+
+state 85
+
+    (55) directiva -> WORD empty int_type .
+
+    COMMENT_IL      reduce using rule 55 (directiva -> WORD empty int_type .)
+    NEWLINE         reduce using rule 55 (directiva -> WORD empty int_type .)
+
+
+state 86
+
+    (56) directiva -> RESB empty int_type .
+
+    COMMENT_IL      reduce using rule 56 (directiva -> RESB empty int_type .)
+    NEWLINE         reduce using rule 56 (directiva -> RESB empty int_type .)
+
+
+state 87
+
+    (57) directiva -> BASE empty etiqueta .
+
+    COMMENT_IL      reduce using rule 57 (directiva -> BASE empty etiqueta .)
+    NEWLINE         reduce using rule 57 (directiva -> BASE empty etiqueta .)
+
+
+state 88
+
+    (44) indexado3 -> simple3 COMA . REG
+
+    REG             shift and go to state 110
+
+
+state 89
+
+    (72) expression -> expression PLUS . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 111
+    var                            shift and go to state 70
+
+state 90
+
+    (73) expression -> expression MINUS . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 112
+    var                            shift and go to state 70
+
+state 91
+
+    (74) expression -> expression MULTIPLY . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 113
+    var                            shift and go to state 70
+
+state 92
+
+    (75) expression -> expression DIVIDE . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 114
+    var                            shift and go to state 70
+
+state 93
+
+    (76) expression -> expression MOD . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 115
+    var                            shift and go to state 70
+
+state 94
+
+    (77) expression -> expression LESST . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 116
+    var                            shift and go to state 70
+
+state 95
+
+    (78) expression -> expression MORET . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 117
+    var                            shift and go to state 70
+
+state 96
+
+    (79) expression -> expression LESSEQ . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 118
+    var                            shift and go to state 70
+
+state 97
+
+    (80) expression -> expression MOREEQ . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 119
+    var                            shift and go to state 70
+
+state 98
+
+    (81) expression -> expression OR_G . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 120
+    var                            shift and go to state 70
+
+state 99
+
+    (82) expression -> expression AND_G . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 121
+    var                            shift and go to state 70
+
+state 100
+
+    (45) indirecto3 -> AT expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    COMMENT_IL      reduce using rule 45 (indirecto3 -> AT expression .)
+    NEWLINE         reduce using rule 45 (indirecto3 -> AT expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+    OR_G            shift and go to state 98
+    AND_G           shift and go to state 99
+
+
+state 101
+
+    (46) inmediato3 -> SHARP expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    COMMENT_IL      reduce using rule 46 (inmediato3 -> SHARP expression .)
+    NEWLINE         reduce using rule 46 (inmediato3 -> SHARP expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+    OR_G            shift and go to state 98
+    AND_G           shift and go to state 99
+
+
+state 102
+
+    (70) expression -> MINUS expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 70 (expression -> MINUS expression .)
+    MINUS           reduce using rule 70 (expression -> MINUS expression .)
+    MULTIPLY        reduce using rule 70 (expression -> MINUS expression .)
+    DIVIDE          reduce using rule 70 (expression -> MINUS expression .)
+    MOD             reduce using rule 70 (expression -> MINUS expression .)
+    LESST           reduce using rule 70 (expression -> MINUS expression .)
+    MORET           reduce using rule 70 (expression -> MINUS expression .)
+    LESSEQ          reduce using rule 70 (expression -> MINUS expression .)
+    MOREEQ          reduce using rule 70 (expression -> MINUS expression .)
+    OR_G            reduce using rule 70 (expression -> MINUS expression .)
+    AND_G           reduce using rule 70 (expression -> MINUS expression .)
+    COMA            reduce using rule 70 (expression -> MINUS expression .)
+    COMMENT_IL      reduce using rule 70 (expression -> MINUS expression .)
+    NEWLINE         reduce using rule 70 (expression -> MINUS expression .)
+    RPARENT         reduce using rule 70 (expression -> MINUS expression .)
+
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! MULTIPLY        [ shift and go to state 91 ]
+  ! DIVIDE          [ shift and go to state 92 ]
+  ! MOD             [ shift and go to state 93 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 103
+
+    (71) expression -> FACTORIAL expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 71 (expression -> FACTORIAL expression .)
+    MINUS           reduce using rule 71 (expression -> FACTORIAL expression .)
+    MULTIPLY        reduce using rule 71 (expression -> FACTORIAL expression .)
+    DIVIDE          reduce using rule 71 (expression -> FACTORIAL expression .)
+    MOD             reduce using rule 71 (expression -> FACTORIAL expression .)
+    LESST           reduce using rule 71 (expression -> FACTORIAL expression .)
+    MORET           reduce using rule 71 (expression -> FACTORIAL expression .)
+    LESSEQ          reduce using rule 71 (expression -> FACTORIAL expression .)
+    MOREEQ          reduce using rule 71 (expression -> FACTORIAL expression .)
+    OR_G            reduce using rule 71 (expression -> FACTORIAL expression .)
+    AND_G           reduce using rule 71 (expression -> FACTORIAL expression .)
+    COMA            reduce using rule 71 (expression -> FACTORIAL expression .)
+    COMMENT_IL      reduce using rule 71 (expression -> FACTORIAL expression .)
+    NEWLINE         reduce using rule 71 (expression -> FACTORIAL expression .)
+    RPARENT         reduce using rule 71 (expression -> FACTORIAL expression .)
+
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! MULTIPLY        [ shift and go to state 91 ]
+  ! DIVIDE          [ shift and go to state 92 ]
+  ! MOD             [ shift and go to state 93 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 104
+
+    (83) expression -> NAME EQUALS . expression
+    (70) expression -> . MINUS expression
+    (71) expression -> . FACTORIAL expression
+    (72) expression -> . expression PLUS expression
+    (73) expression -> . expression MINUS expression
+    (74) expression -> . expression MULTIPLY expression
+    (75) expression -> . expression DIVIDE expression
+    (76) expression -> . expression MOD expression
+    (77) expression -> . expression LESST expression
+    (78) expression -> . expression MORET expression
+    (79) expression -> . expression LESSEQ expression
+    (80) expression -> . expression MOREEQ expression
+    (81) expression -> . expression OR_G expression
+    (82) expression -> . expression AND_G expression
+    (83) expression -> . NAME EQUALS expression
+    (85) expression -> . INT
+    (86) expression -> . HEX_INT
+    (87) expression -> . var
+    (88) expression -> . LPARENT expression RPARENT
+    (84) var -> . NAME
+
+    MINUS           shift and go to state 65
+    FACTORIAL       shift and go to state 66
+    NAME            shift and go to state 67
+    INT             shift and go to state 68
+    HEX_INT         shift and go to state 69
+    LPARENT         shift and go to state 71
+
+    expression                     shift and go to state 122
+    var                            shift and go to state 70
+
+state 105
+
+    (88) expression -> LPARENT expression . RPARENT
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    RPARENT         shift and go to state 123
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+    OR_G            shift and go to state 98
+    AND_G           shift and go to state 99
+
+
+state 106
+
+    (22) f2 -> CODOP2 REG COMA . REG
+    (27) f2 -> CODOP2 REG COMA . error
+
+    REG             shift and go to state 124
+    error           shift and go to state 125
+
+
+state 107
+
+    (26) f2 -> CODOP2 error COMA . REG
+    (28) f2 -> CODOP2 error COMA . error
+
+    REG             shift and go to state 127
+    error           shift and go to state 126
+
+
+state 108
+
+    (23) f2 -> CODOP2_R_N REG COMA . INT
+    (30) f2 -> CODOP2_R_N REG COMA . error
+
+    INT             shift and go to state 128
+    error           shift and go to state 129
+
+
+state 109
+
+    (31) f2 -> CODOP2_R_N error COMA . INT
+
+    INT             shift and go to state 130
+
+
+state 110
+
+    (44) indexado3 -> simple3 COMA REG .
+
+    COMMENT_IL      reduce using rule 44 (indexado3 -> simple3 COMA REG .)
+    NEWLINE         reduce using rule 44 (indexado3 -> simple3 COMA REG .)
+
+
+state 111
+
+    (72) expression -> expression PLUS expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 72 (expression -> expression PLUS expression .)
+    MINUS           reduce using rule 72 (expression -> expression PLUS expression .)
+    LESST           reduce using rule 72 (expression -> expression PLUS expression .)
+    MORET           reduce using rule 72 (expression -> expression PLUS expression .)
+    LESSEQ          reduce using rule 72 (expression -> expression PLUS expression .)
+    MOREEQ          reduce using rule 72 (expression -> expression PLUS expression .)
+    OR_G            reduce using rule 72 (expression -> expression PLUS expression .)
+    AND_G           reduce using rule 72 (expression -> expression PLUS expression .)
+    COMA            reduce using rule 72 (expression -> expression PLUS expression .)
+    COMMENT_IL      reduce using rule 72 (expression -> expression PLUS expression .)
+    NEWLINE         reduce using rule 72 (expression -> expression PLUS expression .)
+    RPARENT         reduce using rule 72 (expression -> expression PLUS expression .)
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! MULTIPLY        [ reduce using rule 72 (expression -> expression PLUS expression .) ]
+  ! DIVIDE          [ reduce using rule 72 (expression -> expression PLUS expression .) ]
+  ! MOD             [ reduce using rule 72 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 112
+
+    (73) expression -> expression MINUS expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 73 (expression -> expression MINUS expression .)
+    MINUS           reduce using rule 73 (expression -> expression MINUS expression .)
+    LESST           reduce using rule 73 (expression -> expression MINUS expression .)
+    MORET           reduce using rule 73 (expression -> expression MINUS expression .)
+    LESSEQ          reduce using rule 73 (expression -> expression MINUS expression .)
+    MOREEQ          reduce using rule 73 (expression -> expression MINUS expression .)
+    OR_G            reduce using rule 73 (expression -> expression MINUS expression .)
+    AND_G           reduce using rule 73 (expression -> expression MINUS expression .)
+    COMA            reduce using rule 73 (expression -> expression MINUS expression .)
+    COMMENT_IL      reduce using rule 73 (expression -> expression MINUS expression .)
+    NEWLINE         reduce using rule 73 (expression -> expression MINUS expression .)
+    RPARENT         reduce using rule 73 (expression -> expression MINUS expression .)
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! MULTIPLY        [ reduce using rule 73 (expression -> expression MINUS expression .) ]
+  ! DIVIDE          [ reduce using rule 73 (expression -> expression MINUS expression .) ]
+  ! MOD             [ reduce using rule 73 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 113
+
+    (74) expression -> expression MULTIPLY expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    MINUS           reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    MULTIPLY        reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    DIVIDE          reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    MOD             reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    LESST           reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    MORET           reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    LESSEQ          reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    MOREEQ          reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    OR_G            reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    AND_G           reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    COMA            reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    COMMENT_IL      reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    NEWLINE         reduce using rule 74 (expression -> expression MULTIPLY expression .)
+    RPARENT         reduce using rule 74 (expression -> expression MULTIPLY expression .)
+
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! MULTIPLY        [ shift and go to state 91 ]
+  ! DIVIDE          [ shift and go to state 92 ]
+  ! MOD             [ shift and go to state 93 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 114
+
+    (75) expression -> expression DIVIDE expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 75 (expression -> expression DIVIDE expression .)
+    MINUS           reduce using rule 75 (expression -> expression DIVIDE expression .)
+    MULTIPLY        reduce using rule 75 (expression -> expression DIVIDE expression .)
+    DIVIDE          reduce using rule 75 (expression -> expression DIVIDE expression .)
+    MOD             reduce using rule 75 (expression -> expression DIVIDE expression .)
+    LESST           reduce using rule 75 (expression -> expression DIVIDE expression .)
+    MORET           reduce using rule 75 (expression -> expression DIVIDE expression .)
+    LESSEQ          reduce using rule 75 (expression -> expression DIVIDE expression .)
+    MOREEQ          reduce using rule 75 (expression -> expression DIVIDE expression .)
+    OR_G            reduce using rule 75 (expression -> expression DIVIDE expression .)
+    AND_G           reduce using rule 75 (expression -> expression DIVIDE expression .)
+    COMA            reduce using rule 75 (expression -> expression DIVIDE expression .)
+    COMMENT_IL      reduce using rule 75 (expression -> expression DIVIDE expression .)
+    NEWLINE         reduce using rule 75 (expression -> expression DIVIDE expression .)
+    RPARENT         reduce using rule 75 (expression -> expression DIVIDE expression .)
+
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! MULTIPLY        [ shift and go to state 91 ]
+  ! DIVIDE          [ shift and go to state 92 ]
+  ! MOD             [ shift and go to state 93 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 115
+
+    (76) expression -> expression MOD expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    PLUS            reduce using rule 76 (expression -> expression MOD expression .)
+    MINUS           reduce using rule 76 (expression -> expression MOD expression .)
+    MULTIPLY        reduce using rule 76 (expression -> expression MOD expression .)
+    DIVIDE          reduce using rule 76 (expression -> expression MOD expression .)
+    MOD             reduce using rule 76 (expression -> expression MOD expression .)
+    LESST           reduce using rule 76 (expression -> expression MOD expression .)
+    MORET           reduce using rule 76 (expression -> expression MOD expression .)
+    LESSEQ          reduce using rule 76 (expression -> expression MOD expression .)
+    MOREEQ          reduce using rule 76 (expression -> expression MOD expression .)
+    OR_G            reduce using rule 76 (expression -> expression MOD expression .)
+    AND_G           reduce using rule 76 (expression -> expression MOD expression .)
+    COMA            reduce using rule 76 (expression -> expression MOD expression .)
+    COMMENT_IL      reduce using rule 76 (expression -> expression MOD expression .)
+    NEWLINE         reduce using rule 76 (expression -> expression MOD expression .)
+    RPARENT         reduce using rule 76 (expression -> expression MOD expression .)
+
+  ! PLUS            [ shift and go to state 89 ]
+  ! MINUS           [ shift and go to state 90 ]
+  ! MULTIPLY        [ shift and go to state 91 ]
+  ! DIVIDE          [ shift and go to state 92 ]
+  ! MOD             [ shift and go to state 93 ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 116
+
+    (77) expression -> expression LESST expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    LESST           reduce using rule 77 (expression -> expression LESST expression .)
+    MORET           reduce using rule 77 (expression -> expression LESST expression .)
+    LESSEQ          reduce using rule 77 (expression -> expression LESST expression .)
+    MOREEQ          reduce using rule 77 (expression -> expression LESST expression .)
+    OR_G            reduce using rule 77 (expression -> expression LESST expression .)
+    AND_G           reduce using rule 77 (expression -> expression LESST expression .)
+    COMA            reduce using rule 77 (expression -> expression LESST expression .)
+    COMMENT_IL      reduce using rule 77 (expression -> expression LESST expression .)
+    NEWLINE         reduce using rule 77 (expression -> expression LESST expression .)
+    RPARENT         reduce using rule 77 (expression -> expression LESST expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! PLUS            [ reduce using rule 77 (expression -> expression LESST expression .) ]
+  ! MINUS           [ reduce using rule 77 (expression -> expression LESST expression .) ]
+  ! MULTIPLY        [ reduce using rule 77 (expression -> expression LESST expression .) ]
+  ! DIVIDE          [ reduce using rule 77 (expression -> expression LESST expression .) ]
+  ! MOD             [ reduce using rule 77 (expression -> expression LESST expression .) ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 117
+
+    (78) expression -> expression MORET expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    LESST           reduce using rule 78 (expression -> expression MORET expression .)
+    MORET           reduce using rule 78 (expression -> expression MORET expression .)
+    LESSEQ          reduce using rule 78 (expression -> expression MORET expression .)
+    MOREEQ          reduce using rule 78 (expression -> expression MORET expression .)
+    OR_G            reduce using rule 78 (expression -> expression MORET expression .)
+    AND_G           reduce using rule 78 (expression -> expression MORET expression .)
+    COMA            reduce using rule 78 (expression -> expression MORET expression .)
+    COMMENT_IL      reduce using rule 78 (expression -> expression MORET expression .)
+    NEWLINE         reduce using rule 78 (expression -> expression MORET expression .)
+    RPARENT         reduce using rule 78 (expression -> expression MORET expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! PLUS            [ reduce using rule 78 (expression -> expression MORET expression .) ]
+  ! MINUS           [ reduce using rule 78 (expression -> expression MORET expression .) ]
+  ! MULTIPLY        [ reduce using rule 78 (expression -> expression MORET expression .) ]
+  ! DIVIDE          [ reduce using rule 78 (expression -> expression MORET expression .) ]
+  ! MOD             [ reduce using rule 78 (expression -> expression MORET expression .) ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 118
+
+    (79) expression -> expression LESSEQ expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    LESST           reduce using rule 79 (expression -> expression LESSEQ expression .)
+    MORET           reduce using rule 79 (expression -> expression LESSEQ expression .)
+    LESSEQ          reduce using rule 79 (expression -> expression LESSEQ expression .)
+    MOREEQ          reduce using rule 79 (expression -> expression LESSEQ expression .)
+    OR_G            reduce using rule 79 (expression -> expression LESSEQ expression .)
+    AND_G           reduce using rule 79 (expression -> expression LESSEQ expression .)
+    COMA            reduce using rule 79 (expression -> expression LESSEQ expression .)
+    COMMENT_IL      reduce using rule 79 (expression -> expression LESSEQ expression .)
+    NEWLINE         reduce using rule 79 (expression -> expression LESSEQ expression .)
+    RPARENT         reduce using rule 79 (expression -> expression LESSEQ expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! PLUS            [ reduce using rule 79 (expression -> expression LESSEQ expression .) ]
+  ! MINUS           [ reduce using rule 79 (expression -> expression LESSEQ expression .) ]
+  ! MULTIPLY        [ reduce using rule 79 (expression -> expression LESSEQ expression .) ]
+  ! DIVIDE          [ reduce using rule 79 (expression -> expression LESSEQ expression .) ]
+  ! MOD             [ reduce using rule 79 (expression -> expression LESSEQ expression .) ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 119
+
+    (80) expression -> expression MOREEQ expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    LESST           reduce using rule 80 (expression -> expression MOREEQ expression .)
+    MORET           reduce using rule 80 (expression -> expression MOREEQ expression .)
+    LESSEQ          reduce using rule 80 (expression -> expression MOREEQ expression .)
+    MOREEQ          reduce using rule 80 (expression -> expression MOREEQ expression .)
+    OR_G            reduce using rule 80 (expression -> expression MOREEQ expression .)
+    AND_G           reduce using rule 80 (expression -> expression MOREEQ expression .)
+    COMA            reduce using rule 80 (expression -> expression MOREEQ expression .)
+    COMMENT_IL      reduce using rule 80 (expression -> expression MOREEQ expression .)
+    NEWLINE         reduce using rule 80 (expression -> expression MOREEQ expression .)
+    RPARENT         reduce using rule 80 (expression -> expression MOREEQ expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+
+  ! PLUS            [ reduce using rule 80 (expression -> expression MOREEQ expression .) ]
+  ! MINUS           [ reduce using rule 80 (expression -> expression MOREEQ expression .) ]
+  ! MULTIPLY        [ reduce using rule 80 (expression -> expression MOREEQ expression .) ]
+  ! DIVIDE          [ reduce using rule 80 (expression -> expression MOREEQ expression .) ]
+  ! MOD             [ reduce using rule 80 (expression -> expression MOREEQ expression .) ]
+  ! LESST           [ shift and go to state 94 ]
+  ! MORET           [ shift and go to state 95 ]
+  ! LESSEQ          [ shift and go to state 96 ]
+  ! MOREEQ          [ shift and go to state 97 ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 120
+
+    (81) expression -> expression OR_G expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    OR_G            reduce using rule 81 (expression -> expression OR_G expression .)
+    AND_G           reduce using rule 81 (expression -> expression OR_G expression .)
+    COMA            reduce using rule 81 (expression -> expression OR_G expression .)
+    COMMENT_IL      reduce using rule 81 (expression -> expression OR_G expression .)
+    NEWLINE         reduce using rule 81 (expression -> expression OR_G expression .)
+    RPARENT         reduce using rule 81 (expression -> expression OR_G expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+
+  ! PLUS            [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! MINUS           [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! MULTIPLY        [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! DIVIDE          [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! MOD             [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! LESST           [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! MORET           [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! LESSEQ          [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! MOREEQ          [ reduce using rule 81 (expression -> expression OR_G expression .) ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 121
+
+    (82) expression -> expression AND_G expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+    OR_G            reduce using rule 82 (expression -> expression AND_G expression .)
+    AND_G           reduce using rule 82 (expression -> expression AND_G expression .)
+    COMA            reduce using rule 82 (expression -> expression AND_G expression .)
+    COMMENT_IL      reduce using rule 82 (expression -> expression AND_G expression .)
+    NEWLINE         reduce using rule 82 (expression -> expression AND_G expression .)
+    RPARENT         reduce using rule 82 (expression -> expression AND_G expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+
+  ! PLUS            [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! MINUS           [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! MULTIPLY        [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! DIVIDE          [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! MOD             [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! LESST           [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! MORET           [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! LESSEQ          [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! MOREEQ          [ reduce using rule 82 (expression -> expression AND_G expression .) ]
+  ! OR_G            [ shift and go to state 98 ]
+  ! AND_G           [ shift and go to state 99 ]
+
+
+state 122
+
+    (83) expression -> NAME EQUALS expression .
+    (72) expression -> expression . PLUS expression
+    (73) expression -> expression . MINUS expression
+    (74) expression -> expression . MULTIPLY expression
+    (75) expression -> expression . DIVIDE expression
+    (76) expression -> expression . MOD expression
+    (77) expression -> expression . LESST expression
+    (78) expression -> expression . MORET expression
+    (79) expression -> expression . LESSEQ expression
+    (80) expression -> expression . MOREEQ expression
+    (81) expression -> expression . OR_G expression
+    (82) expression -> expression . AND_G expression
+
+  ! shift/reduce conflict for PLUS resolved as shift
+  ! shift/reduce conflict for MINUS resolved as shift
+  ! shift/reduce conflict for MULTIPLY resolved as shift
+  ! shift/reduce conflict for DIVIDE resolved as shift
+  ! shift/reduce conflict for MOD resolved as shift
+  ! shift/reduce conflict for LESST resolved as shift
+  ! shift/reduce conflict for MORET resolved as shift
+  ! shift/reduce conflict for LESSEQ resolved as shift
+  ! shift/reduce conflict for MOREEQ resolved as shift
+  ! shift/reduce conflict for OR_G resolved as shift
+  ! shift/reduce conflict for AND_G resolved as shift
+    COMA            reduce using rule 83 (expression -> NAME EQUALS expression .)
+    COMMENT_IL      reduce using rule 83 (expression -> NAME EQUALS expression .)
+    NEWLINE         reduce using rule 83 (expression -> NAME EQUALS expression .)
+    RPARENT         reduce using rule 83 (expression -> NAME EQUALS expression .)
+    PLUS            shift and go to state 89
+    MINUS           shift and go to state 90
+    MULTIPLY        shift and go to state 91
+    DIVIDE          shift and go to state 92
+    MOD             shift and go to state 93
+    LESST           shift and go to state 94
+    MORET           shift and go to state 95
+    LESSEQ          shift and go to state 96
+    MOREEQ          shift and go to state 97
+    OR_G            shift and go to state 98
+    AND_G           shift and go to state 99
+
+  ! PLUS            [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! MINUS           [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! MULTIPLY        [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! DIVIDE          [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! MOD             [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! LESST           [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! MORET           [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! LESSEQ          [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! MOREEQ          [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! OR_G            [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+  ! AND_G           [ reduce using rule 83 (expression -> NAME EQUALS expression .) ]
+
+
+state 123
+
+    (88) expression -> LPARENT expression RPARENT .
+
+    PLUS            reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    MINUS           reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    MULTIPLY        reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    DIVIDE          reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    MOD             reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    LESST           reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    MORET           reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    LESSEQ          reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    MOREEQ          reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    OR_G            reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    AND_G           reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    COMA            reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    COMMENT_IL      reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    NEWLINE         reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+    RPARENT         reduce using rule 88 (expression -> LPARENT expression RPARENT .)
+
+
+state 124
+
+    (22) f2 -> CODOP2 REG COMA REG .
+
+    COMMENT_IL      reduce using rule 22 (f2 -> CODOP2 REG COMA REG .)
+    NEWLINE         reduce using rule 22 (f2 -> CODOP2 REG COMA REG .)
+
+
+state 125
+
+    (27) f2 -> CODOP2 REG COMA error .
+
+    COMMENT_IL      reduce using rule 27 (f2 -> CODOP2 REG COMA error .)
+    NEWLINE         reduce using rule 27 (f2 -> CODOP2 REG COMA error .)
+
+
+state 126
+
+    (28) f2 -> CODOP2 error COMA error .
+
+    COMMENT_IL      reduce using rule 28 (f2 -> CODOP2 error COMA error .)
+    NEWLINE         reduce using rule 28 (f2 -> CODOP2 error COMA error .)
+
+
+state 127
+
+    (26) f2 -> CODOP2 error COMA REG .
+
+    COMMENT_IL      reduce using rule 26 (f2 -> CODOP2 error COMA REG .)
+    NEWLINE         reduce using rule 26 (f2 -> CODOP2 error COMA REG .)
+
+
+state 128
+
+    (23) f2 -> CODOP2_R_N REG COMA INT .
+
+    COMMENT_IL      reduce using rule 23 (f2 -> CODOP2_R_N REG COMA INT .)
+    NEWLINE         reduce using rule 23 (f2 -> CODOP2_R_N REG COMA INT .)
+
+
+state 129
+
+    (30) f2 -> CODOP2_R_N REG COMA error .
+
+    COMMENT_IL      reduce using rule 30 (f2 -> CODOP2_R_N REG COMA error .)
+    NEWLINE         reduce using rule 30 (f2 -> CODOP2_R_N REG COMA error .)
+
+
+state 130
+
+    (31) f2 -> CODOP2_R_N error COMA INT .
+
+    COMMENT_IL      reduce using rule 31 (f2 -> CODOP2_R_N error COMA INT .)
+    NEWLINE         reduce using rule 31 (f2 -> CODOP2_R_N error COMA INT .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for NAME in state 0 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 3 resolved as shift
+WARNING: shift/reduce conflict for BYTE in state 14 resolved as shift
+WARNING: shift/reduce conflict for WORD in state 14 resolved as shift
+WARNING: shift/reduce conflict for RESB in state 14 resolved as shift
+WARNING: shift/reduce conflict for BYTE in state 29 resolved as shift
+WARNING: shift/reduce conflict for WORD in state 29 resolved as shift
+WARNING: shift/reduce conflict for RESB in state 29 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 33 resolved as shift
+WARNING: shift/reduce conflict for C_TEXT in state 52 resolved as shift
+WARNING: shift/reduce conflict for X_HEX in state 52 resolved as shift
+WARNING: shift/reduce conflict for INT in state 53 resolved as shift
+WARNING: shift/reduce conflict for HEX_INT in state 53 resolved as shift
+WARNING: shift/reduce conflict for INT in state 54 resolved as shift
+WARNING: shift/reduce conflict for HEX_INT in state 54 resolved as shift
+WARNING: shift/reduce conflict for NAME in state 56 resolved as shift
+WARNING: shift/reduce conflict for PLUS in state 122 resolved as shift
+WARNING: shift/reduce conflict for MINUS in state 122 resolved as shift
+WARNING: shift/reduce conflict for MULTIPLY in state 122 resolved as shift
+WARNING: shift/reduce conflict for DIVIDE in state 122 resolved as shift
+WARNING: shift/reduce conflict for MOD in state 122 resolved as shift
+WARNING: shift/reduce conflict for LESST in state 122 resolved as shift
+WARNING: shift/reduce conflict for MORET in state 122 resolved as shift
+WARNING: shift/reduce conflict for LESSEQ in state 122 resolved as shift
+WARNING: shift/reduce conflict for MOREEQ in state 122 resolved as shift
+WARNING: shift/reduce conflict for OR_G in state 122 resolved as shift
+WARNING: shift/reduce conflict for AND_G in state 122 resolved as shift
+WARNING: reduce/reduce conflict in state 2 resolved using rule (sicxe_file -> programa)
+WARNING: rejected rule (empty -> <empty>) in state 2
+WARNING: reduce/reduce conflict in state 5 resolved using rule (empty -> empty)
+WARNING: rejected rule (empty_nl -> empty) in state 5
+WARNING: reduce/reduce conflict in state 10 resolved using rule (sicxe_file -> programa empty_nl)
+WARNING: rejected rule (empty_nl -> empty_nl) in state 10
+WARNING: reduce/reduce conflict in state 11 resolved using rule (sicxe_file -> empty_nl programa)
+WARNING: rejected rule (empty -> <empty>) in state 11
+WARNING: reduce/reduce conflict in state 16 resolved using rule (f_column -> empty)
+WARNING: rejected rule (empty -> empty) in state 16
+WARNING: reduce/reduce conflict in state 18 resolved using rule (sicxe_file -> empty_nl programa empty_nl)
+WARNING: rejected rule (empty_nl -> empty_nl) in state 18
+WARNING: reduce/reduce conflict in state 48 resolved using rule (il_comment -> empty)
+WARNING: rejected rule (empty -> empty) in state 48
+WARNING: Rule (empty_nl -> empty) is never reduced
+WARNING: Rule (empty_nl -> empty_nl) is never reduced
