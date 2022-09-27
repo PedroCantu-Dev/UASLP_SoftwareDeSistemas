@@ -265,7 +265,7 @@ def t_error(t):
     t.lexer.skip(1)
 
 
-ejerFinal = '''
+ejerFinal_OG = '''
  EJERCFINAL  START   0H
 SIO
             +LDX    @TABLA
@@ -293,13 +293,27 @@ AREA        RESB	64
             +TIX	TABLA,X
             END     INICIO'''
 
+ejerFinal = '''
+ EJERCFINAL  START   0H
+SIO
+            +LDX    @TABLA
+VALOR	    WORD    140
+	   	    BASE    CAD
+TABLA  	    RESW	20
+    	    +LDS	VALOR, X
+	   	    SHIFTL	S,6
+SIMBOLO     LDD		#VALOR
+	        +LDA	1010H ,X
+CAD	        BYTE	C'FINAL'
+            END     INICIO'''
+
 lexer = lex.lex()
-lexer.input(ejerFinal)
-while True:
-    tok = lexer.token()
-    if not tok:
-        break
-    print(tok)
+# lexer.input(ejerFinal)
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
 
 ###########################
 # definicion del parser
@@ -308,16 +322,16 @@ while True:
 
 precedence = (
     ('left', 'NEWLINE'),
+    ('right', 'NUM'),
+    ('left', 'NAME'),
+    ('left', 'CODOP'),
+    ('left', 'REG'),
+    ('right', 'AT', 'SHARP'),
     ('left', 'OR_G', 'AND_G'),
     ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'MULTIPLY', 'DIVIDE', 'MOD'),
     ('right', 'UMINUS', 'EXTENDED', 'FACTORIAL'),
-    ('right', 'AT', 'SHARP', 'EXTENDED'),
-    ('right', 'NUM'),
-    ('left', 'NAME'),
-    ('left', 'CODOP'),
-    ('left', 'REG'),
 )
 
 
@@ -360,19 +374,6 @@ def p_proposiciones(p):
     | proposiciones linea"""
 
 
-def p_linea(p):
-    """linea : f_column line_core il_comment NEWLINE"""
-
-
-def p_first_column(p):
-    """f_column : etiqueta
-    | empty"""
-
-
-def p_line_core(p):
-    """line_core : instruccion
-    | directiva"""
-
 # c indica una constante entre 0 y 4095
 # m indica una direccion de memoria o un valor mayor que 4095
 
@@ -411,25 +412,23 @@ def p_f2_error_(p):
     | CODOP2_R_N error COMA INT"""
 
 
+def p_f3_error_operando(p):
+    """f3 : CODOP3 error
+    | RSUB error"""
+
+
 def p_f3(p):
     """f3 : CODOP3 simple3
     | CODOP3 indexado3
     | CODOP3 indirecto3
     | CODOP3 inmediato3
     | RSUB
+    | error simple3
+    | error indexado3
+    | error indirecto3
+    | error inmediato3
     """
-
-
-# def p_f3_error_codop(p):
-#     """f3_error_codop : error simple3
-#     | error indexado3
-#     | error indirecto3
-#     | error inmediato3"""
-
-
-# def p_f3_error_operando(p):
-#     """f3_error_operando : CODOP3 error
-#     | RSUB error"""
+    {}
 
 
 def p_simple3(p):
@@ -478,19 +477,37 @@ def p_int_type(p):
     """
 
 
+def p_line_core_error(p):
+    """linea : f_column error il_comment NEWLINE"""
+
+
+def p_linea(p):
+    """linea : f_column line_core il_comment NEWLINE"""
+
+
+def p_first_column(p):
+    """f_column : etiqueta
+    | empty"""
+
+
+def p_line_core(p):
+    """line_core : instruccion
+    | directiva"""
+
+
 def p_il_comment(p):
     """il_comment : COMMENT_IL
     | empty"""
 
 
+def p_etiqueta(p):
+    """etiqueta : NAME """
+    p[0] = p[1]
+
+
 def p_empty(p):
     """empty :
     | empty"""
-
-
-def p_error(p):
-    print("syntax error en el token: " + p.type +
-          "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
 
 
 def p_empty_nl(p):
@@ -504,9 +521,20 @@ def p_empty_nl(p):
 #     | NEWLINE"""
 
 
-def p_etiqueta(p):
-    """etiqueta : NAME """
-    p[0] = p[1]
+######
+# Definiendo que se hace en cada error
+
+
+def p_error(p):
+    if p:
+        print("syntax error en el token: " + p.type +
+              "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
+
+        # Just discard the token and tell the parser it's okay.
+        parser.errok()
+    else:
+        print("Syntax error at EOF")
+
 
 ##########################################
 # La parte de la calculadora de expresiones
