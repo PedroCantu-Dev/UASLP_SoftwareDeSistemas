@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+#para que no diga los cambios que se hacen al generar el parser
+**/parsetab.py
+*/*.out 
