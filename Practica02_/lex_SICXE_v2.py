@@ -108,12 +108,15 @@ tokens = [
     'FINL',
     'COMA',
     'REG',
-    'REG_X',
+    # 'REG_X',
     'COMMENT_ML',
     'COMMENT_IL',
     'CODOP',
     'CODOP1',
-    'CODOP2',
+    'CODOP2',  # por default será del tipo r1, r2 (CODOP_R_R)
+    'CODOP2_R_N',
+    'CODOP2_R',
+    'CODOP2_N',
     'CODOP3',
     'NAME',
     'DIRECTIV',
@@ -194,18 +197,20 @@ def t_X_HEX(t):
 
 def t_NAME(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    if(t.value in SICXE_Dictionary_Directives or t.value == 'RSUB'):
-        t.type = t.value
-    elif(t.value in SICXE_Dictionary_CodOp):
-        if(t.value == 'RSUB' or t.value == 'SHIFTL' or t.value == 'SHIFTR' or t.value == 'TIXR' or t.value == 'CLEAR'):
-            t.type = t.value
+    tDotValue = t.value
+    if tDotValue in SICXE_Dictionary_Directives or tDotValue == 'RSUB':
+        t.type = tDotValue
+    elif tDotValue in SICXE_Dictionary_CodOp:
+        if tDotValue == 'RSUB':
+            t.type = tDotValue
+        elif tDotValue == 'SHIFTL' or tDotValue == 'SHIFTR':
+            t.type = 'CODOP2_R_N'
+        elif tDotValue == 'TIXR' or tDotValue == 'CLEAR':
+            t.type = 'CODOP2_R'
         else:
-            t.type = 'CODOP' + str(SICXE_Dictionary_CodOp[t.value][1])
-    elif(t.value in SIXE_Registers):
-        if(t.value == 'X'):
-            t.type = 'REG_X'
-        else:
-            t.type = 'REG'
+            t.type = 'CODOP' + str(SICXE_Dictionary_CodOp[tDotValue][1])
+    elif(tDotValue in SIXE_Registers):
+        t.type = 'REG'
     else:
         t.type = 'NAME'
     return t
@@ -283,11 +288,11 @@ SALTO       ADD		VALOR,X
 AREA        RESB	64
 	        STA		SALTO
 	        +SUB	350
-	        J		CADENA, X /*esto es un comentario 
-            
-            
-            como la vez*/ 
-            +TIX	TABLA,X 
+	        J		CADENA, X /*esto es un comentario
+
+
+            como la vez*/
+            +TIX	TABLA,X
             END     INICIO'''
 
 lexer = lex.lex()
@@ -357,76 +362,75 @@ def p_line_core(p):
     """line_core : instruccion
     | directiva"""
 
-
-def p_instruccion(p):
-    """instruccion : CODOP1
-    | CODOP2 REG 
-    """
-
-
-def p_f1(p):
-    """
-    CODOP1
-    """
-
-
-def p_f2(p):
-    """"""
-
-
-def p_f3(p):
-    """"""
-
-
-def p_f4(p):
-    """"""
-
-
-def p_directiva(p):
-    """
-    """
-
-# c indica una constante entre 0 y 4095
+    # c indica una constante entre 0 y 4095
 # m indica una direccion de memoria o un valor mayor que 4095
 
 
 def p_third_column(p):
-    """t_column : indexado3
-    | simple3
-    | indirecto3
-    | inmediato3"""
+    """t_column: """
 
 
-def p_simple3_indexado3(p):
-    """indexado3 : simple3 COMA REG_X"""
-
-
-def simple3(p):
-    """simple3 : expression"""
-
-
-def indirecto3(p):
-    """indirecto3 : AT expression"""
-
-
-def inmediato3(p):
-    """inmediato3 : SHARP expression"""
-
-
-def p_opformato(p):
-    """opformato : f4
+def p_instruccion(p):
+    """instruccion : f4
     | f3
     | f2
     | f1"""
     p[0] = p[1]
 
 
-def p_third_column(p):
-    """t_column : """
+def p_f1(p):
+    """f1 : CODOP1
+    """
+
+# nota: cuando se tiene un codop f2
+# que requiera solo un registro , este se puede omitir
+# y por default se le dara el valor 0
+
+
+def p_f2(p):
+    """f2 : CODOP2 REG COMA REG
+    | CODOP2_R_N REG COMA INT
+    | CODOP2_R REG
+    | CODOP2_R
+    """
+
+
+def p_f3(p):
+    """f3 : CODOP3 simple3
+    | CODOP3 indexado3
+    | CODOP3 indirecto3
+    | CODOP3 inmediato3
+    """
+
+
+def simple3(p):
+    """simple3: expression"""
+
+
+def p_simple3_indexado3(p):
+    """indexado3: simple3 COMA REG_X"""
+
+
+def indirecto3(p):
+    """indirecto3: AT expression"""
+
+
+def inmediato3(p):
+    """inmediato3: SHARP expression"""
+
+
+def p_f4(p):
+    """f4 : PLUS f3 %prec EXTENDED"""
+    p[0] = ('f4', p[1], p[2])
+
+
+def p_directiva(p):
+    """
+    """
 
 
 def p_tipodirectiva(p):
-    """tipodirectiva : BYTE
+    """tipodirectiva: BYTE
     | WORD
     | RESB
     | RESW
@@ -435,24 +439,24 @@ def p_tipodirectiva(p):
 
 
 def p_il_comment(p):
-    """il_comment : COMMENT_IL
+    """il_comment: COMMENT_IL
     | empty"""
 
 
 def empty(p):
-    """empty : 
+    """empty:
     | empty
     | """
 
 
 def empty_nl(p):
-    """ empty_nl : empty
+    """ empty_nl: empty
     | NEWLINE
     | empty_nl"""
 
 
 def empty_single_nl(p):
-    """ empty_single_nl : empty
+    """ empty_single_nl: empty
     | NEWLINE
     |"""
 
