@@ -267,7 +267,7 @@ def t_error(t):
 
 ejerFinal = '''
  EJERCFINAL  START   0H
-            SIO
+SIO
             +LDX    @TABLA
 VALOR	    WORD    140
 	   	    BASE    CAD
@@ -420,16 +420,16 @@ def p_f3(p):
     """
 
 
-def p_f3_error_codop(p):
-    """f3_error_codop : error simple3
-    | error indexado3
-    | error indirecto3
-    | error inmediato3"""
+# def p_f3_error_codop(p):
+#     """f3_error_codop : error simple3
+#     | error indexado3
+#     | error indirecto3
+#     | error inmediato3"""
 
 
-def p_f3_error_operando(p):
-    """f3_error_operando : CODOP3 error
-    | RSUB error"""
+# def p_f3_error_operando(p):
+#     """f3_error_operando : CODOP3 error
+#     | RSUB error"""
 
 
 def p_simple3(p):
@@ -454,20 +454,21 @@ def p_f4(p):
 
 
 def p_directiva(p):
-    """directiva : empty BYTE C_TEXT
-    | empty BYTE X_HEX
-    | empty WORD int_type
-    | empty RESB int_type
+    """directiva : BYTE C_TEXT
+    | BYTE X_HEX
+    | WORD int_type
+    | RESB int_type
     | BASE etiqueta
     """
 
 
-def p_directiva_empty(p):
-    """directiva :  BYTE empty C_TEXT
-    | BYTE empty X_HEX
-    | WORD empty int_type
-    | RESB empty int_type
-    | BASE empty etiqueta
+def p_directiva(p):
+    """directiva :  BYTE C_TEXT
+    | BYTE X_HEX
+    | WORD int_type
+    | RESB int_type
+    | RESW  int_type
+    | BASE etiqueta
     """
 
 
@@ -487,15 +488,20 @@ def p_empty(p):
     | empty"""
 
 
+def p_error(p):
+    print("syntax error en el token: " + p.type +
+          "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
+
+
 def p_empty_nl(p):
     """ empty_nl : empty
     | NEWLINE
     | empty_nl"""
 
 
-def p_empty_single_nl(p):
-    """ empty_single_nl : empty
-    | NEWLINE"""
+# def p_empty_single_nl(p):
+#     """ empty_single_nl : empty
+#     | NEWLINE"""
 
 
 def p_etiqueta(p):
@@ -569,4 +575,4 @@ def p_expression_parent(p):
 
 
 parser = yacc.yacc()
-# par = parser.parse(input, debug=False)
+par = parser.parse(ejerFinal, debug=True)
