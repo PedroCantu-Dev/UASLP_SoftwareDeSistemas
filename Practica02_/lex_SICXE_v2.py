@@ -386,6 +386,10 @@ def p_instruccion(p):
     p[0] = p[1]
 
 
+def p_instruccion_error(p):
+    """instruccion_error : f3_error_codop"""
+
+
 def p_f1(p):
     """f1 : CODOP1
     """
@@ -417,16 +421,19 @@ def p_f3_error_operando(p):
     | RSUB error"""
 
 
+def p_f3_error_codop(p):
+    """f3_error_codop : error simple3
+    | error indexado3
+    | error indirecto3
+    | error inmediato3"""
+
+
 def p_f3(p):
     """f3 : CODOP3 simple3
     | CODOP3 indexado3
     | CODOP3 indirecto3
     | CODOP3 inmediato3
     | RSUB
-    | error simple3
-    | error indexado3
-    | error indirecto3
-    | error inmediato3
     """
     {}
 
@@ -477,8 +484,8 @@ def p_int_type(p):
     """
 
 
-def p_line_core_error(p):
-    """linea : f_column error il_comment NEWLINE"""
+def line_error(p):
+    """linea : f_column  line_core_error il_comment NEWLINE"""
 
 
 def p_linea(p):
@@ -493,6 +500,10 @@ def p_first_column(p):
 def p_line_core(p):
     """line_core : instruccion
     | directiva"""
+
+
+def p_line_core_error(p):
+    """line_core_error : instruccion_error"""
 
 
 def p_il_comment(p):
@@ -531,7 +542,7 @@ def p_error(p):
               "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
 
         # Just discard the token and tell the parser it's okay.
-        parser.errok()
+        # parser.errok()
     else:
         print("Syntax error at EOF")
 
