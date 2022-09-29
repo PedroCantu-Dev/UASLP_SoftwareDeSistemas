@@ -1,3 +1,4 @@
+from pathlib import Path
 import tkinter
 import os
 from tkinter import *
@@ -382,8 +383,21 @@ class Sicxe_GUI:
             size = passOneReturn[2]
             errors = passOneReturn[3]
 
+            # print("file name(just name) :  " + Path(__file__).name)
+            # print("Directory name :  " + os.path.dirname(__file__))
+
             intermediateFileName = list(intermediateFile.values())[0][1]
-            interFile = open(intermediateFileName+'.err', "w+")
+            assembledFolderPrefix = os.path.dirname(
+                __file__)+"/assembled/" + intermediateFileName + "/"
+            if not os.path.exists(assembledFolderPrefix):
+                os.makedirs(assembledFolderPrefix)
+
+            # for intermediate file creation
+            if not os.path.exists(assembledFolderPrefix):
+                os.makedirs(assembledFolderPrefix)
+
+            interFile = open(assembledFolderPrefix +
+                             intermediateFileName+'.err', "w+")
             index = 0
             for key in intermediateFile:
                 interFile.writelines(str(key))
@@ -399,7 +413,8 @@ class Sicxe_GUI:
                 index += 1
             interFile.close()
 
-            tabSymFile = open(intermediateFileName+'.tab', "w+")
+            tabSymFile = open(assembledFolderPrefix +
+                              intermediateFileName+'.tab', "w+")
             for key in tableSym:
                 tabSymFile.writelines(key)
                 tabSymFile.writelines(" ")
