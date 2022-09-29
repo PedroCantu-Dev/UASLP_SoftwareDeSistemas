@@ -19,8 +19,10 @@ class Sicxe_GUI:
     __savedFileFlag = True
 
     __sourceFileLabel = LabelFrame(__root, text="Source File")
-    __thisSourceFile = Text(__sourceFileLabel, undo=True)
+    __thisSourceFile = Text(__sourceFileLabel, undo=True, wrap=NONE)
     __thisSourceFileScrollBar = Scrollbar(__thisSourceFile)
+    __thisSourceFileScrollBarX = Scrollbar(
+        __thisSourceFile, orient='horizontal')
 
     __file = None
     __thisSourceFile.bind('<KeyRelease>', __thisSourceFileKeyPressed)
@@ -79,7 +81,7 @@ class Sicxe_GUI:
     __thisErrorTableFileTree.column('#2', anchor=CENTER, width=80)
     __thisErrorTableFileTree.heading('#2', text='Line Index')
     __thisErrorTableFileTree.column('#3', anchor=CENTER)
-    __thisErrorTableFileTree.heading('#3', text='Details')
+    __thisErrorTableFileTree.heading('#3', text='Description')
 
     __thisErrorTableFileScrollBarY = Scrollbar(__thisErrorTableFileTree)
     __thisErrorTableFileScrollBarX = Scrollbar(
@@ -192,6 +194,12 @@ class Sicxe_GUI:
         self.__thisRegistersTree.place(relx=0, rely=0, relheight=1, relwidth=1)
 
         # Scrollbar will adjust automatically according to the content
+        self.__thisSourceFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisSourceFileScrollBarX.config(
+            command=self.__thisSourceFile.xview)
+        self.__thisSourceFile.config(
+            xscrollcommand=self.__thisSourceFileScrollBarX.set)
+
         self.__thisSourceFileScrollBar.pack(side=RIGHT, fill=Y)
         self.__thisSourceFileScrollBar.config(
             command=self.__thisSourceFile.yview)
