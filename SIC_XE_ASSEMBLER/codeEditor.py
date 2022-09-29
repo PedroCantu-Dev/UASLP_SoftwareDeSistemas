@@ -43,6 +43,8 @@ class Sicxe_GUI:
     __thisIntermediateFileTree.column('#2', anchor=CENTER, width=60)
     __thisIntermediateFileTree.heading('#2', text='PC')
     __thisIntermediateFileTree.column('#3', anchor=CENTER, width=100)
+    # __thisIntermediateFileTree.tag_config(background="black",
+    #   foreground="red")
     __thisIntermediateFileTree.heading('#3', text='Label')
     __thisIntermediateFileTree.column('#4', anchor=CENTER, width=100)
     __thisIntermediateFileTree.heading('#4', text='Mnemonic')
@@ -56,32 +58,35 @@ class Sicxe_GUI:
         __thisIntermediateFileTree, orient='horizontal')
 
     # for symbol table
-    columnsTabSym = ('#1', '#2', '#3')
+    columnsTabSym = ('#1', '#2')
     __thisTabSymFileTree = Treeview(
         __TabSymLabel, columns=columnsTabSym, show='headings')
     # define headings
-    __thisTabSymFileTree.column('#1', anchor=CENTER, width=80)
-    __thisTabSymFileTree.heading('#1', text='Sym-Index')
-    __thisTabSymFileTree.column('#2', anchor=CENTER)
-    __thisTabSymFileTree.heading('#2', text='Symbol')
-    __thisTabSymFileTree.column('#3', anchor=CENTER)
-    __thisTabSymFileTree.heading('#3', text='Address')
+    # __thisTabSymFileTree.column('#1', anchor=CENTER, width=80)
+    # __thisTabSymFileTree.heading('#1', text='Sym-Index')
+    __thisTabSymFileTree.column('#1', anchor=CENTER, width=50)
+    __thisTabSymFileTree.heading('#1', text='Symbol')
+    __thisTabSymFileTree.column('#2', anchor=CENTER, width=50)
+    __thisTabSymFileTree.heading('#2', text='Address')
 
     __thisTabSymFileScrollBarY = Scrollbar(__thisTabSymFileTree)
     __thisTabSymFileScrollBarX = Scrollbar(
         __thisTabSymFileTree, orient='horizontal')
 
     # for error lines
-    columnsErrorTable = ('#1', '#2', '#3')
+    #index ,sentence , type, description
+    columnsErrorTable = ('#1', '#2', '#3', '#4')
     __thisErrorTableFileTree = Treeview(
         __ErrorsLabel, columns=columnsErrorTable, show='headings')
     # define headings
-    __thisErrorTableFileTree.column('#1', anchor=CENTER)
-    __thisErrorTableFileTree.heading('#1', text='Type')
-    __thisErrorTableFileTree.column('#2', anchor=CENTER, width=80)
-    __thisErrorTableFileTree.heading('#2', text='Line Index')
-    __thisErrorTableFileTree.column('#3', anchor=CENTER)
-    __thisErrorTableFileTree.heading('#3', text='Description')
+    __thisErrorTableFileTree.column('#1', anchor=CENTER, width=80)
+    __thisErrorTableFileTree.heading('#1', text='Line index')
+    __thisErrorTableFileTree.column('#2', anchor=CENTER, width=200)
+    __thisErrorTableFileTree.heading('#2', text='sentence')
+    __thisErrorTableFileTree.column('#3', anchor=CENTER, width=200)
+    __thisErrorTableFileTree.heading('#3', text='type')
+    __thisErrorTableFileTree.column('#4', anchor=CENTER, width=450)
+    __thisErrorTableFileTree.heading('#4', text='description')
 
     __thisErrorTableFileScrollBarY = Scrollbar(__thisErrorTableFileTree)
     __thisErrorTableFileScrollBarX = Scrollbar(
@@ -238,8 +243,8 @@ class Sicxe_GUI:
                                              command=self.__pass1)
 
         # To give a feature of paste
-        # self.__thisAssemblerMenu.add_command(label="Pass2",
-        #                                 command=self.__pass2)
+        self.__thisAssemblerMenu.add_command(label="Pass2",
+                                             command=self.__pass2)
 
         # To give a feature of assembrer
         self.__thisMenuBar.add_cascade(label="Assembler",
@@ -293,7 +298,9 @@ class Sicxe_GUI:
             file = open(self.__file, "r")
 
             self.__thisSourceFile.insert(1.0, file.read())
-
+            textColored = "un texto X"
+            textColored.tag_config("start", background="black",
+                                   foreground="red")
             file.close()
             __savedFileFlag = True
 
@@ -399,12 +406,12 @@ class Sicxe_GUI:
                 line = tableSym.get(key)
                 tabSymFile.writelines(line)
                 tabSymFile.writelines("\n")
-                # self.__thisTabSymFileTree.insert('',END,values=())
+                self.__thisTabSymFileTree.insert('', END, values=(key, line))
             tabSymFile.writelines("Tam del programa:" + str(size))
             tabSymFile.close()
 
-    # def __pass2(self):
-        # self.__thisTextArea.event_generate("<<Paste>>")
+    def __pass2(self):
+        self.__thisTextArea.event_generate("<<Paste>>")
         #passTwoReturn= passTwo(intermediateFile, tableSym)
 
     def run(self):
