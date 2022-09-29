@@ -130,3 +130,6 @@ dmypy.json
 #para que no diga los cambios que se hacen al generar el parser
 **/parsetab.py
 */*.out 
+*/*.err
+*/*.tab
+*/*.arc

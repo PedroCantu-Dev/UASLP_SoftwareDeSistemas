@@ -893,7 +893,7 @@ def passTwo(archiInter, symTable):
     BASE = 0
     for indexArchi in archiInter:  # forEach line in the intermediateFile
         line = archiInter.get(indexArchi)
-        if(line[1] is '!ERROR!'):  # if there is not error, it means it will make a object code
+        if(line[1] == '!ERROR!'):  # if there is not error, it means it will make a object code
             continue  # if there is an error continue without creating ob code
         else:
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[2]))
