@@ -1,0 +1,5 @@
+LOOP 0xf
+COUNT 0x19
+TABLE 0x2d
+TABLE2 0x4b
+Tam del programa:82

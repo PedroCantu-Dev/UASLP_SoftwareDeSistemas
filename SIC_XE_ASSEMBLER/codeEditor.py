@@ -75,7 +75,7 @@ class Sicxe_GUI:
         __thisTabSymFileTree, orient='horizontal')
 
     # for error lines
-    #index ,sentence , type, description
+    # index ,sentence , type, description
     columnsErrorTable = ('#1', '#2', '#3', '#4')
     __thisErrorTableFileTree = Treeview(
         __ErrorsLabel, columns=columnsErrorTable, show='headings')
@@ -299,9 +299,9 @@ class Sicxe_GUI:
             file = open(self.__file, "r")
 
             self.__thisSourceFile.insert(1.0, file.read())
-            textColored = "un texto X"
-            textColored.tag_config("start", background="black",
-                                   foreground="red")
+            # textColored = "un texto X"
+            # textColored.tag_config("start", background="black",
+            #                        foreground="red")
             file.close()
             __savedFileFlag = True
 
@@ -310,6 +310,7 @@ class Sicxe_GUI:
         self.__file = None
         self.__thisSourceFile.delete(1.0, END)
         __savedFileFlag = True
+        self.cleanOpenNewFile()
 
     def __showSaveChanges(self):
         MsgBox_SI = messagebox.askquestion(
@@ -365,45 +366,62 @@ class Sicxe_GUI:
 
     def __assemble(self):
         # self.__thisTextArea.event_generate("<<Cut>>")
+        # self.__thisTextArea.event_generate("<<Paste>>")
+
         pass1Array = []
         pass2Array = []
+
+    intermediateFile = None
+
+    def cleanWhenPass2(self):
+        {}
+
+    def cleanWhenPass1(self):
+        self.intermediateFile = None
+        for i in self.__thisIntermediateFileTree.get_children():
+            self.__thisIntermediateFileTree.delete(i)
+        for i in self.__thisTabSymFileTree.get_children():
+            self.__thisIntermediateFileTree.delete(i)
+        # self.refresh()
+
+    def refresh(self):
+        self.destroy()
+        self.__init__()
 
     def __pass1(self):
         # llama al metodo para generar una lista de lineas apartir del archivo|
         # call readLines method for generating
+        self.cleanWhenPass1()
         lines = self.__thisSourceFile.get("1.0", "end")
         if(lines):
-            #lines = open(file).readlines()
+            # lines = open(file).readlines()
             # llama al paso 1 |
             # call step one
             lines = lines.split("\n")
             passOneReturn = passOne(lines)
-            intermediateFile = passOneReturn[0]
+            self.intermediateFile = passOneReturn[0]
             tableSym = passOneReturn[1]
             size = passOneReturn[2]
             errors = passOneReturn[3]
-
             # print("file name(just name) :  " + Path(__file__).name)
             # print("Directory name :  " + os.path.dirname(__file__))
 
-            intermediateFileName = list(intermediateFile.values())[0][1]
+            intermediateFileName = list(self.intermediateFile.values())[0][1]
             assembledFolderPrefix = os.path.dirname(
                 __file__)+"/assembled/" + intermediateFileName + "/"
+
+            # for assembled folder creation
             if not os.path.exists(assembledFolderPrefix):
                 os.makedirs(assembledFolderPrefix)
 
-            # for intermediate file creation
-            if not os.path.exists(assembledFolderPrefix):
-                os.makedirs(assembledFolderPrefix)
-
+            # Intermediate File, plot and save
             interFile = open(assembledFolderPrefix +
-                             intermediateFileName+'.err', "w+")
+                             intermediateFileName+'.arc', "w+")
             index = 0
-            for key in intermediateFile:
+            for key in self.intermediateFile:
                 interFile.writelines(str(key))
                 interFile.writelines(" ")
-                line = intermediateFile.get(key)
-                insertionInterFT = []
+                line = self.intermediateFile.get(key)
                 for any in line:
                     interFile.writelines(any)
                     interFile.writelines(" ")
@@ -413,6 +431,7 @@ class Sicxe_GUI:
                 index += 1
             interFile.close()
 
+            # symbol table
             tabSymFile = open(assembledFolderPrefix +
                               intermediateFileName+'.tab', "w+")
             for key in tableSym:
@@ -425,9 +444,36 @@ class Sicxe_GUI:
             tabSymFile.writelines("Tam del programa:" + str(size))
             tabSymFile.close()
 
+            # error table
+            errorFile = open(assembledFolderPrefix +
+                             intermediateFileName+'.err', "w+")
+            for key in errors:
+                errorFile.writelines(str(key))
+                errorFile.writelines(" ")
+                line = errors.get(key)
+
+                for lin in line:
+                    errorFile.writelines(str(lin))
+                    errorFile.writelines(" ")
+                errorFile.writelines("\n")
+                self.__thisErrorTableFileTree.insert(
+                    '', END, values=(key, line[0], line[1], line[2]))
+            errorFile.close()
+
     def __pass2(self):
-        self.__thisTextArea.event_generate("<<Paste>>")
-        #passTwoReturn= passTwo(intermediateFile, tableSym)
+
+        passTwoReturn = passTwo(intermediateFile, tableSym)
+        lines = self.__thisSourceFile.get("1.0", "end")
+        if(lines):
+            # lines = open(file).readlines()
+            # llama al paso 1 |
+            # call step one
+            lines = lines.split("\n")
+            passOneReturn = passOne(lines)
+            intermediateFile = passOneReturn[0]
+            tableSym = passOneReturn[1]
+            size = passOneReturn[2]
+            errors = passOneReturn[3]
 
     def run(self):
         # Run main application
