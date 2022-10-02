@@ -381,7 +381,9 @@ class Sicxe_GUI:
         for i in self.__thisIntermediateFileTree.get_children():
             self.__thisIntermediateFileTree.delete(i)
         for i in self.__thisTabSymFileTree.get_children():
-            self.__thisIntermediateFileTree.delete(i)
+            self.__thisTabSymFileTree.delete(i)
+        for i in self.__thisErrorTableFileTree.get_children():
+            self.__thisErrorTableFileTree.delete(i)
         # self.refresh()
 
     def refresh(self):
@@ -393,7 +395,7 @@ class Sicxe_GUI:
         # call readLines method for generating
         self.cleanWhenPass1()
         lines = self.__thisSourceFile.get("1.0", "end")
-        if(lines):
+        if(lines and lines != '\n'):
             # lines = open(file).readlines()
             # llama al paso 1 |
             # call step one
