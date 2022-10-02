@@ -1,0 +1,6 @@
+2 2 0x30 NUM WORD 64 !ERROR!,:Simbolo:,Simbolo duplicado 
+4 4 0x73 VALOR WORD 16H !ERROR!,:Simbolo:,Simbolo duplicado 
+6 6 0x77 INICIO CLEAR X !ERROR!,:Simbolo:,Simbolo duplicado 
+14 14 0xa7 TEMP RESW 2 !ERROR!,:Simbolo:,Simbolo duplicado 
+15 15 0xad CAD BYTE C'EJERC3' !ERROR!,:Simbolo:,Simbolo duplicado 
+16 16 0xb3 TABLA RESW 1004H !ERROR!,:Simbolo:,Simbolo duplicado 
