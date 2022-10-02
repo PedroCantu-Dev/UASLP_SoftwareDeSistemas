@@ -1,8 +1,5 @@
-2 2 0xc !ERROR! :Simbolo: Simbolo duplicado 
-6 6 0x14 !ERROR! :Simbolo: Simbolo duplicado 
-7 7 0x50 !ERROR! :Sintaxis: Falta  o sobra un operando en la operacion 
-8 8 0x50 !ERROR! :Simbolo: Simbolo duplicado 
-9 9 0x53 !ERROR! :Sintaxis: Operando invalido para BYTE 
-13 13 0x5f !ERROR! :Simbolo: Simbolo duplicado 
-14 14 0x61 !ERROR! :Sintaxis: Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado) 
-16 16 0x64 !ERROR! :Mnemonic: Instruccion no existe 
+7 7 0x50 VALOR TIXR A,S !ERROR!,:Sintaxis:,Falta  o sobra un operando en la operacion 
+8 8 0x50 CICLO SUB @VALOR !ERROR!,:Simbolo:,Simbolo duplicado 
+9 9 0x53 DATO BYTE 3452H !ERROR!,:Sintaxis:,Operando invalido para BYTE 
+14 14 0x61  +ADD @ENTRADA,X !ERROR!, :Sintaxis:, Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado) 
+16 16 0x64  SHIFT A,3 !ERROR!,:Mnemonic:,Instruccion no existe 
