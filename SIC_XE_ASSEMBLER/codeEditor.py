@@ -428,7 +428,7 @@ class Sicxe_GUI:
                     interFile.writelines(any)
                     interFile.writelines(" ")
                 self.__thisIntermediateFileTree.insert(
-                    '', END, values=(index, line[0], line[1], line[2], line[3]))
+                    '', END, values=(index, line[0], line[1], line[2], line[3], line[4]))
                 interFile.writelines("\n")
                 index += 1
             interFile.close()
@@ -458,8 +458,9 @@ class Sicxe_GUI:
                     errorFile.writelines(str(lin))
                     errorFile.writelines(" ")
                 errorFile.writelines("\n")
+                msgError = line[5].split(',')
                 self.__thisErrorTableFileTree.insert(
-                    '', END, values=(key, line[0], line[1], line[2]))
+                    '', END, values=(str(key) + '('+line[1]+')', msgError[0] + line[2] + ' ' + line[3] + ' ' + line[4], msgError[1], msgError[2]))
             errorFile.close()
 
     def __pass2(self):
