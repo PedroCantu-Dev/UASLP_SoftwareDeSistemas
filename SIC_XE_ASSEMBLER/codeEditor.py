@@ -372,6 +372,7 @@ class Sicxe_GUI:
         pass2Array = []
 
     intermediateFile = None
+    tabSym = None
 
     def cleanWhenPass2(self):
         {}
@@ -384,6 +385,7 @@ class Sicxe_GUI:
             self.__thisTabSymFileTree.delete(i)
         for i in self.__thisErrorTableFileTree.get_children():
             self.__thisErrorTableFileTree.delete(i)
+        self.tableSym = None
         # self.refresh()
 
     def refresh(self):
@@ -402,7 +404,7 @@ class Sicxe_GUI:
             lines = lines.split("\n")
             passOneReturn = passOne(lines)
             self.intermediateFile = passOneReturn[0]
-            tableSym = passOneReturn[1]
+            self.tableSym = passOneReturn[1]
             size = passOneReturn[2]
             errors = passOneReturn[3]
             # print("file name(just name) :  " + Path(__file__).name)
@@ -436,10 +438,10 @@ class Sicxe_GUI:
             # symbol table
             tabSymFile = open(assembledFolderPrefix +
                               intermediateFileName+'.tab', "w+")
-            for key in tableSym:
+            for key in self.tableSym:
                 tabSymFile.writelines(key)
                 tabSymFile.writelines(" ")
-                line = tableSym.get(key)
+                line = self.tableSym.get(key)
                 tabSymFile.writelines(line)
                 tabSymFile.writelines("\n")
                 self.__thisTabSymFileTree.insert('', END, values=(key, line))
@@ -460,12 +462,12 @@ class Sicxe_GUI:
                 errorFile.writelines("\n")
                 msgError = line[5].split(',')
                 self.__thisErrorTableFileTree.insert(
-                    '', END, values=(str(key) + '('+line[1]+')', msgError[0] + line[2] + ' ' + line[3] + ' ' + line[4], msgError[1], msgError[2]))
+                    '', END, values=(str(key) + ' | ('+line[1]+')', msgError[0] + '-->   ' + line[2] + ' ' + line[3] + ' ' + line[4], msgError[1], msgError[2]))
             errorFile.close()
 
     def __pass2(self):
 
-        passTwoReturn = passTwo(intermediateFile, tableSym)
+        passTwoReturn = passTwo(intermediateFile, self.tableSym)
         lines = self.__thisSourceFile.get("1.0", "end")
         if(lines):
             # lines = open(file).readlines()

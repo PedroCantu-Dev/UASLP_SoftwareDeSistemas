@@ -442,6 +442,7 @@ def regexMatch(regex, testStr):
 
 
 def passOne(lines):
+    tabSym = {}
     global PC
     PC = 0
     initialDirection = 0
