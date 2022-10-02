@@ -49,9 +49,9 @@ class Sicxe_GUI:
     __thisIntermediateFileTree.heading('#3', text='Label')
     __thisIntermediateFileTree.column('#4', anchor=CENTER, width=100)
     __thisIntermediateFileTree.heading('#4', text='Mnemonic')
-    __thisIntermediateFileTree.column('#5', anchor=CENTER, width=160)
+    __thisIntermediateFileTree.column('#5', anchor=CENTER, width=360)
     __thisIntermediateFileTree.heading('#5', text='Operand')
-    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=160)
+    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=360)
     __thisIntermediateFileTree.heading('#6', text='Obj Code')
 
     __thisIntermediateFileScrollBarY = Scrollbar(__thisIntermediateFileTree)
@@ -140,6 +140,7 @@ class Sicxe_GUI:
         self.__sourceFileLabel.place(relx=0, rely=0, relheight=1, relwidth=1/3)
         self.__InterFileLabel.place(
             relx=1/3, rely=0, relheight=1, relwidth=1/3)
+
         self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/3, relwidth=1/3)
         self.__ErrorsLabel.place(
             relx=2/3, rely=1/3, relheight=1/3, relwidth=1/3)
@@ -466,19 +467,19 @@ class Sicxe_GUI:
             errorFile.close()
 
     def __pass2(self):
-
-        passTwoReturn = passTwo(intermediateFile, self.tableSym)
-        lines = self.__thisSourceFile.get("1.0", "end")
-        if(lines):
-            # lines = open(file).readlines()
-            # llama al paso 1 |
-            # call step one
-            lines = lines.split("\n")
-            passOneReturn = passOne(lines)
-            intermediateFile = passOneReturn[0]
-            tableSym = passOneReturn[1]
-            size = passOneReturn[2]
-            errors = passOneReturn[3]
+        if(self.intermediateFile and self.tableSym):
+            passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
+            lines = self.__thisSourceFile.get("1.0", "end")
+            if(lines):
+                # lines = open(file).readlines()
+                # llama al paso 1 |
+                # call step one
+                lines = lines.split("\n")
+                passOneReturn = passOne(lines)
+                intermediateFile = passOneReturn[0]
+                tableSym = passOneReturn[1]
+                size = passOneReturn[2]
+                errors = passOneReturn[3]
 
     def run(self):
         # Run main application

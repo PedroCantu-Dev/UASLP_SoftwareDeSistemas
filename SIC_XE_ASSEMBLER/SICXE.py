@@ -787,12 +787,17 @@ def getObjAddr(argument, tab):
     argu = baseOperand(argument)
     res = getHexadecimalByString(argu)
     if(res is None):  # it means needs get a value from the symTable
-        res = int(tab.get(argu), 16)
-        if(res):
-            withVariable = True
-        else:
+        try:
+            res = int(tab.get(argu), 16)
+            if(res):
+                withVariable = True
+            else:
+                withVariable = ["!ERROR!",
+                                "simbolo no encontrado en la tabla de simbolos"]
+        except:
             withVariable = ["!ERROR!",
                             "simbolo no encontrado en la tabla de simbolos"]
+
     return [res, withVariable]
 
 
@@ -910,6 +915,7 @@ def flagsForF3andF4_Decimal(mnemonic, operand):
         resFlags += Ibit
     else:
         resFlags += Nbit+Ibit
+    return resFlags
 
 
 def passTwo(archiInter, symTable):
@@ -917,7 +923,7 @@ def passTwo(archiInter, symTable):
     BASE = 0
     for indexArchi in archiInter:  # forEach line in the intermediateFile
         line = archiInter.get(indexArchi)
-        if(line[1] == '!ERROR!'):  # if there is not error, it means it will make a object code
+        if(line[4]):  # if there is not error, it means it will make a object code
             continue  # if there is an error continue without creating ob code
         else:
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[2]))
@@ -986,12 +992,21 @@ def passTwo(archiInter, symTable):
                     op = '{0:08b}'.format(opAux)
                     registersArray = line[3].split(",")
 
-                    r1 = r2 = 0
-                    r1 = SIXE_Registers.get(registersArray[0])
-                    r2 = SIXE_Registers.get(registersArray[1])
+                    r1 = r2On = 0
+                    if(infoMnemonic[3] == ['r']):
+                        r1 = SIXE_Registers.get(registersArray[0])
+                    elif(infoMnemonic[3] == ['n']):
+                        r1 = int(registersArray[0])
+                    elif(infoMnemonic[3] == ['r', 'r']):
+                        r1 = SIXE_Registers.get(registersArray[0])
+                        r2On = SIXE_Registers.get(registersArray[1])
+
+                    elif(infoMnemonic[3] == ['r', 'n']):
+                        r2On = int(registersArray[1])
+
                     r1 = bindigit(r1, 4)
-                    r2 = bindigit(r2, 4)
-                    finalBinString = op + r1 + r2
+                    r2On = bindigit(r2On, 4)
+                    finalBinString = op + r1 + r2On
                     finalHexStr = hex(int(finalBinString, 2))
                     codObj.append(finalHexStr)
                 elif(infoMnemonic[1] == 1):  # Format 1
@@ -1002,3 +1017,4 @@ def passTwo(archiInter, symTable):
                     BASE = '{0:06X}'.format(rawBASE)
                 elif(infoMnemonic[1] == 'BYTE'):
                     codObj.append(byteCodObj(line[3]))
+    return codObj
