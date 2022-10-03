@@ -834,6 +834,12 @@ def SIC_hex_value(s, hex=False):
             if(hex):
                 return hex(int(s, 16))
             return int(s, 16)
+        elif(type(s) == int):
+            if(hex):
+                return hex(s)
+            return s
+        else:
+            return 0
     except:
         return 0
 

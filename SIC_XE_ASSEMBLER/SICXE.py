@@ -789,7 +789,7 @@ def getObjAddr(argument, tab):
     if(res is None):  # it means needs get a value from the symTable
         try:
             res = int(tab.get(argu), 16)
-            if(res):
+            if(res or res == 0):
                 withVariable = True
             else:
                 withVariable = ["!ERROR!",
@@ -923,7 +923,8 @@ def passTwo(archiInter, symTable):
     BASE = 0
     for indexArchi in archiInter:  # forEach line in the intermediateFile
         line = archiInter.get(indexArchi)
-        if(line[4]):  # if there is not error, it means it will make a object code
+        # if there is not error, it means it will make a object code
+        if('ERROR' in line[4] and not 'Simbolo' in line[4]):
             continue  # if there is an error continue without creating ob code
         else:
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[2]))
@@ -968,8 +969,8 @@ def passTwo(archiInter, symTable):
                     # op(6)|n|i|x|b|p|e|desp(12)
                     addressingModeRes = addressingModes(
                         line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
-                    opAux = int(infoMnemonic[2], 16)
-                    op = '{0:08b}'.format(opAux)
+                    opAux = infoMnemonic[2]
+                    op = '{0:08b}'.format(int(opAux, 16))
                     op = op[:len(op)-2]
                     if(addressingModeRes[0] == "!ERROR!"):
                         decFlags = flagsForF3andF4_Decimal(line[2], line[3])
@@ -1000,7 +1001,6 @@ def passTwo(archiInter, symTable):
                     elif(infoMnemonic[3] == ['r', 'r']):
                         r1 = SIXE_Registers.get(registersArray[0])
                         r2On = SIXE_Registers.get(registersArray[1])
-
                     elif(infoMnemonic[3] == ['r', 'n']):
                         r2On = int(registersArray[1])
 
@@ -1012,9 +1012,35 @@ def passTwo(archiInter, symTable):
                 elif(infoMnemonic[1] == 1):  # Format 1
                     # op(8)
                     insertionP2 = infoMnemonic[2]
+                    codObj.append(insertionP2)
                 elif(infoMnemonic[1] == 'BASE'):
                     rawBASE = getObjAddr(line[3], symTable)[0]
                     BASE = '{0:06X}'.format(rawBASE)
                 elif(infoMnemonic[1] == 'BYTE'):
                     codObj.append(byteCodObj(line[3]))
+                elif(infoMnemonic[1] == 'WORD'):
+                    hexAux = SIC_hex_value(line[3], True)
+                    bAux = format(int(hexAux, 16), '0>24b')
+                    finalHexStr = '{0:06X}'.format(int(bAux, 2))
+                    codObj.append(finalHexStr)
     return codObj
+
+
+def SIC_hex_value(s, hexi=False):
+    try:
+        if(re.match('[0-9a-fA-F]+(H|h)', s)):
+            s = s.replace("H", "")
+            s = s.replace("h", "")
+            if(hexi):
+                inte = int(s, 16)
+                exa = hex(inte)
+                return exa
+            return int(s, 16)
+        elif(re.match('[0-9]+$', s)):
+            if(hexi):
+                inte = int(s, 10)
+                exa = hex(inte)
+                return exa
+            return int(s, 10)
+    except:
+        return hex(0)
