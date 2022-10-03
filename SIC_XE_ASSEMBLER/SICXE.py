@@ -14,6 +14,7 @@
 
 from math import *
 import re
+from string import hexdigits
 from typing import Iterable  # for regular expresions
 
 
@@ -166,19 +167,19 @@ def xor(x, y):
 
 
 def getFineOperand(arrayOfPossibleOperands):
-    if(len(arrayOfPossibleOperands) == 1):  # if the operand is unique there is nothing to do
+    if (len(arrayOfPossibleOperands) == 1):  # if the operand is unique there is nothing to do
         return arrayOfPossibleOperands[0]
-    elif(len(arrayOfPossibleOperands) == 2):
+    elif (len(arrayOfPossibleOperands) == 2):
         # it means the next operand is part of the ecuation
-        if(xor(arrayOfPossibleOperands[0][-1] == ',',  arrayOfPossibleOperands[1][0] == ',')):
+        if (xor(arrayOfPossibleOperands[0][-1] == ',',  arrayOfPossibleOperands[1][0] == ',')):
             return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1]
         else:
             return arrayOfPossibleOperands[0]
-    elif(len(arrayOfPossibleOperands) >= 3):
-        if(arrayOfPossibleOperands[1] == ','):
+    elif (len(arrayOfPossibleOperands) >= 3):
+        if (arrayOfPossibleOperands[1] == ','):
             return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1] + arrayOfPossibleOperands[2]
         # it means the next operand is part of the ecuation
-        elif(xor(',' == arrayOfPossibleOperands[0][-1], ',' == arrayOfPossibleOperands[1][0])):
+        elif (xor(',' == arrayOfPossibleOperands[0][-1], ',' == arrayOfPossibleOperands[1][0])):
             return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1]
         else:
             return arrayOfPossibleOperands[0]
@@ -195,7 +196,7 @@ Flags = 0
 
 
 def isExtended(mnemonic):
-    if(mnemonic == baseMnemonic(mnemonic)):
+    if (mnemonic == baseMnemonic(mnemonic)):
         return None
     else:
         return 1
@@ -244,7 +245,7 @@ def baseOperand(operand):
     res = operand
     if res[0] == "@" or res[0] == "#":
         res = operand[1:]
-    if(res.endswith(',X')):
+    if (res.endswith(',X')):
         res = res.replace(',X', '')
     return res
 
@@ -277,7 +278,7 @@ def parseLine(line):
     operands = ''
 
     findComment = line.find("?")
-    if(findComment >= 0):
+    if (findComment >= 0):
         comment = line[findComment:-1]
         line = line[0:findComment]
 
@@ -333,7 +334,7 @@ def addressIsPCRelative(hexAddress):
 
 
 def argumentIsA_c_Constant(argument):
-    if(argument >= hex(0) and argument <= hex(4095)):
+    if (argument >= hex(0) and argument <= hex(4095)):
         return True
     else:
         return False
@@ -342,7 +343,7 @@ def argumentIsA_c_Constant(argument):
 
 
 def argumentIsA_m_Constant(argument):
-    if(argument > hex(4095)):
+    if (argument > hex(4095)):
         return True
     else:
         return False
@@ -350,12 +351,12 @@ def argumentIsA_m_Constant(argument):
 
 def instruLen(instru):
     instruDefArray = SICXE_Dictionary.get(baseMnemonic(instru))
-    if(instruDefArray[1] == 3):
-        if(typeFour(instru)):
+    if (instruDefArray[1] == 3):
+        if (typeFour(instru)):
             return 0x04
         else:
             return 0x03
-    elif(instruDefArray[1] == 2):
+    elif (instruDefArray[1] == 2):
         return 0x02
     else:
         return 0x01
@@ -386,23 +387,23 @@ def directiveLen(directive, operand):
     directiveDefArray = SICXE_Dictionary.get(baseMnemonic(directive))
     res = 0x00
     # BYTE C'Texto' or X'025A'
-    if(directiveDefArray[1] == 'BYTE'):  # for byte directive
+    if (directiveDefArray[1] == 'BYTE'):  # for byte directive
         strExtract = byteOperandExtract(operand)
-        if(operand.startswith('c'.upper())):
+        if (operand.startswith('c'.upper())):
             res = len(strExtract)
-        elif(operand.startswith('x'.upper())):
+        elif (operand.startswith('x'.upper())):
             # divided by two becuse each byte uses two nibbles
             res = int(len(padHexEven(strExtract))/2)
     # WORD Valor. El valor puede expresarse en decimal o hexadecimal.
     # genera una constante entera de una palabra(3 bytes)
-    elif(directiveDefArray[1] == 'WORD'):
+    elif (directiveDefArray[1] == 'WORD'):
         res = 0x03
     # RESB Número. el numero puede expresarse en decimal o hexadecimal.
-    elif(directiveDefArray[1] == 'RESB'):  # reseva el numero de bytes indicado
+    elif (directiveDefArray[1] == 'RESB'):  # reseva el numero de bytes indicado
         res = getHexadecimalByString(operand)
     # RESW Número. Numero puede ser decimal o hexadecimal
     # indica el numero de palabras a reservar
-    elif(directiveDefArray[1] == 'RESW'):
+    elif (directiveDefArray[1] == 'RESW'):
         res = 3 * getHexadecimalByString(operand)
     return res
 
@@ -412,15 +413,15 @@ def directiveLen(directive, operand):
 # at this point the lexical analyzer made its work so, it suóse there is not error whenhex parsing
 def getHexadecimalByString(strConvert):
     res = None
-    if(strConvert.isdecimal()):
+    if (strConvert.isdecimal()):
         res = int(strConvert)
-    elif(correctHex(strConvert)):
+    elif (correctHex(strConvert)):
         res = int(strConvert.replace("h".upper(), ""), 16)
     return res
 
 
 def correctHex(possibleHex):
-    if(possibleHex.count('h'.upper()) == 1 and possibleHex.endswith('h'.upper())):
+    if (possibleHex.count('h'.upper()) == 1 and possibleHex.endswith('h'.upper())):
         return True
     else:
         return False
@@ -432,7 +433,7 @@ def getBytesByString(strOperand):
 
 
 def regexMatch(regex, testStr):
-    if(re.match('^'+regex+'$', testStr)):
+    if (re.match('^'+regex+'$', testStr)):
         return True
     else:
         return False
@@ -452,44 +453,44 @@ def passOne(lines):
     errorDicArray = {}
 
     for line in lines:  # for each line do
-        if(line and line != '\s' and line != '\n' and line != '\t'):
+        if (line and line != '\s' and line != '\n' and line != '\t'):
             insertion = "."
             # parse the line and sign values to variables
             label, mnemonic, operands, comment = parseLine(line)
             codop = ""
 
-            if(comment):
+            if (comment):
                 continue
             else:
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
-                if(operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
+                if (operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
                     operandsArray = operands.split(
                         ',')  # split operands with ","
                 else:
                     operandsArray = [operands]
-                if(not comment):
+                if (not comment):
                     if (dirInstr):  # the instruction exist
-                        if(dirInstr[0] == 'I'):  # if is an instruction
+                        if (dirInstr[0] == 'I'):  # if is an instruction
                             # if the len of the array returned is 4 means uses operands
-                            if(len(dirInstr) == 4):
-                                if(operands):  # si hay almenos un operando
+                            if (len(dirInstr) == 4):
+                                if (operands):  # si hay almenos un operando
                                     # solo se pide un operando
-                                    if(len(dirInstr[3]) == 1 and len(operandsArray) == 1):
+                                    if (len(dirInstr[3]) == 1 and len(operandsArray) == 1):
                                         regAux = argumentTokens[dirInstr[3][0]]
                                         # if(re.match(regAux,operandsArray[0]) or re.match(regAux+',X',operandsArray[0])):
-                                        if(regexMatch(regAux+',X', operandsArray[0])):
-                                            if('@' in operandsArray[0]):
+                                        if (regexMatch(regAux+',X', operandsArray[0])):
+                                            if ('@' in operandsArray[0]):
                                                 insertion = [hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
 
-                                            elif('#' in operandsArray[0]):
+                                            elif ('#' in operandsArray[0]):
                                                 insertion = [hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento inmediato e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
                                             else:
                                                 insertion = [
                                                     hex(PC), label, mnemonic, operands, codop]
-                                        elif(regexMatch(regAux, operandsArray[0])):
+                                        elif (regexMatch(regAux, operandsArray[0])):
                                             insertion = [
                                                 hex(PC), label, mnemonic, operands, codop]
                                         else:
@@ -497,11 +498,11 @@ def passOne(lines):
                                                 PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, El operando no coincide con algun token valido"]
 
                                     # se piden dos operandos
-                                    elif((len(dirInstr[3]) == 2 and len(operandsArray) == 2)):
+                                    elif ((len(dirInstr[3]) == 2 and len(operandsArray) == 2)):
                                         regAux = [
                                             argumentTokens[dirInstr[3][0]], argumentTokens[dirInstr[3][1]]]
                                         # if(re.match(regAux[0],operandsArray[0]) and re.match(regAux[1],operandsArray[1])):
-                                        if(regexMatch(regAux[0], operandsArray[0]) and regexMatch(regAux[1], operandsArray[1])):
+                                        if (regexMatch(regAux[0], operandsArray[0]) and regexMatch(regAux[1], operandsArray[1])):
                                             insertion = [
                                                 hex(PC), label, mnemonic, operands, codop]
                                         else:  # if any operand is invalid
@@ -514,20 +515,20 @@ def passOne(lines):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Falta almenos un operando en la operacion"]
                             else:  # means not uses operands
-                                if(not operands or operands.startswith('?')):
+                                if (not operands or operands.startswith('?')):
                                     insertion = [
                                         hex(PC), label, mnemonic, '', '']
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,sobra un operando"]
-                        elif(dirInstr[0] == 'D'):  # is a directive
-                            if(dirInstr[1] == 'START'):  # no suma nada
-                                if(not label):
+                        elif (dirInstr[0] == 'D'):  # is a directive
+                            if (dirInstr[1] == 'START'):  # no suma nada
+                                if (not label):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
-                                elif(len(operandsArray) == 1):  # only need one operand
+                                elif (len(operandsArray) == 1):  # only need one operand
                                     # if(re.match(argumentTokens["dir"],operands)):
-                                    if(regexMatch(argumentTokens["dir"], operands)):
+                                    if (regexMatch(argumentTokens["dir"], operands)):
                                         insertion = [
                                             hex(PC), label, mnemonic, operands, codop]
                                     else:
@@ -537,56 +538,56 @@ def passOne(lines):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,operandos de sobra"]
                                 initialDirection = PC
-                            elif(dirInstr[1] == 'END'):  # no suma nada
-                                if(label):
+                            elif (dirInstr[1] == 'END'):  # no suma nada
+                                if (label):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END no lleva label"]
                                 # elif(re.match(argumentTokens["[simbol]"],operands)):#only need one operand
                                 # only need one operand
-                                elif(regexMatch(argumentTokens["[simbol]"], operands)):
+                                elif (regexMatch(argumentTokens["[simbol]"], operands)):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,El simbolo no es valido"]
-                            elif(dirInstr[1] == 'BYTE'):
+                            elif (dirInstr[1] == 'BYTE'):
                                 # if(re.match(argumentTokens['[simbol]'],operands) and (re.match(argumentTokens["C'TEXT'"],operands) or re.match(argumentTokens["X'HEX'"],operands)) ):
-                                if(regexMatch(argumentTokens['[simbol]'], label) and (regexMatch(argumentTokens["C'TEXT'"], operands) or regexMatch(argumentTokens["X'HEX'"], operands))):
+                                if (regexMatch(argumentTokens['[simbol]'], label) and (regexMatch(argumentTokens["C'TEXT'"], operands) or regexMatch(argumentTokens["X'HEX'"], operands))):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
                                 else:
                                     insertion = [
                                         hex(PC),  label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BYTE"]
-                            elif(dirInstr[1] == 'BASE'):
+                            elif (dirInstr[1] == 'BASE'):
                                 # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["simbol"],operands)):
-                                if(regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["simbol"], operands)):
+                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["simbol"], operands)):
 
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,Sintaxis:,Operando invalido para BASE"]
-                            elif(dirInstr[1] == 'WORD'):
+                            elif (dirInstr[1] == 'WORD'):
                                 # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["c"],operands)):
-                                if(regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["c"], operands)):
+                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["c"], operands)):
 
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BASE"]
-                            elif(dirInstr[1] == 'RESB'):
+                            elif (dirInstr[1] == 'RESB'):
                                 # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["num"],operands)):
-                                if(regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
+                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
 
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
-                            elif(dirInstr[1] == 'RESW'):
+                            elif (dirInstr[1] == 'RESW'):
                                 # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["num"],operands)):
-                                if(regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
+                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
 
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, codop]
@@ -600,22 +601,22 @@ def passOne(lines):
                     codOb.update({codOp_LineCounter: " . "})
                 # if there was not a syntax error
                 if len(insertion) >= 5:
-                    if(not "!ERROR!" in insertion[4]):
-                        if(label):
-                            if(tabSym.get(label)):  # if the symbol already exist
+                    if (not "!ERROR!" in insertion[4]):
+                        if (label):
+                            if (tabSym.get(label)):  # if the symbol already exist
                                 er = [hex(PC), label, mnemonic, operands,
                                       "!ERROR!,:Simbolo:,Simbolo duplicado"]
                                 er.insert(0, codOp_LineCounter)
                                 errorDicArray.update({codOp_LineCounter: er})
                                 insertion.extend(
                                     ["!ERROR!,:Simbolo:,Simbolo duplicado"])
-                            elif(mnemonic != "START"):  # else insert the symbol into tabsym
+                            elif (mnemonic != "START"):  # else insert the symbol into tabsym
                                 tabSym.update({label: hex(PC)})
                             else:  # es el nombre de programa ya que es START
                                 nombreDePrograma = label
-                        if(dirInstr[0] == 'I'):
+                        if (dirInstr[0] == 'I'):
                             PC += instruLen(mnemonic)
-                        elif(dirInstr[0] == 'D' and dirInstr[1] != 'END'):
+                        elif (dirInstr[0] == 'D' and dirInstr[1] != 'END'):
                             PC += directiveLen(mnemonic, operands)
                     else:
                         insertionCpy = insertion[:]
@@ -625,7 +626,7 @@ def passOne(lines):
                     {}
                 codOb.update({codOp_LineCounter: insertion})
                 codOp_LineCounter += 1  # line counter for identify
-                if(dirInstr and dirInstr[1] == 'END'):
+                if (dirInstr and dirInstr[1] == 'END'):
                     break  # break the loop if the directive END shows up
     initialDirection = PC - initialDirection
     return [codOb, tabSym, initialDirection, errorDicArray]
@@ -786,10 +787,10 @@ def getObjAddr(argument, tab):
     withVariable = False
     argu = baseOperand(argument)
     res = getHexadecimalByString(argu)
-    if(res is None):  # it means needs get a value from the symTable
+    if (res is None):  # it means needs get a value from the symTable
         try:
             res = int(tab.get(argu), 16)
-            if(res or res == 0):
+            if (res or res == 0):
                 withVariable = True
             else:
                 withVariable = ["!ERROR!",
@@ -803,93 +804,145 @@ def getObjAddr(argument, tab):
 
 def addressingModes(mnemonic, argument, tab, CP, B):
     OD = getObjAddr(argument, tab)
-    if(isinstance(OD[1], list) and len(OD[1]) > 1):
+    auxValueAr = SIC_hex_value(OD[1], True)
+    if (isinstance(OD[1], list) and len(OD[1]) > 1):
         return OD[1]
     else:
-        if(typeFour(mnemonic)):  # if mnemonic is extended
+        if (typeFour(mnemonic)):  # if mnemonic is extended
             # if(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
-            if(regexMatch('@' + argumentTokens.get('m'), argument)):
+            if (regexMatch('@' + argumentTokens.get('m'), argument)):
+                if (regexMatch('@' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 return [flag_Obj_NE(OD[0]), OD[1]]
             # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
-            elif(regexMatch('#' + argumentTokens.get('m'), argument)):
+            elif (regexMatch('#' + argumentTokens.get('m'), argument)):
+                if (regexMatch('#' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
                 # it means is needs to relocate
                 return [flag_Obj_IE(OD[0]), OD[1]]
             # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('m,X'), argument)):
+            elif (regexMatch(argumentTokens.get('m,X'), argument)):
+                argu = argument.replace(",X", "")
+                if (regexMatch(argumentTokens.get('num'), argu)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 return [flag_Obj_NIXE(OD[0]), OD[1]]
             # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('m'), argument)):
+            elif (regexMatch(argumentTokens.get('m'), argument)):
+                if (regexMatch(argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
                 return [flag_Obj_NIE(OD[0]), OD[1]]
+            else:
+                return ["!ERROR!", "Modo de direccionamiento no existe"]
         else:
             # if(re.match('^'+'#'+ argumentTokens.get('c')+'$',argument)):
-            if(regexMatch('#' + argumentTokens.get('c'), argument)):
+            if (regexMatch('#' + argumentTokens.get('c'), argument)):
+                if (regexMatch('#' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_c_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
                 return [flag_Obj_I(OD[0]), False]
             # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
-            elif(regexMatch('#' + argumentTokens.get('m'), argument)):
+            elif (regexMatch('#' + argumentTokens.get('m'), argument)):
+                if (regexMatch('#' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
                 # can be base or cp relative
                 tempIPoIB = [flag_Obj_IP(OD[0], CP), False]
-                if(addressIsPCRelative(tempIPoIB[0][1])):
+                if (addressIsPCRelative(tempIPoIB[0][1])):
                     return tempIPoIB
                 else:
                     tempIPoIB = [flag_Obj_IB(OD[0], B), False]
-                    if(addressIsBaseRelative(tempIPoIB[0][1])):
+                    if (addressIsBaseRelative(tempIPoIB[0][1])):
                         return tempIPoIB
+
                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
             # elif(re.match('^'+argumentTokens.get('c,X')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('c,X'), argument)):
+            elif (regexMatch(argumentTokens.get('c,X'), argument)):
+                argu = argument.replace(",X", "")
+                if (regexMatch(argumentTokens.get('num'), argu)):
+                    if not argumentIsA_c_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 return [flag_Obj_NIX(OD[0]), OD[1]]
             # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('m,X'), argument)):
+            elif (regexMatch(argumentTokens.get('m,X'), argument)):
                 # can be base or cp relative
+                argu = argument.replace(",X", "")
+                if (regexMatch(argumentTokens.get('num'), argu)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 tempIPoIB = [flag_Obj_NIXP(OD[0], CP), False]
-                if(addressIsPCRelative(tempIPoIB[0][1])):
+                if (addressIsPCRelative(tempIPoIB[0][1])):
                     return tempIPoIB
                 else:
                     tempIPoIB = [flag_Obj_NIXB(OD[0], B), False]
-                    if(addressIsBaseRelative(tempIPoIB[0][1])):
+                    if (addressIsBaseRelative(tempIPoIB[0][1])):
                         return tempIPoIB
                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
             # elif(re.match('^'+'@'+ argumentTokens.get('c')+'$',argument)):
-            elif(regexMatch('@' + argumentTokens.get('c'), argument)):
+            elif (regexMatch('@' + argumentTokens.get('c'), argument)):
+                if (regexMatch('@' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 return [flag_Obj_N(OD[0]), False]
             # elif(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
-            elif(regexMatch('@' + argumentTokens.get('m'), argument)):
+            elif (regexMatch('@' + argumentTokens.get('m'), argument)):
+                if (regexMatch('@' + argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 # can be base or cp relative
                 tempIPoIB = [flag_Obj_NP(OD[0], CP), False]
-                if(addressIsPCRelative(tempIPoIB[0][1])):
+                if (addressIsPCRelative(tempIPoIB[0][1])):
                     return tempIPoIB
                 else:
                     tempIPoIB = [flag_Obj_NB(OD[0], B), False]
-                    if(addressIsBaseRelative(tempIPoIB[0][1])):
+                    if (addressIsBaseRelative(tempIPoIB[0][1])):
                         return tempIPoIB
                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
             # elif(re.match('^'+argumentTokens.get('c')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('c'), argument)):
+            elif (regexMatch(argumentTokens.get('c'), argument)):
+                if (regexMatch(argumentTokens.get('num'), argument)):
+                    if not argumentIsA_c_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 return [flag_Obj_NI(OD[0]), False]
             # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
-            elif(regexMatch(argumentTokens.get('m'), argument)):
+            elif (regexMatch(argumentTokens.get('m'), argument)):
+                if (regexMatch(argumentTokens.get('num'), argument)):
+                    if not argumentIsA_m_Constant(auxValueAr):
+                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+
                 # can be base or cp relative
                 tempIPoIB = [flag_Obj_NIP(OD[0], CP), False]
-                if(addressIsPCRelative(tempIPoIB[0][1])):
+                if (addressIsPCRelative(tempIPoIB[0][1])):
                     return tempIPoIB
                 else:
                     tempIPoIB = [flag_Obj_NIB(OD[0], B), False]
-                    if(addressIsBaseRelative(tempIPoIB[0][1])):
+                    if (addressIsBaseRelative(tempIPoIB[0][1])):
                         return tempIPoIB
                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
             else:
                 return ["!ERROR!", "Modo de direccionamiento no existe"]
+        return ["!ERROR!", "Modo de direccionamiento no existe"]
 
 
 def byteCodObj(operand):
     strExtract = byteOperandExtract(operand)
     res = ''
-    if(operand.startswith('c'.upper())):
+    if (operand.startswith('c'.upper())):
         # divided by two becuse each byte uses two nibbles
         strExtract = padHexEven(strExtract).replace("'", "")
         for caracter in strExtract:
             res += format(ord(caracter), 'x')
-    elif(operand.startswith('x'.upper())):
+    elif (operand.startswith('x'.upper())):
         # divided by two becuse each byte uses two nibbles
         res = padHexEven(strExtract).replace("'", "")
     return res
@@ -905,13 +958,13 @@ def bindigit(n, bits):
 
 def flagsForF3andF4_Decimal(mnemonic, operand):
     resFlags = 0
-    if(typeFour(mnemonic)):
+    if (typeFour(mnemonic)):
         resFlags += Ebit
-    if(operand.endswith(",X")):
+    if (operand.endswith(",X")):
         resFlags += Xbit
-    if(operand[0] == '@'):
+    if (operand[0] == '@'):
         resFlags += Nbit
-    elif(operand[0] == '#'):
+    elif (operand[0] == '#'):
         resFlags += Ibit
     else:
         resFlags += Nbit+Ibit
@@ -919,20 +972,20 @@ def flagsForF3andF4_Decimal(mnemonic, operand):
 
 
 def passTwo(archiInter, symTable):
-    codObj = []  # this function return the codObj
+    codObj = {}  # this function return the codObj
     BASE = 0
     for indexArchi in archiInter:  # forEach line in the intermediateFile
         line = archiInter.get(indexArchi)
         # if there is not error, it means it will make a object code
-        if('ERROR' in line[4] and not 'Simbolo' in line[4]):
+        if ('ERROR' in line[4] and not 'Simbolo' in line[4]):
             continue  # if there is an error continue without creating ob code
         else:
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[2]))
             #[hex(PC), label, mnemonic, operands, codop]
             # 'BASE'  : ['D','BASE',0],}
             # 'ADD'   : ['I',3,0x18,['m']],
-            if(infoMnemonic[1] == 3):
-                if(baseMnemonic(line[2]) == 'RSUB'):
+            if (infoMnemonic[1] == 3):
+                if (baseMnemonic(line[2]) == 'RSUB'):
                     opAux = int(infoMnemonic[2], 16)
                     op = '{0:08b}'.format(opAux)
                     op = op[:len(op)-2]
@@ -941,23 +994,24 @@ def passTwo(archiInter, symTable):
                     desp = bindigit(0, 12)
                     finalBinString = op + nixbpe + desp
                     finalHexStr = hex(int(finalBinString, 2))
-                    codObj.append(finalHexStr)
-                elif(typeFour(line[2])):  # Format 4
+                    # codObj.append(finalHexStr)
+                    codObj[line[0]] = finalHexStr
+
+                elif (typeFour(line[2])):  # Format 4
                     # op(6)|n|i|x|b|p|e|dir(20)
                     addressingModeRes = addressingModes(
                         line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
                     opAux = int(infoMnemonic[2], 16)
                     op = '{0:08b}'.format(opAux)
                     op = op[:len(op)-2]
-                    if(addressingModeRes[0] == "!ERROR!"):
+                    if (addressingModeRes[0] == "!ERROR!"):
                         decFlags = flagsForF3andF4_Decimal(line[2], line[3])
                         decFlags += Bbit + Pbit
                         nixbpe = '{0:06b}'.format(decFlags)
                         dir = bindigit(-1, 20)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
-                        if(addressingModeRes[1] == True):
-                            finalHexStr += '*'
+                        finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
                         #dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
@@ -966,9 +1020,10 @@ def passTwo(archiInter, symTable):
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
-                        if(addressingModeRes[1] == True):
+                        if (addressingModeRes[1] == True):
                             finalHexStr += '*'
-                    codObj.append(finalHexStr)
+                    # codObj.append(finalHexStr)
+                    codObj[line[0]] = finalHexStr
                 else:  # Format 3
                     # op(6)|n|i|x|b|p|e|desp(12)
                     addressingModeRes = addressingModes(
@@ -976,15 +1031,14 @@ def passTwo(archiInter, symTable):
                     opAux = infoMnemonic[2]
                     op = '{0:08b}'.format(int(opAux, 16))
                     op = op[:len(op)-2]
-                    if(addressingModeRes[0] == "!ERROR!"):
+                    if (addressingModeRes[0] == "!ERROR!"):
                         decFlags = flagsForF3andF4_Decimal(line[2], line[3])
                         decFlags += Bbit + Pbit
                         nixbpe = '{0:06b}'.format(decFlags)
                         dir = bindigit(-1, 12)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
-                        if(addressingModeRes[1] == True):
-                            finalHexStr += '*'
+                        finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
                         #desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
@@ -993,61 +1047,67 @@ def passTwo(archiInter, symTable):
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + desp
                         finalHexStr = hex(int(finalBinString, 2))
-                        if(addressingModeRes[1] == True):
+                        if (addressingModeRes[1] == True):
                             finalHexStr += '*'
-                    codObj.append(finalHexStr)
+                    # codObj.append(finalHexStr)
+                    codObj[line[0]] = finalHexStr
             else:
-                if(infoMnemonic[1] == 2):  # Format 2
+                if (infoMnemonic[1] == 2):  # Format 2
                     # op(8)|r1(4)|r2(4)
                     opAux = int(infoMnemonic[2], 16)
                     op = '{0:08b}'.format(opAux)
                     registersArray = line[3].split(",")
 
                     r1 = r2On = 0
-                    if(infoMnemonic[3] == ['r']):
+                    if (infoMnemonic[3] == ['r']):
                         r1 = SIXE_Registers.get(registersArray[0])
-                    elif(infoMnemonic[3] == ['n']):
+                    elif (infoMnemonic[3] == ['n']):
                         r1 = int(registersArray[0])
-                    elif(infoMnemonic[3] == ['r', 'r']):
+                    elif (infoMnemonic[3] == ['r', 'r']):
                         r1 = SIXE_Registers.get(registersArray[0])
                         r2On = SIXE_Registers.get(registersArray[1])
-                    elif(infoMnemonic[3] == ['r', 'n']):
+                    elif (infoMnemonic[3] == ['r', 'n']):
                         r2On = int(registersArray[1])
 
                     r1 = bindigit(r1, 4)
                     r2On = bindigit(r2On, 4)
                     finalBinString = op + r1 + r2On
                     finalHexStr = hex(int(finalBinString, 2))
-                    codObj.append(finalHexStr)
-                elif(infoMnemonic[1] == 1):  # Format 1
+                    # codObj.append(finalHexStr)
+                    codObj[line[0]] = finalHexStr
+
+                elif (infoMnemonic[1] == 1):  # Format 1
                     # op(8)
                     insertionP2 = infoMnemonic[2]
-                    codObj.append(insertionP2)
-                elif(infoMnemonic[1] == 'BASE'):
+                    # codObj.append(insertionP2)
+                    codObj[line[0]] = insertionP2
+                elif (infoMnemonic[1] == 'BASE'):
                     rawBASE = getObjAddr(line[3], symTable)[0]
                     BASE = '{0:06X}'.format(rawBASE)
-                elif(infoMnemonic[1] == 'BYTE'):
-                    codObj.append(byteCodObj(line[3]))
-                elif(infoMnemonic[1] == 'WORD'):
+                elif (infoMnemonic[1] == 'BYTE'):
+                    codObj[line[0]] = byteCodObj(line[3])
+                    # codObj.append(byteCodObj(line[3]))
+                elif (infoMnemonic[1] == 'WORD'):
                     hexAux = SIC_hex_value(line[3], True)
                     bAux = format(int(hexAux, 16), '0>24b')
                     finalHexStr = '{0:06X}'.format(int(bAux, 2))
-                    codObj.append(finalHexStr)
+                    # codObj.append(finalHexStr)
+                    codObj[line[0]] = finalHexStr
     return codObj
 
 
 def SIC_hex_value(s, hexi=False):
     try:
-        if(re.match('[0-9a-fA-F]+(H|h)', s)):
+        if (re.match('[0-9a-fA-F]+(H|h)', s)):
             s = s.replace("H", "")
             s = s.replace("h", "")
-            if(hexi):
+            if (hexi):
                 inte = int(s, 16)
                 exa = hex(inte)
                 return exa
             return int(s, 16)
-        elif(re.match('[0-9]+$', s)):
-            if(hexi):
+        elif (re.match('[0-9]+$', s)):
+            if (hexi):
                 inte = int(s, 10)
                 exa = hex(inte)
                 return exa

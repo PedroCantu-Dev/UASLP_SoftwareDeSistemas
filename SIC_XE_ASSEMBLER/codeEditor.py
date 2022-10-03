@@ -1,5 +1,4 @@
 from pathlib import Path
-import tkinter
 import os
 from tkinter import *
 from tkinter import messagebox
@@ -280,7 +279,7 @@ class Sicxe_GUI:
     def __openFile(self):
         if self.__savedFileFlag == False:
             save = self.__showSaveChanges(self)
-            if(save == True):
+            if (save == True):
                 self.__saveFile(self)
 
         self.__file = askopenfilename(initialdir=os.getcwd(
@@ -398,7 +397,7 @@ class Sicxe_GUI:
         # call readLines method for generating
         self.cleanWhenPass1()
         lines = self.__thisSourceFile.get("1.0", "end")
-        if(lines and lines != '\n'):
+        if (lines and lines != '\n'):
             # lines = open(file).readlines()
             # llama al paso 1 |
             # call step one
@@ -467,10 +466,10 @@ class Sicxe_GUI:
             errorFile.close()
 
     def __pass2(self):
-        if(self.intermediateFile and self.tableSym):
+        if (self.intermediateFile and self.tableSym):
             passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
             lines = self.__thisSourceFile.get("1.0", "end")
-            if(lines):
+            if (lines):
                 # lines = open(file).readlines()
                 # llama al paso 1 |
                 # call step one
