@@ -31,7 +31,7 @@ SICXE_Dictionary = {
     'ADDF': ['I', 3, '0x58', ['operand']],
     'ADDR': ['I', 2, '0x90', ['r', 'r']],
     'AND': ['I', 3, '0x40', ['operand']],
-    'CLEAR': ['I', 2, '0xB4', ['operand']],
+    'CLEAR': ['I', 2, '0xB4', ['r']],
     'COMP': ['I', 3, '0x28', ['operand']],
     'COMF': ['I', 3, '0x88', ['operand']],
     'COMPR': ['I', 2, '0xA0', ['r', 'r']],
@@ -809,17 +809,17 @@ def addressingModes(mnemonic, argument, tab, CP, B):
         if(typeFour(mnemonic)):  # if mnemonic is extended
             # if(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
             if(regexMatch('@' + argumentTokens.get('m'), argument)):
-                return [flag_Obj_NE(OD[0]), False]
+                return [flag_Obj_NE(OD[0]), OD[1]]
             # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
             elif(regexMatch('#' + argumentTokens.get('m'), argument)):
                 # it means is needs to relocate
                 return [flag_Obj_IE(OD[0]), OD[1]]
             # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
             elif(regexMatch(argumentTokens.get('m,X'), argument)):
-                return [flag_Obj_NIXE(OD[0]), False]
+                return [flag_Obj_NIXE(OD[0]), OD[1]]
             # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
             elif(regexMatch(argumentTokens.get('m'), argument)):
-                return [flag_Obj_NIE(OD[0]), False]
+                return [flag_Obj_NIE(OD[0]), OD[1]]
         else:
             # if(re.match('^'+'#'+ argumentTokens.get('c')+'$',argument)):
             if(regexMatch('#' + argumentTokens.get('c'), argument)):
@@ -954,6 +954,10 @@ def passTwo(archiInter, symTable):
                         decFlags += Bbit + Pbit
                         nixbpe = '{0:06b}'.format(decFlags)
                         dir = bindigit(-1, 20)
+                        finalBinString = op + nixbpe + dir
+                        finalHexStr = hex(int(finalBinString, 2))
+                        if(addressingModeRes[1] == True):
+                            finalHexStr += '*'
                     else:
                         hexOfFlags = addressingModeRes[0][0]
                         #dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
@@ -964,7 +968,7 @@ def passTwo(archiInter, symTable):
                         finalHexStr = hex(int(finalBinString, 2))
                         if(addressingModeRes[1] == True):
                             finalHexStr += '*'
-                        codObj.append(finalHexStr)
+                    codObj.append(finalHexStr)
                 else:  # Format 3
                     # op(6)|n|i|x|b|p|e|desp(12)
                     addressingModeRes = addressingModes(
@@ -976,7 +980,11 @@ def passTwo(archiInter, symTable):
                         decFlags = flagsForF3andF4_Decimal(line[2], line[3])
                         decFlags += Bbit + Pbit
                         nixbpe = '{0:06b}'.format(decFlags)
-                        desp = bindigit(-1, 12)
+                        dir = bindigit(-1, 12)
+                        finalBinString = op + nixbpe + dir
+                        finalHexStr = hex(int(finalBinString, 2))
+                        if(addressingModeRes[1] == True):
+                            finalHexStr += '*'
                     else:
                         hexOfFlags = addressingModeRes[0][0]
                         #desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
@@ -985,7 +993,9 @@ def passTwo(archiInter, symTable):
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + desp
                         finalHexStr = hex(int(finalBinString, 2))
-                        codObj.append(finalHexStr)
+                        if(addressingModeRes[1] == True):
+                            finalHexStr += '*'
+                    codObj.append(finalHexStr)
             else:
                 if(infoMnemonic[1] == 2):  # Format 2
                     # op(8)|r1(4)|r2(4)
