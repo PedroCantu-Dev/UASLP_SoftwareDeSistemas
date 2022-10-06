@@ -1067,7 +1067,8 @@ def passTwo(archiInter, symTable):
                         r1 = SIXE_Registers.get(registersArray[0])
                         r2On = SIXE_Registers.get(registersArray[1])
                     elif (infoMnemonic[3] == ['r', 'n']):
-                        r2On = int(registersArray[1])
+                        r1 = SIXE_Registers.get(registersArray[0])
+                        r2On = int(registersArray[1])-1
 
                     r1 = bindigit(r1, 4)
                     r2On = bindigit(r2On, 4)
