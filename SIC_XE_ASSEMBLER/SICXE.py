@@ -334,7 +334,7 @@ def addressIsPCRelative(hexAddress):
 
 
 def argumentIsA_c_Constant(argument):
-    if (argument >= hex(0) and argument <= hex(4095)):
+    if (int(argument, 16) >= 0 and int(argument, 16) <= 4095):
         return True
     else:
         return False
@@ -343,7 +343,7 @@ def argumentIsA_c_Constant(argument):
 
 
 def argumentIsA_m_Constant(argument):
-    if (argument > hex(4095)):
+    if (int(argument, 16) > 4095):
         return True
     else:
         return False
@@ -804,7 +804,7 @@ def getObjAddr(argument, tab):
 
 def addressingModes(mnemonic, argument, tab, CP, B):
     OD = getObjAddr(argument, tab)
-    auxValueAr = SIC_hex_value(OD[1], True)
+    auxValueAr = SIC_hex_value(OD[0], True)
     if (isinstance(OD[1], list) and len(OD[1]) > 1):
         return OD[1]
     else:
@@ -888,7 +888,7 @@ def addressingModes(mnemonic, argument, tab, CP, B):
             # elif(re.match('^'+'@'+ argumentTokens.get('c')+'$',argument)):
             elif (regexMatch('@' + argumentTokens.get('c'), argument)):
                 if (regexMatch('@' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
+                    if not argumentIsA_c_Constant(auxValueAr):
                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
 
                 return [flag_Obj_N(OD[0]), False]
@@ -1098,7 +1098,12 @@ def passTwo(archiInter, symTable):
 
 def SIC_hex_value(s, hexi=False):
     try:
-        if (re.match('[0-9a-fA-F]+(H|h)', s)):
+        if isinstance(s, int):
+            if (hexi):
+                exa = hex(s)
+                return exa
+            return s
+        elif (re.match('[0-9a-fA-F]+(H|h)', s)):
             s = s.replace("H", "")
             s = s.replace("h", "")
             if (hexi):
