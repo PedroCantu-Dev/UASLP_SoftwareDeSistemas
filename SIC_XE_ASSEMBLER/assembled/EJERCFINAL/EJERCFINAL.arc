@@ -19,4 +19,5 @@
 18 0x6fa1  STA SALTO  
 19 0x6fa4  +SUB 350  
 20 0x6fa8  J CADENA,X  
-21 0x6fab  END INICIO  
+21 0x6fab  +TIX TABLA,X  
+22 0x6faf  END INICIO  
