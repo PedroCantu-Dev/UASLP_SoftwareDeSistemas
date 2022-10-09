@@ -1094,6 +1094,8 @@ def passTwo(archiInter, symTable):
                 elif (infoMnemonic[1] == 'BASE'):
                     rawBASE = getObjAddr(line[3], symTable)[0]
                     BASE = '{0:06X}'.format(rawBASE)
+                    codObj[indexArchi] = "----"
+                    archiInter[indexArchi][4] = "----"
                 elif (infoMnemonic[1] == 'BYTE'):
                     # codObj.append(byteCodObj(line[3]))
                     # codObj[line[0]] = byteCodObj(line[3])
