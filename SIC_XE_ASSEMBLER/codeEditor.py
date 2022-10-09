@@ -386,11 +386,25 @@ class Sicxe_GUI:
         for i in self.__thisErrorTableFileTree.get_children():
             self.__thisErrorTableFileTree.delete(i)
         self.tableSym = None
-        # self.refresh()
+
+    def cleanWhenPass2(self):
+        for i in self.__thisIntermediateFileTree.get_children():
+            self.__thisIntermediateFileTree.delete(i)
 
     def refresh(self):
         self.destroy()
         self.__init__()
+
+    def __getAssembledFolderPrefix(self, fileName):
+        assembledFolderPrefix = os.path.dirname(
+            __file__)+"/assembled/" + fileName + "/"
+        # for assembled folder creation
+        if not os.path.exists(assembledFolderPrefix):
+            os.makedirs(assembledFolderPrefix)
+        return assembledFolderPrefix
+
+    assembledFolderPrefix = ""
+    intermediateFileName = ""
 
     def __pass1(self):
         # llama al metodo para generar una lista de lineas apartir del archivo|
@@ -410,17 +424,20 @@ class Sicxe_GUI:
             # print("file name(just name) :  " + Path(__file__).name)
             # print("Directory name :  " + os.path.dirname(__file__))
 
-            intermediateFileName = list(self.intermediateFile.values())[0][1]
-            assembledFolderPrefix = os.path.dirname(
-                __file__)+"/assembled/" + intermediateFileName + "/"
+            self.intermediateFileName = list(
+                self.intermediateFile.values())[0][1]
+            # assembledFolderPrefix = os.path.dirname(
+            #     __file__)+"/assembled/" + intermediateFileName + "/"
+            self.assembledFolderPrefix = self.__getAssembledFolderPrefix(
+                self.intermediateFileName)
 
-            # for assembled folder creation
-            if not os.path.exists(assembledFolderPrefix):
-                os.makedirs(assembledFolderPrefix)
+            # # for assembled folder creation
+            # if not os.path.exists(assembledFolderPrefix):
+            #     os.makedirs(assembledFolderPrefix)
 
             # Intermediate File, plot and save
-            interFile = open(assembledFolderPrefix +
-                             intermediateFileName+'.arc', "w+")
+            interFile = open(self.assembledFolderPrefix +
+                             self.intermediateFileName+'.arc', "w+")
             index = 0
             for key in self.intermediateFile:
                 interFile.writelines(str(key))
@@ -436,8 +453,8 @@ class Sicxe_GUI:
             interFile.close()
 
             # symbol table
-            tabSymFile = open(assembledFolderPrefix +
-                              intermediateFileName+'.tab', "w+")
+            tabSymFile = open(self.assembledFolderPrefix +
+                              self.intermediateFileName+'.tab', "w+")
             for key in self.tableSym:
                 tabSymFile.writelines(key)
                 tabSymFile.writelines(" ")
@@ -449,8 +466,8 @@ class Sicxe_GUI:
             tabSymFile.close()
 
             # error table
-            errorFile = open(assembledFolderPrefix +
-                             intermediateFileName+'.err', "w+")
+            errorFile = open(self.assembledFolderPrefix +
+                             self.intermediateFileName+'.err', "w+")
             for key in errors:
                 errorFile.writelines(str(key))
                 errorFile.writelines(" ")
@@ -466,19 +483,32 @@ class Sicxe_GUI:
             errorFile.close()
 
     def __pass2(self):
-        if (self.intermediateFile and self.tableSym):
-            passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
-            lines = self.__thisSourceFile.get("1.0", "end")
-            if (lines):
-                # lines = open(file).readlines()
-                # llama al paso 1 |
-                # call step one
-                lines = lines.split("\n")
-                passOneReturn = passOne(lines)
-                intermediateFile = passOneReturn[0]
-                tableSym = passOneReturn[1]
-                size = passOneReturn[2]
-                errors = passOneReturn[3]
+        # self.cleanWhenPass2()
+        if (not self.intermediateFile or not self.tableSym):
+            self.__pass1()
+        passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
+
+        # Intermediate File, plot and save
+        interFile = open(self.assembledFolderPrefix +
+                         self.intermediateFileName+'_pass2'+'.arc', "w+")
+
+        index = 0
+        for key in self.intermediateFile:
+            codObjeto = ""
+            interFile.writelines(str(key))
+            interFile.writelines(" ")
+            line = self.intermediateFile.get(key)
+            for content in line:
+                interFile.writelines(content)
+                interFile.writelines(" ")
+            if (key in passTwoReturn):
+                codObjeto = passTwoReturn.get(key)
+                interFile.writelines(codObjeto)
+            self.__thisIntermediateFileTree.insert(key, END, values=(
+                key, line[0], line[1], line[2], line[3], line[4]))
+            interFile.writelines("\n")
+        index += 1
+        interFile.close()
 
     def run(self):
         # Run main application

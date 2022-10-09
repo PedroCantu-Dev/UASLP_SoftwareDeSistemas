@@ -974,6 +974,7 @@ def flagsForF3andF4_Decimal(mnemonic, operand):
 def passTwo(archiInter, symTable):
     codObj = {}  # this function return the codObj
     BASE = 0
+
     for indexArchi in archiInter:  # forEach line in the intermediateFile
         line = archiInter.get(indexArchi)
         # if there is not error, it means it will make a object code
@@ -995,7 +996,9 @@ def passTwo(archiInter, symTable):
                     finalBinString = op + nixbpe + desp
                     finalHexStr = hex(int(finalBinString, 2))
                     # codObj.append(finalHexStr)
-                    codObj[line[0]] = finalHexStr
+                    # codObj[line[0]] = finalHexStr
+                    codObj[indexArchi] = finalHexStr
+                    archiInter[indexArchi][4] = finalHexStr
 
                 elif (typeFour(line[2])):  # Format 4
                     # op(6)|n|i|x|b|p|e|dir(20)
@@ -1023,7 +1026,9 @@ def passTwo(archiInter, symTable):
                         if (addressingModeRes[1] == True):
                             finalHexStr += '*'
                     # codObj.append(finalHexStr)
-                    codObj[line[0]] = finalHexStr
+                    # codObj[line[0]] = finalHexStr
+                    codObj[indexArchi] = finalHexStr
+                    archiInter[indexArchi][4] = finalHexStr
                 else:  # Format 3
                     # op(6)|n|i|x|b|p|e|desp(12)
                     addressingModeRes = addressingModes(
@@ -1050,7 +1055,9 @@ def passTwo(archiInter, symTable):
                         if (addressingModeRes[1] == True):
                             finalHexStr += '*'
                     # codObj.append(finalHexStr)
-                    codObj[line[0]] = finalHexStr
+                    # codObj[line[0]] = finalHexStr
+                    codObj[indexArchi] = finalHexStr
+                    archiInter[indexArchi][4] = finalHexStr
             else:
                 if (infoMnemonic[1] == 2):  # Format 2
                     # op(8)|r1(4)|r2(4)
@@ -1069,31 +1076,40 @@ def passTwo(archiInter, symTable):
                     elif (infoMnemonic[3] == ['r', 'n']):
                         r1 = SIXE_Registers.get(registersArray[0])
                         r2On = int(registersArray[1])-1
-
                     r1 = bindigit(r1, 4)
                     r2On = bindigit(r2On, 4)
                     finalBinString = op + r1 + r2On
                     finalHexStr = hex(int(finalBinString, 2))
                     # codObj.append(finalHexStr)
-                    codObj[line[0]] = finalHexStr
-
+                    # codObj[line[0]] = finalHexStr
+                    codObj[indexArchi] = finalHexStr
+                    archiInter[indexArchi][4] = finalHexStr
                 elif (infoMnemonic[1] == 1):  # Format 1
                     # op(8)
                     insertionP2 = infoMnemonic[2]
                     # codObj.append(insertionP2)
-                    codObj[line[0]] = insertionP2
+                    # codObj[line[0]] = insertionP2
+                    codObj[indexArchi] = insertionP2
+                    archiInter[indexArchi][4] = insertionP2
                 elif (infoMnemonic[1] == 'BASE'):
                     rawBASE = getObjAddr(line[3], symTable)[0]
                     BASE = '{0:06X}'.format(rawBASE)
                 elif (infoMnemonic[1] == 'BYTE'):
-                    codObj[line[0]] = byteCodObj(line[3])
                     # codObj.append(byteCodObj(line[3]))
+                    # codObj[line[0]] = byteCodObj(line[3])
+                    codObj[indexArchi] = byteCodObj(line[3])
+                    archiInter[indexArchi][4] = byteCodObj(line[3])
                 elif (infoMnemonic[1] == 'WORD'):
                     hexAux = SIC_hex_value(line[3], True)
                     bAux = format(int(hexAux, 16), '0>24b')
                     finalHexStr = '{0:06X}'.format(int(bAux, 2))
                     # codObj.append(finalHexStr)
-                    codObj[line[0]] = finalHexStr
+                    # codObj[line[0]] = finalHexStr
+                    codObj[indexArchi] = finalHexStr
+                    archiInter[indexArchi][4] = finalHexStr
+                else:
+                    codObj[indexArchi] = "----"
+                    archiInter[indexArchi][4] = "----"
     return codObj
 
 
