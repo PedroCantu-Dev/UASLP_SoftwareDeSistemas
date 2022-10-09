@@ -374,9 +374,6 @@ class Sicxe_GUI:
     intermediateFile = None
     tabSym = None
 
-    def cleanWhenPass2(self):
-        {}
-
     def cleanWhenPass1(self):
         self.intermediateFile = None
         for i in self.__thisIntermediateFileTree.get_children():
@@ -483,9 +480,9 @@ class Sicxe_GUI:
             errorFile.close()
 
     def __pass2(self):
-        # self.cleanWhenPass2()
         if (not self.intermediateFile or not self.tableSym):
             self.__pass1()
+        self.cleanWhenPass2()
         passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
 
         # Intermediate File, plot and save
@@ -504,7 +501,7 @@ class Sicxe_GUI:
             if (key in passTwoReturn):
                 codObjeto = passTwoReturn.get(key)
                 interFile.writelines(codObjeto)
-            self.__thisIntermediateFileTree.insert(key, END, values=(
+            self.__thisIntermediateFileTree.insert('', END, values=(
                 key, line[0], line[1], line[2], line[3], line[4]))
             interFile.writelines("\n")
         index += 1
