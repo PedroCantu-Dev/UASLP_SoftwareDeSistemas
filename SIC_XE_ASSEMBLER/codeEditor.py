@@ -474,6 +474,8 @@ class Sicxe_GUI:
             errorFile.close()
 
     def makeHexString(self, vari):
+        if (type(vari) is int):
+            return self.makeHexString(hex(vari))
         try:
             int(vari, 16)
             return vari.replace('0x', '')
@@ -515,11 +517,18 @@ class Sicxe_GUI:
         self.makeRegisters()
         # asumimos que los pasos anteriores se relizaron
 
-    def fillOrCut(self, strFOC, numFinal=6, charFill='0'):
+    def fillOrCutL(self, strFOC, numFinal=6, charFill='0'):
         if (len(strFOC) < numFinal):
             return strFOC.ljust(numFinal, charFill)
         else:
             return strFOC[0:numFinal]
+
+    def fillOrCutR(self, strFOC, numFinal=6, charFill='0'):
+        if (len(strFOC) < numFinal):
+            return strFOC.rjust(numFinal, charFill)
+        else:
+            return strFOC[0:numFinal]
+
     # funcion para generar los archivos de texto
 
     def makeRegisters(self):
@@ -527,8 +536,8 @@ class Sicxe_GUI:
                          self.intermediateFileName+'.obj', "w+")
         nombre = self.intermediateFileName
         # registro H
-        rH = "H" + self.fillOrCut(nombre) + self.fillOrCut(self.makeHexString(
-            self.initial)) + self.fillOrCut(self.makeHexString(self.initial))
+        rH = "H" + self.fillOrCutL(nombre) + self.fillOrCutR(self.makeHexString(
+            self.initial)) + self.fillOrCutR(self.makeHexString(self.size))
         # registro T
         for key in self.intermediateFile:
             registros.writelines(str(key))
