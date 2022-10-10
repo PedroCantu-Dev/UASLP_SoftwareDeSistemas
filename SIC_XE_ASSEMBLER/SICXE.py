@@ -628,8 +628,8 @@ def passOne(lines):
                 codOp_LineCounter += 1  # line counter for identify
                 if (dirInstr and dirInstr[1] == 'END'):
                     break  # break the loop if the directive END shows up
-    initialDirection = PC - initialDirection
-    return [codOb, tabSym, initialDirection, errorDicArray]
+    tam = PC - initialDirection
+    return [codOb, tabSym, initialDirection, tam, errorDicArray]
 
 
 # Calculo de la direccion objetivo para SIC-XE

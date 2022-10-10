@@ -364,13 +364,6 @@ class Sicxe_GUI:
             self.__root.title(os.path.basename(
                 self.__file) + " - SicXe Assembly")
 
-    def __assemble(self):
-        # self.__thisTextArea.event_generate("<<Cut>>")
-        # self.__thisTextArea.event_generate("<<Paste>>")
-
-        pass1Array = []
-        pass2Array = []
-
     intermediateFile = None
     tabSym = None
 
@@ -416,8 +409,9 @@ class Sicxe_GUI:
             passOneReturn = passOne(lines)
             self.intermediateFile = passOneReturn[0]
             self.tableSym = passOneReturn[1]
-            size = passOneReturn[2]
-            errors = passOneReturn[3]
+            self.initial = passOneReturn[2]
+            self.size = passOneReturn[3]
+            errors = passOneReturn[4]
             # print("file name(just name) :  " + Path(__file__).name)
             # print("Directory name :  " + os.path.dirname(__file__))
 
@@ -459,7 +453,7 @@ class Sicxe_GUI:
                 tabSymFile.writelines(line)
                 tabSymFile.writelines("\n")
                 self.__thisTabSymFileTree.insert('', END, values=(key, line))
-            tabSymFile.writelines("Tam del programa:" + str(size))
+            tabSymFile.writelines("Tam del programa:" + str(self.size))
             tabSymFile.close()
 
             # error table
@@ -478,6 +472,13 @@ class Sicxe_GUI:
                 self.__thisErrorTableFileTree.insert(
                     '', END, values=(str(key) + ' | ('+line[1]+')', msgError[0] + '-->   ' + line[2] + ' ' + line[3] + ' ' + line[4], msgError[1], msgError[2]))
             errorFile.close()
+
+    def makeHexString(self, vari):
+        try:
+            int(vari, 16)
+            return vari.replace('0x', '')
+        except:
+            return '0'
 
     def __pass2(self):
         if (not self.intermediateFile or not self.tableSym):
@@ -506,6 +507,43 @@ class Sicxe_GUI:
             interFile.writelines("\n")
         index += 1
         interFile.close()
+# self.__thisTextArea.event_generate("<<Cut>>")
+        # self.__thisTextArea.event_generate("<<Paste>>")
+
+    def __assemble(self):
+        self.__pass2()
+        self.makeRegisters()
+        # asumimos que los pasos anteriores se relizaron
+
+    def fillOrCut(self, strFOC, numFinal=6, charFill='0'):
+        if (len(strFOC) < numFinal):
+            return strFOC.ljust(numFinal, charFill)
+        else:
+            return strFOC[0:numFinal]
+    # funcion para generar los archivos de texto
+
+    def makeRegisters(self):
+        registros = open(self.assembledFolderPrefix +
+                         self.intermediateFileName+'.obj', "w+")
+        nombre = self.intermediateFileName
+        # registro H
+        rH = "H" + self.fillOrCut(nombre) + self.fillOrCut(self.makeHexString(
+            self.initial)) + self.fillOrCut(self.makeHexString(self.initial))
+        # registro T
+        for key in self.intermediateFile:
+            registros.writelines(str(key))
+            registros.writelines(" ")
+            line = self.intermediateFile.get(key)
+            for content in line:
+                registros.writelines(content)
+                registros.writelines(" ")
+            if (key in passTwoReturn):
+                codObjeto = passTwoReturn.get(key)
+                registros.writelines(codObjeto)
+            self.__thisIntermediateFileTree.insert('', END, values=(
+                key, line[0], line[1], line[2], line[3], line[4]))
+        # registro M
+        # registro E
 
     def run(self):
         # Run main application
