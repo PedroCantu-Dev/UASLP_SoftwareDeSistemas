@@ -529,30 +529,65 @@ class Sicxe_GUI:
         else:
             return strFOC[0:numFinal]
 
-    # funcion para generar los archivos de texto
+        # funcion para generar los archivos de texto
 
     def makeRegisters(self):
         registros = open(self.assembledFolderPrefix +
                          self.intermediateFileName+'.obj', "w+")
         nombre = self.intermediateFileName
+        primeraInstruccion = ""
+
         # registro H
-        rH = "H" + self.fillOrCutL(nombre) + self.fillOrCutR(self.makeHexString(
+        objFileLines = "H" + self.fillOrCutL(nombre) + self.fillOrCutR(self.makeHexString(
             self.initial)) + self.fillOrCutR(self.makeHexString(self.size))
+
+        objFileLines += "\n"
         # registro T
-        for key in self.intermediateFile:
-            registros.writelines(str(key))
-            registros.writelines(" ")
-            line = self.intermediateFile.get(key)
-            for content in line:
-                registros.writelines(content)
-                registros.writelines(" ")
-            if (key in passTwoReturn):
-                codObjeto = passTwoReturn.get(key)
-                registros.writelines(codObjeto)
-            self.__thisIntermediateFileTree.insert('', END, values=(
-                key, line[0], line[1], line[2], line[3], line[4]))
-        # registro M
+        objFileLines += "T"
+        for item in self.intermediateFile:
+            line = self.intermediateFile[item][4]
+            instru = self.intermediateFile[item][2]
+            fullLine = self.intermediateFile[item]
+            if (line == "----"):
+                continue
+            if (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
+                # cortan el archivo de texto
+                objFileLines += "\n"  # cortando el archivo de texto
+            elif (instru == 'END'):
+                if (fullLine[3]):  # buscará en la tabla de simbolos
+                    primeraInstruccion = "YEah"
+            else:
+                # si aun no se sabe la primera instruccion se guarda en la variable
+                if (not primeraInstruccion):
+                    # si en efecto se trata de una instruccion se asigna el valor
+                    if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
+                        primeraInstruccion = self.fillOrCutR(fullLine[0])
+                if ('*' in line):
+                    objFileLines += str(line).replace('*', '')
+                    # se genera un registro m
+                    if (instru == 'WORD'):
+                        pass
+                    elif (baseMnemonic(instru) in SICXE_Dictionary.keys()):
+
+                        objFileLines += self.fillOrCutR(fullLine[0])
+                        objFileLines += '05'
+                        if (True):  # aqui  cambiará segun se avance en la arquitectura
+                            objFileLines += '+'
+                        else:
+                            pass  # los casos para saber cuando es con signo -
+                        objFileLines += self.fillOrCutL(nombre)
+                        pass
+                    elif (True):
+                        # los casos que faltan por ver como relocalizables.
+                        pass
+                else:
+                    objFileLines += str(line)
+                objFileLines += " "
         # registro E
+        objFileLines += "E"
+        objFileLines += self.fillOrCutR(primeraInstruccion)
+        objFileLines += ""
+        registros.writelines(objFileLines)
 
     def run(self):
         # Run main application
