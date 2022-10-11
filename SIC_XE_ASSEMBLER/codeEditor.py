@@ -529,7 +529,13 @@ class Sicxe_GUI:
         else:
             return strFOC[0:numFinal]
 
-        # funcion para generar los archivos de texto
+    def deleteStringAfterChar(self, ch, strValue):
+        # The Regex pattern to match al characters on and after '-'
+        pattern = ch + ".*"
+        # Remove all characters after the character '-' from string
+        return re.sub(pattern, '', strValue)
+
+    # funcion para generar los archivos de texto
 
     def makeRegisters(self):
         registros = open(self.assembledFolderPrefix +
@@ -542,47 +548,54 @@ class Sicxe_GUI:
             self.initial)) + self.fillOrCutR(self.makeHexString(self.size))
 
         objFileLines += "\n"
+        registrosM = []
         # registro T
-        objFileLines += "T"
         for item in self.intermediateFile:
             line = self.intermediateFile[item][4]
             instru = self.intermediateFile[item][2]
             fullLine = self.intermediateFile[item]
-            if (line == "----"):
-                continue
+
             if (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
                 # cortan el archivo de texto
                 objFileLines += "\n"  # cortando el archivo de texto
+            elif (line == "----"):
+                continue
             elif (instru == 'END'):
                 if (fullLine[3]):  # buscará en la tabla de simbolos
                     primeraInstruccion = "YEah"
             else:
+                objFileLines += "T"
                 # si aun no se sabe la primera instruccion se guarda en la variable
                 if (not primeraInstruccion):
                     # si en efecto se trata de una instruccion se asigna el valor
                     if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
                         primeraInstruccion = self.fillOrCutR(fullLine[0])
                 if ('*' in line):
-                    objFileLines += str(line).replace('*', '')
+                    objFileLines += self.deleteStringAfterChar(
+                        ':', str(line).replace('*', ''))
                     # se genera un registro m
-                    if (instru == 'WORD'):
+                    if (instru == 'WORD'):  # si el relocalizable es por un WORD
                         pass
                     elif (baseMnemonic(instru) in SICXE_Dictionary.keys()):
-
-                        objFileLines += self.fillOrCutR(fullLine[0])
-                        objFileLines += '05'
+                        # la relocalizacion se hará un byte despues
+                        registroM = "\nM"
+                        registroM += self.fillOrCutR(
+                            hex(int(fullLine[0], 16)+1))
+                        registroM += '05'
                         if (True):  # aqui  cambiará segun se avance en la arquitectura
-                            objFileLines += '+'
+                            registroM += '+'
                         else:
                             pass  # los casos para saber cuando es con signo -
-                        objFileLines += self.fillOrCutL(nombre)
-                        pass
+                        registroM += nombre+'\n'
+                        registrosM.append(registroM)
                     elif (True):
                         # los casos que faltan por ver como relocalizables.
                         pass
                 else:
-                    objFileLines += str(line)
+                    objFileLines += self.deleteStringAfterChar(':', str(line))
                 objFileLines += " "
+        for itemss in registrosM:
+            objFileLines += itemss
         # registro E
         objFileLines += "E"
         objFileLines += self.fillOrCutR(primeraInstruccion)
