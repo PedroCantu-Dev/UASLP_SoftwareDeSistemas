@@ -536,29 +536,64 @@ class Sicxe_GUI:
 
         objFileLines += "\n"
         registrosM = []
+
+        primeraDireccionRegistroAux = ""
+        registroTAux = ""
+
+        lastCodObj = ""
+        lastDireccion = ""
         # registro T
         for item in self.intermediateFile:
             line = self.intermediateFile[item][4]
             instru = self.intermediateFile[item][2]
             fullLine = self.intermediateFile[item]
 
-            if (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
+            if (len(registroTAux) >= 60):
                 # cortan el archivo de texto
+                if (len(registroTAux) > 60):
+                    primeraDireccionRegistroAux = lastDireccion
+                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(len(registroTAux)/2), 2) + \
+                        " " + registroTAux[:-len(lastCodObj)]
+                    registroTAux = registroTAux[-len(lastCodObj):]
+                    lastDireccion = ""
+                else:
+                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + fillOrCutR(hex(len(registroTAux)), 2) + \
+                        " " + registroTAux
+
+                registroTAux = ""
+                primeraDireccionRegistroAux = ""
+                lastCodObj = ""
                 objFileLines += "\n"  # cortando el archivo de texto
-            elif (line == "----"):
-                continue
+            elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
+                # cortan el archivo de texto
+                if (registroTAux):
+                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
+                        " " + registroTAux
+                registroTAux = ""
+                lastCodObj = ""
+                primeraDireccionRegistroAux = ""
+                objFileLines += "\n"  # cortando el archivo de texto
             elif (instru == 'END'):
+                if (registroTAux):
+                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
+                        " " + registroTAux
                 if (fullLine[3]):  # buscará en la tabla de simbolos
                     primeraInstruccion = "YEah"
+            elif (line == "----"):
+                continue
+
             else:
-                objFileLines += "T"
+                lastDireccion = fullLine[0]
+                # objFileLines += "T"
                 # si aun no se sabe la primera instruccion se guarda en la variable
                 if (not primeraInstruccion):
                     # si en efecto se trata de una instruccion se asigna el valor
                     if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
                         primeraInstruccion = fillOrCutR(fullLine[0])
+                if (not primeraDireccionRegistroAux):
+                    primeraDireccionRegistroAux = fullLine[0]
                 if ('*' in line):
-                    objFileLines += self.deleteStringAfterChar(
+                    lastCodObj = self.deleteStringAfterChar(
                         ':', str(line).replace('*', ''))
                     # se genera un registro m
                     if (instru == 'WORD'):  # si el relocalizable es por un WORD
@@ -567,7 +602,7 @@ class Sicxe_GUI:
                         # la relocalizacion se hará un byte despues
                         registroM = "\nM"
                         registroM += fillOrCutR(
-                            hex(int(fullLine[0], 16)+1))
+                            cleanHexForCodObj(hex(int(fullLine[0], 16)+1)))
                         registroM += '05'
                         if (True):  # aqui  cambiará segun se avance en la arquitectura
                             registroM += '+'
@@ -579,13 +614,13 @@ class Sicxe_GUI:
                         # los casos que faltan por ver como relocalizables.
                         pass
                 else:
-                    objFileLines += self.deleteStringAfterChar(':', str(line))
-                objFileLines += " "
+                    lastCodObj = self.deleteStringAfterChar(':', str(line))
+                registroTAux += lastCodObj
         for itemss in registrosM:
             objFileLines += itemss
         # registro E
         objFileLines += "E"
-        objFileLines += fillOrCutR(primeraInstruccion)
+        objFileLines += cleanHexForCodObj(primeraInstruccion)
         objFileLines += ""
         registros.writelines(objFileLines)
 
