@@ -15,6 +15,7 @@
 from math import *
 import re
 from string import hexdigits
+import string
 from typing import Iterable  # for regular expresions
 
 
@@ -782,6 +783,8 @@ def flag_Obj_IB(objetiveAddress_TA, B):
     res2 = hex(objetiveAddress_TA - int(B, 16))
     return [res1, res2]
 
+# asumimos que los pasos anteriores se relizaron
+
 
 def getObjAddr(argument, tab):
     withVariable = False
@@ -995,6 +998,8 @@ def passTwo(archiInter, symTable):
                     desp = bindigit(0, 12)
                     finalBinString = op + nixbpe + desp
                     finalHexStr = hex(int(finalBinString, 2))
+                    finalHexStr = cleanHexForCodObj(
+                        finalHexStr, infoMnemonic[1]*2)
                     # codObj.append(finalHexStr)
                     # codObj[line[0]] = finalHexStr
                     codObj[indexArchi] = finalHexStr
@@ -1014,6 +1019,8 @@ def passTwo(archiInter, symTable):
                         dir = bindigit(-1, 20)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
+                        finalHexStr = cleanHexForCodObj(
+                            finalHexStr, (infoMnemonic[1]+1)*2)
                         finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
@@ -1023,6 +1030,8 @@ def passTwo(archiInter, symTable):
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
+                        finalHexStr = cleanHexForCodObj(
+                            finalHexStr, (infoMnemonic[1]+1)*2)
                         if (addressingModeRes[1] == True):
                             finalHexStr += '*'
                     # codObj.append(finalHexStr)
@@ -1043,6 +1052,8 @@ def passTwo(archiInter, symTable):
                         dir = bindigit(-1, 12)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
+                        finalHexStr = cleanHexForCodObj(
+                            finalHexStr, infoMnemonic[1]*2)
                         finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
@@ -1052,6 +1063,8 @@ def passTwo(archiInter, symTable):
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + desp
                         finalHexStr = hex(int(finalBinString, 2))
+                        finalHexStr = cleanHexForCodObj(
+                            finalHexStr, infoMnemonic[1]*2)
                         if (addressingModeRes[1] == True):
                             finalHexStr += '*'
                     # codObj.append(finalHexStr)
@@ -1080,13 +1093,16 @@ def passTwo(archiInter, symTable):
                     r2On = bindigit(r2On, 4)
                     finalBinString = op + r1 + r2On
                     finalHexStr = hex(int(finalBinString, 2))
+                    finalHexStr = cleanHexForCodObj(
+                        finalHexStr, infoMnemonic[1]*2)
                     # codObj.append(finalHexStr)
                     # codObj[line[0]] = finalHexStr
                     codObj[indexArchi] = finalHexStr
                     archiInter[indexArchi][4] = finalHexStr
                 elif (infoMnemonic[1] == 1):  # Format 1
                     # op(8)
-                    insertionP2 = infoMnemonic[2]
+                    insertionP2 = cleanHexForCodObj(
+                        infoMnemonic[2], infoMnemonic[1]*2)
                     # codObj.append(insertionP2)
                     # codObj[line[0]] = insertionP2
                     codObj[indexArchi] = insertionP2
@@ -1113,6 +1129,28 @@ def passTwo(archiInter, symTable):
                     codObj[indexArchi] = "----"
                     archiInter[indexArchi][4] = "----"
     return codObj
+
+
+def fillOrCutL(strFOC, numFinal=6, charFill='0'):
+    if (len(strFOC) < numFinal):
+        return strFOC.ljust(numFinal, charFill)
+    else:
+        return strFOC[0:numFinal]
+
+
+def fillOrCutR(strFOC, numFinal=6, charFill='0'):
+    if (len(strFOC) < numFinal):
+        return strFOC.rjust(numFinal, charFill)
+    else:
+        return strFOC[0:numFinal]
+
+
+def cleanHexForCodObj(hexa, numFinal=6, charfill='0'):
+    if (type(hexa) == str):
+        hexAuxi = hexa.replace('0x', '')
+        return fillOrCutR(hexAuxi, numFinal, charfill)
+    elif (type(hexa) == int):
+        return fillOrCutR(int(hexa, 16), numFinal, charfill)
 
 
 def SIC_hex_value(s, hexi=False):

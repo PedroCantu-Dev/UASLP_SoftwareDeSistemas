@@ -515,19 +515,6 @@ class Sicxe_GUI:
     def __assemble(self):
         self.__pass2()
         self.makeRegisters()
-        # asumimos que los pasos anteriores se relizaron
-
-    def fillOrCutL(self, strFOC, numFinal=6, charFill='0'):
-        if (len(strFOC) < numFinal):
-            return strFOC.ljust(numFinal, charFill)
-        else:
-            return strFOC[0:numFinal]
-
-    def fillOrCutR(self, strFOC, numFinal=6, charFill='0'):
-        if (len(strFOC) < numFinal):
-            return strFOC.rjust(numFinal, charFill)
-        else:
-            return strFOC[0:numFinal]
 
     def deleteStringAfterChar(self, ch, strValue):
         # The Regex pattern to match al characters on and after '-'
@@ -544,8 +531,8 @@ class Sicxe_GUI:
         primeraInstruccion = ""
 
         # registro H
-        objFileLines = "H" + self.fillOrCutL(nombre) + self.fillOrCutR(self.makeHexString(
-            self.initial)) + self.fillOrCutR(self.makeHexString(self.size))
+        objFileLines = "H" + fillOrCutL(nombre) + fillOrCutR(self.makeHexString(
+            self.initial)) + fillOrCutR(self.makeHexString(self.size))
 
         objFileLines += "\n"
         registrosM = []
@@ -569,7 +556,7 @@ class Sicxe_GUI:
                 if (not primeraInstruccion):
                     # si en efecto se trata de una instruccion se asigna el valor
                     if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
-                        primeraInstruccion = self.fillOrCutR(fullLine[0])
+                        primeraInstruccion = fillOrCutR(fullLine[0])
                 if ('*' in line):
                     objFileLines += self.deleteStringAfterChar(
                         ':', str(line).replace('*', ''))
@@ -579,7 +566,7 @@ class Sicxe_GUI:
                     elif (baseMnemonic(instru) in SICXE_Dictionary.keys()):
                         # la relocalizacion se hará un byte despues
                         registroM = "\nM"
-                        registroM += self.fillOrCutR(
+                        registroM += fillOrCutR(
                             hex(int(fullLine[0], 16)+1))
                         registroM += '05'
                         if (True):  # aqui  cambiará segun se avance en la arquitectura
@@ -598,7 +585,7 @@ class Sicxe_GUI:
             objFileLines += itemss
         # registro E
         objFileLines += "E"
-        objFileLines += self.fillOrCutR(primeraInstruccion)
+        objFileLines += fillOrCutR(primeraInstruccion)
         objFileLines += ""
         registros.writelines(objFileLines)
 
