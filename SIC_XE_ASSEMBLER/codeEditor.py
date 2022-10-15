@@ -32,7 +32,8 @@ class Sicxe_GUI:
     __ErrorsLabel = LabelFrame(__root, text="Errors File")
     __registerFileLabel = LabelFrame(__root, text="Registers")
 
-    __thisRegisterFile = Text(__registerFileLabel, wrap=NONE)
+    # , state='disabled')
+    __thisRegisterFile = Text(__registerFileLabel, wrap=NONE, state=DISABLED)
     __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
     __thisRegisterFileScrollBarX = Scrollbar(
         __thisRegisterFile, orient='horizontal')
@@ -573,12 +574,12 @@ class Sicxe_GUI:
                 # cortan el archivo de texto
                 if (len(registroTAux) > 60):
                     primeraDireccionRegistroAux = lastDireccion
-                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(len(registroTAux)/2), 2) + \
+                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(len(registroTAux)/2), 2) + \
                         " " + registroTAux[:-len(lastCodObj)]
                     registroTAux = registroTAux[-len(lastCodObj):]
                     lastDireccion = ""
                 else:
-                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + fillOrCutR(hex(len(registroTAux)), 2) + \
+                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + fillOrCutR(hex(len(registroTAux)), 2) + \
                         " " + registroTAux
 
                 registroTAux = ""
@@ -588,7 +589,7 @@ class Sicxe_GUI:
             elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
                 # cortan el archivo de texto
                 if (registroTAux):
-                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
+                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
                         " " + registroTAux
                 registroTAux = ""
                 lastCodObj = ""
@@ -596,7 +597,7 @@ class Sicxe_GUI:
                 objFileLines += "\n"  # cortando el archivo de texto
             elif (instru == 'END'):
                 if (registroTAux):
-                    objFileLines += 'T ' + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
+                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
                         " " + registroTAux
                 if (fullLine[3]):  # buscará en la tabla de simbolos
                     primeraInstruccion = "YEah"
@@ -624,12 +625,12 @@ class Sicxe_GUI:
                         registroM = "\nM"
                         registroM += fillOrCutR(
                             cleanHexForCodObj(hex(int(fullLine[0], 16)+1)))
-                        registroM += '05'
+                        registroM += "05"
                         if (True):  # aqui  cambiará segun se avance en la arquitectura
-                            registroM += '+'
+                            registroM += "+"
                         else:
                             pass  # los casos para saber cuando es con signo -
-                        registroM += nombre+'\n'
+                        registroM += nombre+"\n"
                         registrosM.append(registroM)
                     elif (True):
                         # los casos que faltan por ver como relocalizables.
@@ -642,8 +643,12 @@ class Sicxe_GUI:
         # registro E
         objFileLines += "E"
         objFileLines += cleanHexForCodObj(primeraInstruccion)
-        objFileLines += ""
+
+        self.__thisRegisterFile.config(state=NORMAL)
+        self.__thisRegisterFile.insert(1.0, objFileLines)
+        self.__thisRegisterFile.config(state=DISABLED)
         registros.writelines(objFileLines)
+        registros.close()
 
     def run(self):
         # Run main application
