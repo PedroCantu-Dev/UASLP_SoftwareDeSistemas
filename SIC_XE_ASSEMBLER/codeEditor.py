@@ -30,7 +30,12 @@ class Sicxe_GUI:
     __InterFileLabel = LabelFrame(__root, text="Intermediate File")
     __TabSymLabel = LabelFrame(__root, text="Symbol Table")
     __ErrorsLabel = LabelFrame(__root, text="Errors File")
-    __RegistersLabel = LabelFrame(__root, text="Registers")
+    __registerFileLabel = LabelFrame(__root, text="Registers")
+
+    __thisRegisterFile = Text(__registerFileLabel, wrap=NONE)
+    __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
+    __thisRegisterFileScrollBarX = Scrollbar(
+        __thisRegisterFile, orient='horizontal')
 
     # for intermediate file
     columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6')
@@ -93,19 +98,20 @@ class Sicxe_GUI:
         __thisErrorTableFileTree, orient='horizontal')
 
     # forRegisters
-    columnsRegisters = ('#1', '#2', '#3', '#4', '#5')
-    __thisRegistersTree = Treeview(
-        __RegistersLabel, columns=columnsRegisters, show='headings')
-    # define headings
-    __thisRegistersTree.heading('#1', text='Type')
-    __thisRegistersTree.heading('#2', text='Name')
-    __thisRegistersTree.heading('#3', text='Direction')
-    __thisRegistersTree.heading('#4', text='Size')
-    __thisRegistersTree.heading('#5', text='Content')
+    # columnsRegisters = ('#1', '#2', '#3', '#4', '#5')
+    # __thisRegistersTree = Treeview(
+    #     __RegistersLabel, columns=columnsRegisters, show='headings')
 
-    __thisRegistersScrollBarY = Scrollbar(__thisRegistersTree)
-    __thisRegistersScrollBarX = Scrollbar(
-        __thisRegistersTree, orient='horizontal')
+    # define headings
+    # __thisRegistersTree.heading('#1', text='Type')
+    # __thisRegistersTree.heading('#2', text='Name')
+    # __thisRegistersTree.heading('#3', text='Direction')
+    # __thisRegistersTree.heading('#4', text='Size')
+    # __thisRegistersTree.heading('#5', text='Content')
+
+    # __thisRegistersScrollBarY = Scrollbar(__thisRegistersTree)
+    # __thisRegistersScrollBarX = Scrollbar(
+    #     __thisRegistersTree, orient='horizontal')
 
     # for menu bar at the top of the window
     __thisMenuBar = Menu(__root)
@@ -143,7 +149,7 @@ class Sicxe_GUI:
         self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/3, relwidth=1/3)
         self.__ErrorsLabel.place(
             relx=2/3, rely=1/3, relheight=1/3, relwidth=1/3)
-        self.__RegistersLabel.place(
+        self.__registerFileLabel.place(
             relx=2/3, rely=2/3, relheight=1/3, relwidth=1/3)
 
         self.__thisIntermediateFileScrollBarX.pack(side=BOTTOM, fill='x')
@@ -179,16 +185,16 @@ class Sicxe_GUI:
         self.__thisErrorTableFileTree.config(
             yscrollcommand=self.__thisErrorTableFileScrollBarY.set)
 
-        self.__thisRegistersScrollBarX.pack(side=BOTTOM, fill='x')
-        self.__thisRegistersScrollBarX.config(
-            command=self.__thisRegistersTree.xview)
-        self.__thisRegistersTree.config(
-            xscrollcommand=self.__thisRegistersScrollBarX.set)
-        self.__thisRegistersScrollBarY.pack(side=RIGHT, fill=Y)
-        self.__thisRegistersScrollBarY.config(
-            command=self.__thisRegistersTree.yview)
-        self.__thisRegistersTree.config(
-            yscrollcommand=self.__thisRegistersScrollBarY.set)
+        # self.__thisRegistersScrollBarX.pack(side=BOTTOM, fill='x')
+        # self.__thisRegistersScrollBarX.config(
+        #     command=self.__thisRegistersTree.xview)
+        # self.__thisRegistersTree.config(
+        #     xscrollcommand=self.__thisRegistersScrollBarX.set)
+        # self.__thisRegistersScrollBarY.pack(side=RIGHT, fill=Y)
+        # self.__thisRegistersScrollBarY.config(
+        #     command=self.__thisRegistersTree.yview)
+        # self.__thisRegistersTree.config(
+        #     yscrollcommand=self.__thisRegistersScrollBarY.set)
 
         self.__thisSourceFile.place(relx=0, rely=0, relheight=1, relwidth=1)
         self.__thisIntermediateFileTree.place(
@@ -197,7 +203,8 @@ class Sicxe_GUI:
             relx=0, rely=0, relheight=1, relwidth=1)
         self.__thisErrorTableFileTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
-        self.__thisRegistersTree.place(relx=0, rely=0, relheight=1, relwidth=1)
+        # self.__thisRegistersTree.place(relx=0, rely=0, relheight=1, relwidth=1)
+        self.__thisRegisterFile.place(relx=0, rely=0, relheight=1, relwidth=1)
 
         # Scrollbar will adjust automatically according to the content
         self.__thisSourceFileScrollBarX.pack(side=BOTTOM, fill='x')
@@ -206,11 +213,25 @@ class Sicxe_GUI:
         self.__thisSourceFile.config(
             xscrollcommand=self.__thisSourceFileScrollBarX.set)
 
+        ####
+        self.__thisRegisterFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisRegisterFileScrollBarX.config(
+            command=self.__thisRegisterFile.xview)
+        self.__thisRegisterFile.config(
+            xscrollcommand=self.__thisRegisterFileScrollBarX.set)
+
         self.__thisSourceFileScrollBar.pack(side=RIGHT, fill=Y)
         self.__thisSourceFileScrollBar.config(
             command=self.__thisSourceFile.yview)
         self.__thisSourceFile.config(
             yscrollcommand=self.__thisSourceFileScrollBar.set)
+
+        ####
+        self.__thisRegisterFileScrollBar.pack(side=RIGHT, fill=Y)
+        self.__thisRegisterFileScrollBar.config(
+            command=self.__thisRegisterFile.yview)
+        self.__thisRegisterFile.config(
+            yscrollcommand=self.__thisRegisterFileScrollBar.set)
 
         # To open new file
         self.__thisFileMenu.add_command(label="New",
