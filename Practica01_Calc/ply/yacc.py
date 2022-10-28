@@ -259,9 +259,11 @@ class YaccProduction:
         if isinstance(n, slice):
             return [s.value for s in self.slice[n]]
         elif n >= 0:
-            return self.slice[n].value
+            # return self.slice[n].value
+            return self.slice[n]
         else:
-            return self.stack[n].value
+            # return self.slice[n].value
+            return self.stack[n]
 
     def __setitem__(self, n, v):
         self.slice[n].value = v
