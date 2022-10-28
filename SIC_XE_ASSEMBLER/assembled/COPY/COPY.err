@@ -1,0 +1,7 @@
+6 6 0xf  USE CDATA !ERROR!,:Mnemonic:,Instruccion no existe 
+9 9 0x15  USE CBLKS !ERROR!,:Mnemonic:,Instruccion no existe 
+11 11 0x1015 BUFFEND EQU * !ERROR!,:Mnemonic:,Instruccion no existe 
+12 12 0x1015 MAXLEN EQU BUFFER !ERROR!,:Mnemonic:,Instruccion no existe 
+13 13 0x1015  USE  !ERROR!,:Mnemonic:,Instruccion no existe 
+16 16 0x101b  USE CDATA !ERROR!,:Mnemonic:,Instruccion no existe 
+18 18 0x101c  USE  !ERROR!,:Mnemonic:,Instruccion no existe 

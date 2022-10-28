@@ -203,39 +203,39 @@ def run(p):
             return run(p[1]) * run(p[2])
         elif p[0] == '/':
             divisor = run(p[2])
-            if(divisor > 0):
+            if (divisor > 0):
                 return run(p[1]) / run(p[2])
             else:
                 return math.inf
         elif p[0] == '%':
             return run(p[1]) % run(p[2])
         elif p[0] == '||':
-            if(run(p[1]) > 0 or run(p[2]) > 0):
+            if (run(p[1]) > 0 or run(p[2]) > 0):
                 return 1
             else:
                 return 0
         elif p[0] == '&&':
-            if(run(p[1]) > 0 and run(p[2]) > 0):
+            if (run(p[1]) > 0 and run(p[2]) > 0):
                 return 1
             else:
                 return 0
         elif p[0] == '<':
-            if(run(p[1]) < run(p[2])):
+            if (run(p[1]) < run(p[2])):
                 return 1
             else:
                 return 0
         elif p[0] == '>':
-            if(run(p[1]) > run(p[2])):
+            if (run(p[1]) > run(p[2])):
                 return 1
             else:
                 return 0
         elif p[0] == '<=':
-            if(run(p[1]) <= run(p[2])):
+            if (run(p[1]) <= run(p[2])):
                 return 1
             else:
                 return 0
         elif p[0] == '>=':
-            if(run(p[1]) >= run(p[2])):
+            if (run(p[1]) >= run(p[2])):
                 return 1
             else:
                 return 0
