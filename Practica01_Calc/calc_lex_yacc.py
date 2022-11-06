@@ -5,7 +5,6 @@ import math
 
 # Create a list to hold all of the token names
 tokens = [
-
     'INT',
     'FLOAT',
     'NAME',

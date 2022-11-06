@@ -586,7 +586,7 @@ class Sicxe_GUI:
                 primeraDireccionRegistroAux = ""
                 lastCodObj = ""
                 objFileLines += "\n"  # cortando el archivo de texto
-            elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG'):
+            elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG' or instru == 'USE'):
                 # cortan el archivo de texto
                 if (registroTAux):
                     objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
