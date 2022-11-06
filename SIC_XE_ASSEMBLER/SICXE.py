@@ -17,6 +17,7 @@ import re
 from string import hexdigits
 import string
 from typing import Iterable  # for regular expresions
+import calc.calc as calc
 
 
 # Diccionario de directivas y nemonicos |
