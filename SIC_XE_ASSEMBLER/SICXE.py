@@ -29,12 +29,16 @@ SICXE_Dictionary = {
     'RESB': ['D', 'RESB', -1],
     'RESW': ['D', 'RESW', -1],
     'BASE': ['D', 'BASE', 0],
-    #las directivas añadidas para los nuevos features 
-    'EQU' : ['D', 'EQU', 0],
-    'USE' : ['D','USE', 0],
-    'ORG' : ['D','ORG', 0],
-    #directivas para secciones de control 
-    #todas las instrucciones
+    # las directivas añadidas para los nuevos features
+    'EQU': ['D', 'EQU', 0],
+    'USE': ['D', 'USE', 0],
+    'ORG': ['D', 'ORG', 0],
+    # directivas para secciones de control
+    'CSECT': ['D', 'CSECT', 0],
+    'EXTDEF': ['D', 'EXTDEF', 0],
+    'EXTREF': ['D', 'EXTREF', 0],
+
+    # todas las instrucciones
     'ADD': ['I', 3, '0x18', ['operand']],
     'ADDF': ['I', 3, '0x58', ['operand']],
     'ADDR': ['I', 2, '0x90', ['r', 'r']],
