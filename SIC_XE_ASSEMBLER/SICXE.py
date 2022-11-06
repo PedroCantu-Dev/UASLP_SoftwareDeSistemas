@@ -37,7 +37,6 @@ SICXE_Dictionary = {
     'CSECT': ['D', 'CSECT', 0],
     'EXTDEF': ['D', 'EXTDEF', 0],
     'EXTREF': ['D', 'EXTREF', 0],
-
     # todas las instrucciones
     'ADD': ['I', 3, '0x18', ['operand']],
     'ADDF': ['I', 3, '0x58', ['operand']],
@@ -605,6 +604,18 @@ def passOne(lines):
                                 else:
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
+                            elif (dirInstr[1] == 'EQU'):
+                                pass
+                            elif (dirInstr[1] == 'USE'):
+                                pass
+                            elif (dirInstr[1] == 'ORG'):
+                                pass
+                            elif (dirInstr[1] == 'CSECT'):
+                                pass
+                            elif (dirInstr[1] == 'EXTDEF'):
+                                pass
+                            elif (dirInstr[1] == 'EXTREF'):
+                                pass
                     else:  # error mnemonico no encontrado.
                         insertion = [
                             hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,Instruccion no existe"]
