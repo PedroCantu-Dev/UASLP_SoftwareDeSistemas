@@ -199,6 +199,8 @@ def p_error(p):
         # parser.errok()
     else:
         print("Syntax error at EOF")
+        err = True
+        errorDescription = "Syntax error en EOF"
 
 
 parser = yacc.yacc()
@@ -348,7 +350,7 @@ def listToString(s):
 # retorna un array con todos los tokens de una expresion dada
 def getTokens(expression):
     resTokens = []
-    lexer.input(data)
+    lexer.input(expression)
 
     while True:
         tok = lexer.token()
@@ -367,7 +369,40 @@ def getTokens(expression):
 
 
 def validateExSyntax(expression):
-    pass
+    global err
+    err = False
+    global errorDescription
+    errorDescription = ""
+    try:
+        parser.parse(expression)
+        if (err == True):
+            if ("inexistente" in errorDescription):
+                return True
+            else:
+                return (False, errorDescription)
+        else:
+            return True
+    except:
+        return (False, "Error expresion invalida")
+
+# valida la sintaxys total de la expresion:
+# es decir si es correcta lexica y sintacticamente
+# sin importarle si los terminos(simbolos) están definidos
+
+
+def validateExSyntaxAndVariables(expression):
+    global err
+    err = False
+    global errorDescription
+    errorDescription = ""
+    try:
+        parser.parse(expression)
+        if (err == True):
+            return (False, errorDescription)
+        else:
+            return True
+    except:
+        return (False, ":::Error expresion invalida :::")
 
 # valida si la expresion es  valida
 # y determina si es Absoluta, relativa o invalida por relatividad
@@ -385,11 +420,14 @@ def validateExRelativityOp(expression):
     pass
 
 
-# lexer = lex.lex()
-# while True:
-#     data = input("expression: ")
-#     listOfTokens = getTokens(data)
-# print(listToString(listOfTokens))
+lexer = lex.lex()
+while True:
+    data = input("expression: ")
+    data2 = validateExSyntax(data)
+    if (data2 == True):
+        print("correct expresion :D")
+    else:
+        print("expression invalida sintacticamente: " + errorDescription)
 
  ################################################
 
