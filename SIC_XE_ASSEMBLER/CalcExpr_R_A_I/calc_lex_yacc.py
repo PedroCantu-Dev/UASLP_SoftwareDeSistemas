@@ -3,9 +3,6 @@ import ply.yacc as yacc
 import sys
 import math
 
-err = False
-errorDescription = ""
-
 # Create a list to hold all of the token names
 tokens = [
     'INT',
@@ -203,8 +200,6 @@ def p_error(p):
         errorDescription = "Syntax error en EOF"
 
 
-parser = yacc.yacc()
-env = {}
 # while True:
 #     try:
 #         s = input('calc>>')
@@ -212,6 +207,24 @@ env = {}
 #         break
 #     print(parser.parse(s))
 
+#####
+#
+#Variables necesarias para el funcionamiento
+#
+#####
+
+err = False
+errorDescription = ""
+varUSE = "omision"
+varSECT = "omision"
+parser = yacc.yacc()
+# arreglo de secciones
+secciones = {}
+# instancia de seccion
+seccion = {}
+# instancia de
+tabBlock = {}
+tabSymb = {}
 
 def run(p):
     global err
@@ -263,8 +276,11 @@ def run(p):
                 return 0
         elif p[0] == '=':
             try:
-                env[p[1]] = run(p[2])
-                return env[p[1]]
+                #env[p[1]] = run(p[2])
+                # return env[p[1]]
+                secciones[varSECT][varUSE][p[1]] = run(p[2])
+                return secciones[varSECT][varUSE][p[1]]
+
             except:
                 errorDescription = "variable inexistente en el ambito 2"
                 err = True
@@ -274,7 +290,8 @@ def run(p):
             return -(run(p[1]))
         elif p[0] == 'var':
             try:
-                return env[p[1]]
+                # return env[p[1]]
+                return secciones[varSECT][varUSE][p[1]]
             except:
                 errorDescription = "variable inexistente en el ambito 1"
                 err = True
@@ -332,6 +349,21 @@ def run(p):
 # except EOFError:
 # break
 # parser.parse(s)
+
+def changeUSE(name):
+    global varUSE
+    if (name):
+        varUSE = name
+    else:
+        varUSE = "omision"
+
+
+def changeSECT(name):
+    global varSECT
+    if (name):
+        varSECT = name
+    else:
+        varSECT = "omision"
 
 
 def listToString(s):
@@ -409,6 +441,7 @@ def validateExSyntaxAndVariables(expression):
 
 
 def validateExRelativity_A_R_I(expression):
+    tokens = getTokens(expression)
     pass
 
 # determina si las operaciones de expresiones son válidas,
