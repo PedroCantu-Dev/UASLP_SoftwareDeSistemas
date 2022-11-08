@@ -285,20 +285,20 @@ def run(p):
         return p
 
 
-while True:
-    try:
-        errorDescription = ""
-        err = False
-        s = input('calc>> ')
-    except EOFError:
-        err = True
-        errorDescription = "EOF"
-        break
-    parser.parse(s)
-    if (err == True):
-        print(":::ERROR::: " + errorDescription)
-    else:
-        print("well done")
+# while True:
+#     try:
+#         errorDescription = ""
+#         err = False
+#         s = input('calc>> ')
+#     except EOFError:
+#         err = True
+#         errorDescription = "EOF"
+#         break
+#     parser.parse(s)
+#     if (err == True):
+#         print(":::ERROR::: " + errorDescription)
+#     else:
+#         print("well done")
 
 
 # Ensure our parser understands the correct order of operations.
@@ -331,13 +331,36 @@ while True:
 # break
 # parser.parse(s)
 
-# # lexer = lex.lex()
-# # while True:
-# #     data = input("expression: ")
-# #     lexer.input(data)
+lexer = lex.lex()
+while True:
+    data = input("expression: ")
+    lexer.input(data)
 
-# #     while True:
-# #         tok = lexer.token()
-# #         if not tok:
-# #             break
-# #         print(tok)
+    while True:
+        tok = lexer.token()
+        if not tok:
+            break
+        print(tok)
+
+# valida la sintaxys total de la expresion:
+# es decir si es correcta lexica y sintacticamente
+# sin importarle si los terminos(simbolos) están definidos
+
+
+def validateExSyntax(expression):
+    pass
+
+# valida si la expresion es  valida
+# y determina si es Absoluta, relativa o invalida por relatividad
+
+
+def validateExRelativity_A_R_I(expression):
+    pass
+
+# determina si las operaciones de expresiones son válidas,
+# es decir que no se utilicen terminos relativos
+# para operaciones como multiplicación o división
+
+
+def validateExRelativityOp(expression):
+    pass
