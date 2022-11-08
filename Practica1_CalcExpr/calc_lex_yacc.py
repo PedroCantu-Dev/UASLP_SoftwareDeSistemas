@@ -3,9 +3,11 @@ import ply.yacc as yacc
 import sys
 import math
 
+err = False
+errorDescription = ""
+
 # Create a list to hold all of the token names
 tokens = [
-
     'INT',
     'FLOAT',
     'NAME',
@@ -79,12 +81,17 @@ def t_NAME(t):
     t.type = 'NAME'
     return t
 
+
 # Skip the current token and output 'Illegal characters' using the special Ply t_error function.
 
 
-# def t_error(t):
-#     print("Illegal characters:"+t.value+":")
-#     t.lexer.skip(1)
+def t_error(t):
+    global err
+    global errorDescription
+    errorDescription = "Illegal characters:"+t.value+":"
+    print("Illegal characters:"+t.value+":")
+    t.lexer.skip(1)
+    err = True
 
 
 # Build the lexer
@@ -105,17 +112,9 @@ precedence = (
 def p_calc(p):
     '''
     calc : expression
-        | r_expression
-        | a_expression
-        | empty
+         | empty
     '''
     print(run(p[1].value))
-
-
-def r_expression(p):
-    '''
-    r_expression : r_expression
-    '''
 
 
 def p_expression_uminus(p):
@@ -187,8 +186,19 @@ def p_empty(p):
 
 
 def p_error(p):
-    print("syntax error")
-    print(p[0])
+    global err
+    global errorDescription
+    if p:
+        print("syntax error en el token: " + p.type +
+              "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
+
+        errorDescription = "syntax error en el token: " + p.type + \
+            "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno)
+        err = True
+        # Just discard the token and tell the parser it's okay.
+        # parser.errok()
+    else:
+        print("Syntax error at EOF")
 
 
 parser = yacc.yacc()
@@ -202,6 +212,8 @@ env = {}
 
 
 def run(p):
+    global err
+    global errorDescription
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
@@ -248,13 +260,24 @@ def run(p):
             else:
                 return 0
         elif p[0] == '=':
-            env[p[1]] = run(p[2])
-            return env[p[1]]
+            try:
+                env[p[1]] = run(p[2])
+                return env[p[1]]
+            except:
+                errorDescription = "variable inexistente en el ambito 2"
+                err = True
+                return 0
         elif p[0] == 'uminus':
             print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
-            return env[p[1]]
+            try:
+                return env[p[1]]
+            except:
+                errorDescription = "variable inexistente en el ambito 1"
+                err = True
+                return 0
+
         elif p[0] == '!':
             return math.factorial(int(run(p[1])))
     else:
@@ -262,12 +285,20 @@ def run(p):
         return p
 
 
-while True:
-    try:
-        s = input('calc>> ')
-    except EOFError:
-        break
-    parser.parse(s)
+# while True:
+#     try:
+#         errorDescription = ""
+#         err = False
+#         s = input('calc>> ')
+#     except EOFError:
+#         err = True
+#         errorDescription = "EOF"
+#         break
+#     parser.parse(s)
+#     if (err == True):
+#         print(":::ERROR::: " + errorDescription)
+#     else:
+#         print("well done")
 
 
 # Ensure our parser understands the correct order of operations.
@@ -286,16 +317,58 @@ while True:
 #  '''
 
 # # Give the lexer some input
-# lexer.input(data)
+
 
 # while True:
 #     tok = lexer.token()
 #     if not tok:
 #         break
 #     print(tok)
-# try:
-# s = input('>> ')
+#     try:
+#         s = input('>> ')
 
 # except EOFError:
 # break
+
+
+while True:
+    try:
+        s = input('calc>> ')
+    except EOFError:
+        break
+    parser.parse(s)
 # parser.parse(s)
+
+# lexer = lex.lex()
+# while True:
+#     data = input("expression: ")
+#     lexer.input(data)
+
+#     while True:
+#         tok = lexer.token()
+#         if not tok:
+#             break
+#         print(tok)
+
+# valida la sintaxys total de la expresion:
+# es decir si es correcta lexica y sintacticamente
+# sin importarle si los terminos(simbolos) están definidos
+
+
+def validateExSyntax(expression):
+    pass
+
+# valida si la expresion es  valida
+# y determina si es Absoluta, relativa o invalida por relatividad
+
+
+def validateExRelativity_A_R_I(expression):
+    pass
+
+# determina si las operaciones de expresiones son válidas,
+# es decir que no se utilicen terminos relativos
+# para operaciones como multiplicación o división
+
+
+def validateExRelativityOp(expression):
+    pass
