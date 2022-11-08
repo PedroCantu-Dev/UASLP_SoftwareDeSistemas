@@ -574,9 +574,14 @@ class Sicxe_GUI:
                 # cortan el archivo de texto
                 if (len(registroTAux) > 60):
                     primeraDireccionRegistroAux = lastDireccion
-                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(len(registroTAux)/2), 2) + \
-                        " " + registroTAux[:-len(lastCodObj)]
-                    registroTAux = registroTAux[-len(lastCodObj):]
+                    if (len(registroTAux) % 2 == 0):
+                        objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(
+                            hex(int(len(registroTAux)/2)), 2) + " " + registroTAux[:-len(lastCodObj)]
+                        registroTAux = registroTAux[-len(lastCodObj):]
+                    else:
+                        objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int((len(registroTAux)+1)/2)), 2) + \
+                            " " + registroTAux[:-len(lastCodObj)]
+                        registroTAux = registroTAux[-len(lastCodObj):]
                     lastDireccion = ""
                 else:
                     objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + fillOrCutR(hex(len(registroTAux)), 2) + \

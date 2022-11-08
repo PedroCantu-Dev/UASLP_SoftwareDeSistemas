@@ -105,9 +105,20 @@ precedence = (
 def p_calc(p):
     '''
     calc : expression
-         | empty
+        | r_expression
+        | a_expression
+        | empty
     '''
     print(run(p[1].value))
+
+
+def r_expression(p):
+    '''
+    r_expression : r_expression
+    '''
+
+
+def a_expression(p):
 
 
 def p_expression_uminus(p):

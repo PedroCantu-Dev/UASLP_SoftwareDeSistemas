@@ -11,7 +11,6 @@
 # Addressing Mode Errors
 # direccionamiento relativo en formato 3 |
 # Relative addressing impossible on format 3.
-
 from math import *
 import re
 from string import hexdigits
@@ -196,8 +195,12 @@ def getFineOperand(arrayOfPossibleOperands):
             return arrayOfPossibleOperands[0]
 
 
-Optab = {}
-Optab2 = {}
+# Optab = {}
+# Optab2 = {}
+
+symbolsTables = {}
+blocksTables = {}
+
 
 X = 0
 
@@ -606,7 +609,7 @@ def passOne(lines):
                                     insertion = [
                                         hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
                             elif (dirInstr[1] == 'EQU'):
-                                pass
+                                calc.insertSymbol(label, operands)
                             elif (dirInstr[1] == 'USE'):
                                 pass
                             elif (dirInstr[1] == 'ORG'):
@@ -1198,3 +1201,116 @@ def SIC_hex_value(s, hexi=False):
             return int(s, 10)
     except:
         return hex(0)
+
+
+def getExpressionValue_(self, input):
+    debug = False
+    ops_ = ['-', '+', '*', '/']
+    operands = []
+    one_operand = ''
+    operators = []
+
+    # we have a special case; and that is where the input is simply '*'
+    if input == '*':
+        return t.getCorrespondingNumber('*')
+
+    for bit in input:
+        if bit in ops_:
+            if len(one_operand) == 0:
+                return -1
+
+            # returns [value, 'A' or 'R']
+            num = t.getCorrespondingNumber(one_operand)
+            if num == -1:
+                self.errors.append("Cannot find", one_operand, "in the symtab")
+                return -1
+            operands.append(num)
+            one_operand = ''
+
+            if len(operators) != 0:
+                while ops_.index(operators[-1]) >= ops_.index(bit):
+                    op1 = operands.pop()  # because we used up 2 operands
+                    op2 = operands.pop()
+                    abs_or_rel = [op1[1], op2[1]]
+                    op1 = op1[0]
+                    op2 = op2[0]
+                    single = operators.pop()
+                    if single == '-':
+                        if abs_or_rel != ['R', 'R']:
+                            self.errors.append(
+                                "Cannot find value of expression; check whether the args are absolute")
+                            return
+                        operands.append([op2 - op1, 'A'])
+                    else:
+                        if abs_or_rel != ['A', 'A']:
+                            self.errors.append(
+                                "Cannot find value of expression; check whether the args are absolute")
+                            return
+                    if single == '+':
+                        operands.append([op2 + op1, 'A'])
+                    elif single == '*':
+                        operands.append([op2 * op1, 'A'])
+                    else:
+                        operands.append([op2 // op1, 'A'])
+                    if len(operators) == 0:
+                        break
+            operators.append(bit)
+        else:
+            one_operand += bit
+        if debug:
+            print("\n\n")
+            print("new bit: ", bit)
+            print("operands: ", operands)
+            print("operators: ", operators)
+
+    if len(one_operand) == 0:
+        return -1
+    num = t.getCorrespondingNumber(one_operand)
+    if num == -1:
+        self.errors.append("Cannot find", one_operand, "in the symtab")
+        return
+    operands.append(num)
+
+    if debug:
+        print("finished main loop")
+        print("\n\n")
+        print("operands: ", operands)
+        print("operators: ", operators)
+
+    while (len(operands) != 1):
+        op1 = operands.pop()  # because we used up 2 operands
+        op2 = operands.pop()
+        abs_or_rel = [op1[1], op2[1]]
+        op1 = op1[0]
+        op2 = op2[0]
+        single = operators.pop()
+
+        if debug:
+            print("just before the first iteration")
+            print("\n\n")
+            print("operands: ", operands)
+            print("operators: ", operators)
+
+        if single == '-':
+            if abs_or_rel != ['R', 'R']:
+                self.errors.append(
+                    "Cannot find value of expression; check whether the args are absolute")
+                return
+            operands.append([op2 - op1, 'A'])
+        else:
+            if abs_or_rel != ['A', 'A']:
+                self.errors.append(
+                    "Cannot find value of expression; check whether the args are absolute")
+                return
+            if single == '+':
+                operands.append([op2 + op1, 'A'])
+            elif single == '*':
+                operands.append([op2 * op1, 'A'])
+            else:
+                operands.append([op2 // op1, 'A'])
+        if debug:
+            print("\n\n")
+            print("operands: ", operands)
+            print("operators: ", operators)
+
+    return operands[0]

@@ -1,0 +1,4 @@
+3 3 0x4  SHIFT A,3 !ERROR!,:Mnemonic:,Instruccion no existe 
+9 9 0x13 ETIQ SIO #1 !ERROR!,:Sintaxis:,sobra un operando 
+25 25 0x103b  RMO A !ERROR!,:Sintaxis:,Falta  o sobra un operando en la operacion 
+29 29 0x1042 MAYOR LDCH MAX !ERROR!,:Simbolo:,Simbolo duplicado 

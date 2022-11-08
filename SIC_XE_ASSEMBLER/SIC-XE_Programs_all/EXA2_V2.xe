@@ -28,8 +28,9 @@ MAX RESB    1
 MAIN     +JSUB  BUSCA
     CLEAR   A
 MAYOR   LDCH    MAX
-    BYTE    c'F2'
+    BYTE    C'F2'
     END MAIN
+
 
 
 

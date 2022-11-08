@@ -3,6 +3,14 @@ import ply.yacc as yacc
 import sys
 import math
 
+# definiendo la tabla de simbolos y la de bloques
+symbolTable = {}
+blocksTable = {}
+
+# definiendo secciones de control
+controlSections = {}
+
+
 # Create a list to hold all of the token names
 tokens = [
 
@@ -254,13 +262,53 @@ def run(p):
         return p
 
 
-while True:
+# while True:
+#     try:
+#         s = input('calc>> ')
+#     except EOFError:
+#         break
+#     parser.parse(s)
+
+symbolTable = {}
+blocksTable = {}
+
+
+def insertSymbol(controlSection, symbol, dir_val, type_R_A, blockNumber, extSymbol):
+    if controlSection in controlSection.keys():
+        symTable = controlSections[controlSection][0]
+        if not symbol in symTable.keys():
+            symTable.update(
+                {symbol: (dir_val, type_R_A, blockNumber, extSymbol)})
+        else:
+            return 'error simbolo duplicado'
+    else:
+        symTable.update({symbol: (dir_val, type_R_A, blockNumber, extSymbol)})
+
+
+def insertBlock(controlSection, blockNumber, name, blockLen, initialRel):
+    if controlSection in controlSections.keys():
+        blockTable = controlSections[controlSection][1]
+        if not blockNumber in blockTable.keys():
+            blockTable.update({blockNumber: (name, blockLen, initialRel)})
+        else:
+            lastLen = blocksTable[blockNumber][1]
+            blockTable.update(
+                {blockNumber: (name, blockLen+lastLen, initialRel)})
+    else:
+        controlSections[controlSection][1] = (
+            blockNumber, name, blockLen, initialRel)
+
+
+def insertBlockSection(name, symTab, blockTab):
+    pass
+
+
+def calc():
     try:
         s = input('calc>> ')
     except EOFError:
-        break
+        print("nonono")
     parser.parse(s)
-
 
 # Ensure our parser understands the correct order of operations.
 # The precedence variable is a special Ply variable.
