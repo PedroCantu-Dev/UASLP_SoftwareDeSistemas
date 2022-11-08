@@ -331,16 +331,35 @@ def run(p):
 # break
 # parser.parse(s)
 
-lexer = lex.lex()
-while True:
-    data = input("expression: ")
+
+def listToString(s):
+
+    # initialize an empty string
+    str1 = ""
+
+    # traverse in the string
+    for ele in s:
+        str1 += ele
+
+    # return string
+    return str1
+
+
+# retorna un array con todos los tokens de una expresion dada
+def getTokens(expression):
+    resTokens = []
     lexer.input(data)
 
     while True:
         tok = lexer.token()
+
         if not tok:
             break
+        else:
+            resTokens.append(str(tok.value))
         print(tok)
+    return resTokens
+
 
 # valida la sintaxys total de la expresion:
 # es decir si es correcta lexica y sintacticamente
@@ -364,3 +383,20 @@ def validateExRelativity_A_R_I(expression):
 
 def validateExRelativityOp(expression):
     pass
+
+
+# lexer = lex.lex()
+# while True:
+#     data = input("expression: ")
+#     listOfTokens = getTokens(data)
+# print(listToString(listOfTokens))
+
+ ################################################
+
+   # lexer.input(data)
+
+    # while True:
+    #     tok = lexer.token()
+    #     if not tok:
+    #         break
+    #     print(tok)
