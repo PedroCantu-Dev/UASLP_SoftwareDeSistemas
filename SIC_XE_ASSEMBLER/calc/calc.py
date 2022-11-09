@@ -228,19 +228,12 @@ def p_error(p):
         err = True
         errorDescription = "Syntax error en EOF"
 
-
-# while True:
-#     try:
-#         s = input('calc>>')
-#     except EOFError:
-#         break
-#     print(parser.parse(s))
-
 #####
 #
 # Variables necesarias para el funcionamiento
 #
 #####
+
 
 err = False
 errorDescription = ""
@@ -257,6 +250,8 @@ tabSym = {}
 
 tabBlockRow = {}
 tabSymRow = {}
+
+listaCSECTBlockCP = {}
 
 
 def onInit():
@@ -366,52 +361,6 @@ def run(p):
         return p
 
 
-# while True:
-#     try:
-#         errorDescription = ""
-#         err = False
-#         s = input('calc>> ')
-#     except EOFError:
-#         err = True
-#         errorDescription = "EOF"
-#         break
-#     parser.parse(s)
-#     if (err == True):
-#         print(":::ERROR::: " + errorDescription)
-#     else:
-#         print("well done")
-
-
-# Ensure our parser understands the correct order of operations.
-# The precedence variable is a special Ply variable.
-# precedence = (
-
-#     ('left', 'PLUS', 'MINUS'),
-#     ('left', 'MULTIPLY', 'DIVIDE')
-
-# )
-
-# Test it out
-# data = '''
-#  3 + 4 * 10
-#    + -20 / 34 >=2 >(ssdR- 50) || 45<(89)*!76 <= 45
-#  '''
-
-# # Give the lexer some input
-
-
-# while True:
-#     tok = lexer.token()
-#     if not tok:
-#         break
-#     print(tok)
-#     try:
-#         s = input('>> ')
-
-# except EOFError:
-# break
-# parser.parse(s)
-
 def changeUSE(name=''):
     global varUSE
     if (name):
@@ -508,7 +457,7 @@ def validateExSyntaxAndVariables(expression):
 # y determina si es Absoluta, relativa o invalida por relatividad
 
 
-def signsRulePoitive(signOrSigns):
+def singnsRulePositive(signOrSigns):
     if (type(signOrSigns) is list):
         if (len(signOrSigns) == 0):
             return True
@@ -546,12 +495,12 @@ def validateExRelativity_A_R_I(expression):
             # comprobar en la tabla si es Relativo o absoluto
             # if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
             if (input(tok.value+": ") == 's'):
-                if (signsRulePoitive(parentesis)):
+                if (singnsRulePositive(parentesis)):
                     if (len(operators) > 0):
                         operator = operators.pop()
                         if (operator == "*" or operator == "/"):
                             return "ERROR: operador invalido para termino relativo"
-                        if (signsRulePoitive(operator)):
+                        if (singnsRulePositive(operator)):
                             if (len(Rneg) > 0):
                                 Rneg.pop()
                             else:
@@ -568,7 +517,7 @@ def validateExRelativity_A_R_I(expression):
                             Rpos.append(tok.value)
                 else:
                     if (len(operators) > 0):
-                        if (signsRulePoitive(operators.pop())):
+                        if (singnsRulePositive(operators.pop())):
                             if (len(Rpos) > 0):
                                 Rpos.pop()
                             else:
@@ -629,6 +578,60 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 
 
 # while True:
+#     try:
+#         s = input('calc>>')
+#     except EOFError:
+#         break
+#     print(parser.parse(s))
+
+
+# while True:
+#     try:
+#         errorDescription = ""
+#         err = False
+#         s = input('calc>> ')
+#     except EOFError:
+#         err = True
+#         errorDescription = "EOF"
+#         break
+#     parser.parse(s)
+#     if (err == True):
+#         print(":::ERROR::: " + errorDescription)
+#     else:
+#         print("well done")
+
+
+# Ensure our parser understands the correct order of operations.
+# The precedence variable is a special Ply variable.
+# precedence = (
+
+#     ('left', 'PLUS', 'MINUS'),
+#     ('left', 'MULTIPLY', 'DIVIDE')
+
+# )
+
+# Test it out
+# data = '''
+#  3 + 4 * 10
+#    + -20 / 34 >=2 >(ssdR- 50) || 45<(89)*!76 <= 45
+#  '''
+
+# # Give the lexer some input
+
+
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
+#     try:
+#         s = input('>> ')
+
+# except EOFError:
+# break
+# parser.parse(s)
+
+# while True:
 #     sect = input(seccion)
 #     if (sect):
 #         varSECT = sect
@@ -651,4 +654,4 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #         break
     #     print(tok)
 #################################
-print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+AFHH'))
+# print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
