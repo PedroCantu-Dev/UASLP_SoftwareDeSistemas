@@ -481,9 +481,9 @@ def validateExSyntaxAndVariables(expression):
 
 def signsRulePoitive(signOrSigns):
     if (type(signOrSigns) is list):
-        if (signOrSigns.count == 0):
+        if (len(signOrSigns) == 0):
             return True
-        elif (signOrSigns.count % 2 == 0):
+        elif (signOrSigns.count('-') % 2 == 0):
             return True
         else:
             return False
@@ -501,67 +501,71 @@ def validateExRelativity_A_R_I(expression):
     parentesis = []
     operators = []
     for tok in tokenes:
-        if (tok.type == 'MINUS' or tok.type == 'PLUS'):
+        if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
             operators.append(tok.value)
         elif (tok.type == 'LPARENT'):
-            if (operators.count() > 0):
+            if (len(operators) > 0):
                 parentesis.append(operators.pop())
             else:
                 parentesis.append('+')
         elif (tok.type == 'RPARENT'):
             parentesis.pop()
         elif (tok.type == 'INT'):
-            if (operators.count() > 0):
+            if (len(operators) > 0):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
+            # if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
+            if (input(tok.value+": ") == 's'):
                 if (signsRulePoitive(parentesis)):
-                    if (operators.count() > 0):
-                        if (signsRulePoitive(operators.pop())):
-                            if (Rneg.count() > 0):
+                    if (len(operators) > 0):
+                        operator = operators.pop()
+                        if (operator == "*" or operator == "/"):
+                            return "ERROR: operador invalido para termino relativo"
+                        if (signsRulePoitive(operator)):
+                            if (len(Rneg) > 0):
                                 Rneg.pop()
                             else:
                                 Rpos.append(tok.value)
                         else:
-                            if (Rpos.count() > 0):
+                            if (len(Rpos) > 0):
                                 Rpos.pop()
                             else:
                                 Rneg.append(tok.value)
                     else:
-                        if (Rneg.count() > 0):
+                        if (len(Rneg) > 0):
                             Rneg.pop()
                         else:
                             Rpos.append(tok.value)
                 else:
-                    if (operators.count() > 0):
+                    if (len(operators) > 0):
                         if (signsRulePoitive(operators.pop())):
-                            if (Rpos.count() > 0):
+                            if (len(Rpos) > 0):
                                 Rpos.pop()
                             else:
                                 Rneg.append(tok.value)
                         else:
-                            if (Rneg.count() > 0):
+                            if (len(Rneg) > 0):
                                 Rneg.pop()
                             else:
                                 Rpos.append(tok.value)
                     else:
-                        if (Rneg.count() > 0):
+                        if (len(Rneg) > 0):
                             Rneg.pop()
                         else:
                             Rpos.append(tok.value)
             else:
-                if (operators.count() > 0):
+                if (len(operators) > 0):
                     operators.pop()
-    if (Rpos.count() == 0 and Rneg.count() == 0):
+    if (len(Rpos) == 0 and len(Rneg) == 0):
         # significa que es un termino absoluto
         return 'A'
-    elif (Rpos.count() == 1 and Rneg.count() == 0):
+    elif (len(Rpos) == 1 and len(Rneg) == 0):
         # significa que es un termino relativo
         return 'R'
     else:
         # significa que es un error
-        return 'Error'
+        return 'Error: la expresion es invalida por relatividad'
 
 # determina si las operaciones de expresiones son válidas,
 # es decir que no se utilicen terminos relativos
@@ -618,4 +622,4 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #         break
     #     print(tok)
 #################################
-validateExRelativity_A_R_I('(ETIQ-30-TABLA+3)')
+print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM'))
