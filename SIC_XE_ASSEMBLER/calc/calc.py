@@ -362,9 +362,14 @@ def changeUSE(name=''):
         varUSE = "omision"
 
 
+arrayBlocks = []
+
+
 def changeSECT(name=''):
     global varSECT
-    if (name):
+    if (name and name in secciones.keys()):
+        pass  # error porque se quiere volver a nombrar una seccion de control igual
+    elif (name):
         varSECT = name
     else:
         varSECT = "omision"
@@ -456,14 +461,19 @@ def validateExRelativity_A_R_I(expression):
 def validateExRelativityOp(expression):
     pass
 
+
 #############################
 # operaciones para las tablas
 #############################
+blockCounter = 0
 
 
-def appendTabSymRow(symbol, dirVal, typ, numBlock, extBool):
-    secciones[varSECT]['tabsym'] = {symbol: {
-        'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}}
+def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock):
+    if (not symbol in secciones[varSECT]['tabsym'].keys()):
+        secciones[varSECT]['tabsym'] = {symbol: {
+            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}}
+    else:
+        pass  # error simbolo duplicado
 
 
 def appendTabBlockRow(numBlock, name, len=0, dirIniRel=0):
@@ -475,14 +485,20 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 
 
-lexer = lex.lex()
 while True:
-    data = input("expression: ")
-    data2 = validateExSyntax(data)
-    if (data2 == True):
-        print("correct expresion :D")
-    else:
-        print("expression invalida sintacticamente: " + errorDescription)
+    sect = input(seccion)
+    if (sect):
+        varSECT = sect
+
+
+# lexer = lex.lex()
+# while True:
+#     data = input("expression: ")
+#     data2 = validateExSyntax(data)
+#     if (data2 == True):
+#         print("correct expresion :D")
+#     else:
+#         print("expression invalida sintacticamente: " + errorDescription)
 
  ################################################
 
