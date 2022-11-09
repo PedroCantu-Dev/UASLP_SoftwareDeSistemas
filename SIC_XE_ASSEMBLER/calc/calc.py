@@ -5,6 +5,7 @@ import math
 
 # Create a list to hold all of the token names
 tokens = [
+    'INTH',
     'INT',
     'FLOAT',
     'NAME',
@@ -60,6 +61,12 @@ def t_FLOAT(t):
     t.value = float(t.value)
     return t
 
+
+def t_INTH(t):
+    r'\d+H|(A|B|C|D|E|F)+\d*H'
+    t.value = getIntByHexOInt(t.value)
+    return t
+
 # An int is 1 or more numbers.
 
 
@@ -67,6 +74,28 @@ def t_INT(t):
     r'\d+'
     t.value = int(t.value)
     return t
+
+
+# at this point the lexical analyzer made its work so, it suóse there is not error whenhex parsing
+
+
+def getIntByHexOInt(strConvert):
+    res = None
+    if (strConvert.isdecimal()):
+        res = int(strConvert)
+    elif (correctHex(strConvert)):
+        if ("h" in strConvert):
+            res = int(strConvert.replace("h", ""), 16)
+        else:
+            res = int(strConvert.replace("h".upper(), ""), 16)
+    return res
+
+
+def correctHex(possibleHex):
+    if (('h' in possibleHex or 'H' in possibleHex) and (possibleHex.endswith('h'.upper()) or possibleHex.endswith('h'))):
+        return True
+    else:
+        return False
 
 # A NAME is a variable name. A variable can be 1 or more characters in length.
 # The first character must be in the ranges a-z A-Z or be an underscore.
@@ -622,4 +651,4 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #         break
     #     print(tok)
 #################################
-print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM'))
+print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+FFF'))
