@@ -63,7 +63,7 @@ def t_FLOAT(t):
 
 
 def t_INTH(t):
-    r'\d+H|(A|B|C|D|E|F)+\d*H'
+    r'\d+H|(A|B|C|D|E|F)+\d*H^'
     t.value = getIntByHexOInt(t.value)
     return t
 
@@ -651,4 +651,4 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #         break
     #     print(tok)
 #################################
-print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+FFF'))
+print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+AFHH'))
