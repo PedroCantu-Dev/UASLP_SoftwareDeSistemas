@@ -308,7 +308,7 @@ def run(p):
                 return 0
         elif p[0] == '=':
             try:
-                #env[p[1]] = run(p[2])
+                # env[p[1]] = run(p[2])
                 # return env[p[1]]
                 appendTabSymRow(p[1], run(p[2]),
                                 validateExRelativity_A_R_I(p[2]), False)
@@ -428,7 +428,8 @@ def getTokens(expression):
         if not tok:
             break
         else:
-            resTokens.append(str(tok.value))
+            # resTokens.append({'type': tok.type, 'value': tok.value})
+            resTokens.append(tok)
         print(tok)
     return resTokens
 
@@ -478,13 +479,89 @@ def validateExSyntaxAndVariables(expression):
 # y determina si es Absoluta, relativa o invalida por relatividad
 
 
+def signsRulePoitive(signOrSigns):
+    if (type(signOrSigns) is list):
+        if (signOrSigns.count == 0):
+            return True
+        elif (signOrSigns.count % 2 == 0):
+            return True
+        else:
+            return False
+    else:
+        if (signOrSigns == '+'):
+            return True
+        else:
+            return False
+
+
 def validateExRelativity_A_R_I(expression):
-    tokens = getTokens(expression)
+    tokenes = getTokens(expression)
     Rpos = []
     Rneg = []
-    paren = []
-    operation = []
-    pass
+    parentesis = []
+    operators = []
+    for tok in tokenes:
+        if (tok.type == 'MINUS' or tok.type == 'PLUS'):
+            operators.append(tok.value)
+        elif (tok.type == 'LPARENT'):
+            if (operators.count() > 0):
+                parentesis.append(operators.pop())
+            else:
+                parentesis.append('+')
+        elif (tok.type == 'RPARENT'):
+            parentesis.pop()
+        elif (tok.type == 'INT'):
+            if (operators.count() > 0):
+                operators.pop()
+        elif (tok.type == 'NAME'):
+            # comprobar en la tabla si es Relativo o absoluto
+            if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
+                if (signsRulePoitive(parentesis)):
+                    if (operators.count() > 0):
+                        if (signsRulePoitive(operators.pop())):
+                            if (Rneg.count() > 0):
+                                Rneg.pop()
+                            else:
+                                Rpos.append(tok.value)
+                        else:
+                            if (Rpos.count() > 0):
+                                Rpos.pop()
+                            else:
+                                Rneg.append(tok.value)
+                    else:
+                        if (Rneg.count() > 0):
+                            Rneg.pop()
+                        else:
+                            Rpos.append(tok.value)
+                else:
+                    if (operators.count() > 0):
+                        if (signsRulePoitive(operators.pop())):
+                            if (Rpos.count() > 0):
+                                Rpos.pop()
+                            else:
+                                Rneg.append(tok.value)
+                        else:
+                            if (Rneg.count() > 0):
+                                Rneg.pop()
+                            else:
+                                Rpos.append(tok.value)
+                    else:
+                        if (Rneg.count() > 0):
+                            Rneg.pop()
+                        else:
+                            Rpos.append(tok.value)
+            else:
+                if (operators.count() > 0):
+                    operators.pop()
+    if (Rpos.count() == 0 and Rneg.count() == 0):
+        # significa que es un termino absoluto
+        return 'A'
+    elif (Rpos.count() == 1 and Rneg.count() == 0):
+        # significa que es un termino relativo
+        return 'R'
+    else:
+        # significa que es un error
+        return 'Error'
 
 # determina si las operaciones de expresiones son válidas,
 # es decir que no se utilicen terminos relativos
@@ -510,8 +587,8 @@ def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock):
 
 
 def appendTabBlockRow(numBlock, name, len=0, dirIniRel=0):
-    secciones[varSECT]['tabblock'] = {numBlock: {
-        'name': name, 'len': len, 'dirIniRel': dirIniRel}}
+    secciones[varSECT]['tabblock'].append({numBlock: {
+        'name': name, 'len': len, 'dirIniRel': dirIniRel}})
 
 
 def updateTabBlockLen(numBlock, len=0, section=varSECT):
@@ -523,7 +600,6 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 #     if (sect):
 #         varSECT = sect
 
-
 # lexer = lex.lex()
 # while True:
 #     data = input("expression: ")
@@ -533,8 +609,7 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 #     else:
 #         print("expression invalida sintacticamente: " + errorDescription)
 
- ################################################
-
+################################################
    # lexer.input(data)
 
     # while True:
@@ -542,6 +617,5 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #     if not tok:
     #         break
     #     print(tok)
-
-
 #################################
+validateExRelativity_A_R_I('(ETIQ-30-TABLA+3)')
