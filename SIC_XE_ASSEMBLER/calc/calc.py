@@ -230,6 +230,34 @@ tabBlockRow = {}
 tabSymRow = {}
 
 
+def onInit():
+    global tabBlockRow
+    global tabSymRow
+    global err
+    global errorDescription
+    global varUSE
+    global varSECT
+    global parser
+    global secciones
+    global seccion
+    global tabBlock
+    global tabSym
+    tabBlockRow = {}
+    tabSymRow = {}
+    err = False
+    errorDescription = ""
+    varUSE = "omision"
+    varSECT = "omision"
+    parser = yacc.yacc()
+    # arreglo de secciones
+    secciones = {}
+    # instancia de seccion
+    seccion = {}
+    # instancia de
+    tabBlock = {}
+    tabSym = {}
+
+
 def run(p):
     global err
     global errorDescription
@@ -282,8 +310,9 @@ def run(p):
             try:
                 #env[p[1]] = run(p[2])
                 # return env[p[1]]
-                secciones[varSECT][varUSE][p[1]] = run(p[2])
-                return secciones[varSECT][varUSE][p[1]]
+                appendTabSymRow(p[1], run(p[2]),
+                                validateExRelativity_A_R_I(p[2]), False)
+                return secciones[varSECT]['tabsym'][p[1]]['dirVal']
 
             except:
                 errorDescription = "variable inexistente en el ambito 2"
@@ -295,7 +324,7 @@ def run(p):
         elif p[0] == 'var':
             try:
                 # return env[p[1]]
-                return secciones[varSECT][varUSE][p[1]]
+                return secciones[varSECT]['tabsym'][p[1]]['dirVal']
             except:
                 errorDescription = "variable inexistente en el ambito 1"
                 err = True
@@ -451,6 +480,10 @@ def validateExSyntaxAndVariables(expression):
 
 def validateExRelativity_A_R_I(expression):
     tokens = getTokens(expression)
+    Rpos = []
+    Rneg = []
+    paren = []
+    operation = []
     pass
 
 # determina si las operaciones de expresiones son válidas,
@@ -470,8 +503,8 @@ blockCounter = 0
 
 def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock):
     if (not symbol in secciones[varSECT]['tabsym'].keys()):
-        secciones[varSECT]['tabsym'] = {symbol: {
-            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}}
+        secciones[varSECT]['tabsym'].append({symbol: {
+            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}})
     else:
         pass  # error simbolo duplicado
 
@@ -485,10 +518,10 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 
 
-while True:
-    sect = input(seccion)
-    if (sect):
-        varSECT = sect
+# while True:
+#     sect = input(seccion)
+#     if (sect):
+#         varSECT = sect
 
 
 # lexer = lex.lex()
