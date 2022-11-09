@@ -209,7 +209,7 @@ def p_error(p):
 
 #####
 #
-#Variables necesarias para el funcionamiento
+# Variables necesarias para el funcionamiento
 #
 #####
 
@@ -224,7 +224,11 @@ secciones = {}
 seccion = {}
 # instancia de
 tabBlock = {}
-tabSymb = {}
+tabSym = {}
+
+tabBlockRow = {}
+tabSymRow = {}
+
 
 def run(p):
     global err
@@ -350,7 +354,7 @@ def run(p):
 # break
 # parser.parse(s)
 
-def changeUSE(name):
+def changeUSE(name=''):
     global varUSE
     if (name):
         varUSE = name
@@ -358,7 +362,7 @@ def changeUSE(name):
         varUSE = "omision"
 
 
-def changeSECT(name):
+def changeSECT(name=''):
     global varSECT
     if (name):
         varSECT = name
@@ -452,6 +456,24 @@ def validateExRelativity_A_R_I(expression):
 def validateExRelativityOp(expression):
     pass
 
+#############################
+# operaciones para las tablas
+#############################
+
+
+def appendTabSymRow(symbol, dirVal, typ, numBlock, extBool):
+    secciones[varSECT]['tabsym'] = {symbol: {
+        'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}}
+
+
+def appendTabBlockRow(numBlock, name, len=0, dirIniRel=0):
+    secciones[varSECT]['tabblock'] = {numBlock: {
+        'name': name, 'len': len, 'dirIniRel': dirIniRel}}
+
+
+def updateTabBlockLen(numBlock, len=0, section=varSECT):
+    secciones[section]['tabblock'][numBlock]['len'] = len
+
 
 lexer = lex.lex()
 while True:
@@ -471,3 +493,6 @@ while True:
     #     if not tok:
     #         break
     #     print(tok)
+
+
+#################################
