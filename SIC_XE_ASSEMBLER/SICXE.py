@@ -122,14 +122,14 @@ Ebit = 1
 
 # Tabla de simbolos |
 # Defined symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           and their dir values
-tabSym = {}
+#tabSym = {}
 
 # codigo objeto
-codOb = {}
+#codOb = {}
 
 # Contador de programa |
 # Program counter
-PC = 0
+#PC = 0
 B = 0
 
 # c indica una constante o dir de memoria entre 0 y 4095
@@ -168,61 +168,39 @@ argumentTokens = {
 
     # tokens for new included expresions
     'EXP': '[a-zA-Z]+[a-zA-Z0-9]*',
-
 }
-
-
-def xor(x, y):
-    return bool((x and not y) or (not x and y))
-
-# Optab = {}
-# Optab2 = {}
-
-
-symbolsTables = {}
-blocksTables = {}
-
-
-X = 0
-
-isBase = False
-BaseLoc = 0
-Flags = 0
-
-
-def isExtended(mnemonic):
-    if (mnemonic == baseMnemonic(mnemonic)):
-        return None
-    else:
-        return 1
 
 # dice si una instruccion es tipo 4
 
 
 def typeFour(mnemonic):
     if mnemonic[0] == "+":
-        return 1
-    return None
-
-# dice si una instruccion es tipo 4
-
-
-def typeSIC(mnemonic):
-    if mnemonic in ("FIX" or "FLOAT" or "HIO" or "SIO" or "TIO"):
-        return 1
-    return None
-
-
-def isString(operands):
-    return operands[0] == 'C'
-
-
-def isspace(line):
+        return True
     return False
 
+# determina si una instruccion es extendida
 
-def isSymbol(string):
-    return string in tabSym.keys()
+
+def isExtended(mnemonic):
+    if (mnemonic == baseMnemonic(mnemonic)):
+        return False
+    else:
+        return True
+
+# determina si una instruccion es valida
+
+
+def validMnemonic(mnemonic):
+    if SICXE_Dictionary.get(mnemonic) or (mnemonic.startswith('+') and SICXE_Dictionary.get(baseMnemonic(mnemonic))):
+        return True
+    else:
+        return False
+
+# funcion xor
+
+
+def xor(x, y):
+    return bool((x and not y) or (not x and y))
 
 # Regresa el nemonico como tal, sin signo + |
 # Return the mnemonic strin with any leading + striped off
@@ -236,13 +214,29 @@ def baseMnemonic(mnemonic):
 # retorna el operando sin tipo de direccionamiento
 
 
-def baseOperand(operand):
-    res = operand
-    if res[0] == "@" or res[0] == "#":
-        res = operand[1:]
+def validateOperandSyntax(operand):
+    auxOperand = operand
+    if auxOperand[0] == "@" or auxOperand[0] == "#":
+        auxOperand = operand[1:]
+        if ("@" in auxOperand or "#" in auxOperand):
+            return {'valid': False, 'msg': 'Error en modo de direccionamiento'}
+        else:
+            exSyntaxValidation = calc.validateExSyntax(auxOperand)
+            if (exSyntaxValidation == True):
+
     if (res.endswith(',X')):
         res = res.replace(',X', '')
     return res
+
+
+def typeSIC(mnemonic):
+    if mnemonic in ("FIX" or "FLOAT" or "HIO" or "SIO" or "TIO"):
+        return True
+    return None
+
+
+def isString(operands):
+    return operands[0] == 'C'
 
 # Retorna 1 si el primer caracter es diferente a espacios lo que quiere decir que hay una etiqueta|
 # Return 1 if the first character is different to any type of space, that means it is a label
@@ -251,17 +245,37 @@ def baseOperand(operand):
 def haslabel(c):
     return c != ' ' and c != '\t' and c != '\n'
 
-# Retorna 1 si la linea omienza con un punto |
-# return 1 if the line begin with point.
+
+# determina si una direccion es relativa a la base, esta tiene que ser hexadecimal |
+# determine if a given address is relative to the base, the address must be in hexadecimal
+
+
+def addressIsBaseRelative(hexAddress):
+    if int(hexAddress, 16) >= 0 and int(hexAddress, 16) <= 4096:
+        return True
+    else:
+        return False
+
+# determina si una direccion es relativa al contador de programa, esta tiene que ser hexadecimal |
+# determine if a given address is relative to program counter, the address must be in hexadecimal
+
+
+def addressIsPCRelative(hexAddress):
+    if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
+        return True
+    else:
+        return False
+
+# Retorna 1 si la linea omienza con un "?" |
+# return 1 if the line begin with point ?
 
 
 def isComment(c):
     return c == '?'
 
-
-# function to return key for any value
-
 # analisis gramatical | parser
+
+
 def parseLine(line):
 
     # Si la linea empieza con punto la toma como comentario |
@@ -297,34 +311,6 @@ def parseLine(line):
                 operands = "".join(lineWords[1:])  # index 1 to beyond
     return (label, mnemonic, operands, '')
 
-# function to return key for any value
-
-
-def get_key(val: object, my_dict: dict):
-    for key, value in my_dict.items():
-        if val == value:
-            return key
-    return "key doesn't exist"
-
-# determina si una direccion es relativa a la base, esta tiene que ser hexadecimal |
-# determine if a given address is relative to the base, the address must be in hexadecimal
-
-
-def addressIsBaseRelative(hexAddress):
-    if int(hexAddress, 16) >= 0 and int(hexAddress, 16) <= 4096:
-        return True
-    else:
-        return False
-
-# determina si una direccion es relativa al contador de programa, esta tiene que ser hexadecimal |
-# determine if a given address is relative to program counter, the address must be in hexadecimal
-
-
-def addressIsPCRelative(hexAddress):
-    if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
-        return True
-    else:
-        return False
 
 # return True if the range of the costant is between 0 and 4095
 
@@ -343,6 +329,8 @@ def argumentIsA_m_Constant(argument):
         return True
     else:
         return False
+
+# determina el numero de bytes que se tienen que reservar según la instruccion
 
 
 def instruLen(instru):
@@ -365,15 +353,37 @@ def padHexEven(string):
         return '0'+string
     return string
 
+
 # this function extracts the substring between markers
-
-
-def byteOperandExtract(raw_string):
-    start_marker = "'"
-    end_marker = "'"
+# extrae los caracteres entre marcadores
+def byteOperandExtract(raw_string, start_marker="'", end_marker="'"):
     start = raw_string.index(start_marker) + len(start_marker)
     end = raw_string.index(end_marker, start)
     return raw_string[start:end]
+
+# metodo ya incluido en calc
+
+
+def correctHex(possibleHex):
+    if (possibleHex.count('h'.upper()) == 1 and possibleHex.endswith('h'.upper())):
+        return True
+    else:
+        return False
+
+# converts any decimal or hexadecimal string into a hexadecimal value
+# at this point the lexical analyzer made its work so, it asume there is not error when hex parsing
+
+# estos metodos ya se incluyen en calc
+
+
+def getHexadecimalByString(strConvert):
+    res = None
+    if (strConvert.isdecimal()):
+        res = int(strConvert)
+    elif (correctHex(strConvert)):
+        res = int(strConvert.replace("h".upper(), ""), 16)
+    return res
+
 
 # retorna la cantidad de bytes necesarios segun la directiva |
 # return the number of bytes needed deppending of the directive
@@ -403,25 +413,6 @@ def directiveLen(directive, operand):
         res = 3 * getHexadecimalByString(operand)
     return res
 
-# converts any decimal or hexadecimal string into a hexadecimal value
-
-
-# at this point the lexical analyzer made its work so, it suóse there is not error whenhex parsing
-def getHexadecimalByString(strConvert):
-    res = None
-    if (strConvert.isdecimal()):
-        res = int(strConvert)
-    elif (correctHex(strConvert)):
-        res = int(strConvert.replace("h".upper(), ""), 16)
-    return res
-
-
-def correctHex(possibleHex):
-    if (possibleHex.count('h'.upper()) == 1 and possibleHex.endswith('h'.upper())):
-        return True
-    else:
-        return False
-
 
 def getBytesByString(strOperand):
     pattern = "'(.*?)'"
@@ -434,14 +425,56 @@ def regexMatch(regex, testStr):
     else:
         return False
 
+
+# para determinar el valor de las bandera NIXBPE
+Nbit = 32
+Ibit = 16
+Xbit = 8
+Bbit = 4
+Pbit = 2
+Ebit = 1
+
+
+def flagsValue(mnemonic, operand):
+    resFlags = 0
+    # tipos de direccionamiento:
+    if (operand[0] == '@'):  # Indirecto
+        resFlags += Nbit
+    elif (operand[0] == '#'):  # inmediato
+        resFlags += Ibit
+    else:  # simple
+        resFlags += Nbit+Ibit
+    # si es indexado
+    if (operand.endswith(",X")):
+        resFlags += Xbit
+    # si es extendido:
+    if (typeFour(mnemonic)):
+        resFlags += Ebit
+    return resFlags
+
+
+################################################
+################################################
+################################################
+################################################
+################################################
+
+
 # Analizador Léxico/Sintáctico SIC-XE |
 # SIC-XE Lexical and syntax análisis
+
+# Optab = {}
+# Optab2 = {}
+symbolsTables = {}
+blocksTables = {}
+X = 0
+isBase = False
+BaseLoc = 0
+Flags = 0
 
 
 def passOne(lines):
     calc.onInit()
-    global PC
-    PC = 0
     initialDirection = 0
     # Por cada linea en el archivo se hace un analisis gramatical |
     # Parse each line in the file
@@ -452,7 +485,7 @@ def passOne(lines):
         if (line and line != '\s' and line != '\n' and line != '\t'):
             insertion = "."
             # parse the line and sign values to variables
-            label, mnemonic, operands, comment = parseLine_HotFix(line)
+            label, mnemonic, operands, comment = parseLine(line)
             codop = ""
 
             if (comment):
@@ -460,6 +493,20 @@ def passOne(lines):
             else:
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
+                if (dirInstr[0] == 'I'):  # si es una instruccion
+                    if (dirInstr[1] == 3):  # es instruccion formato 3
+                        if ('@' in operands):
+
+                        elif ('#' in operands):
+
+                            # if (typeFour(mnemonic)):  # si es formato 4
+
+                    elif (dirInstr[1] == 2):
+
+                        ########################################################
+                        ########################################################
+                        ########################################################
+
                 if (operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
                     operandsArray = operands.split(
                         ',')  # split operands with ","
@@ -645,151 +692,6 @@ def passOne(lines):
 # estas funciones contienen el desplazamiento despejado
 
 
-Nbit = 32
-Ibit = 16
-Xbit = 8
-Bbit = 4
-Pbit = 2
-Ebit = 1
-
-# SIMPLE
-
-
-def flag_Obj_NI(objetiveAddress_TA):
-    #TA = desp
-    #desp = TA
-    res1 = hex(Nbit + Ibit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-# formato 4
-
-
-def flag_Obj_NIE(objetiveAddress_TA):
-    #TA = dir
-    #dir = TA
-    res1 = hex(Nbit + Ibit + Ebit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_NIP(objetiveAddress_TA, CP):
-    #TA = (CP) + desp
-    #desp = TA - (CP)
-    res1 = hex(Nbit + Ibit + Pbit)
-    res2 = hex(objetiveAddress_TA - int(CP, 16))
-    return [res1, res2]
-
-
-def flag_Obj_NIB(objetiveAddress_TA, B):
-    #TA = (B) + desp
-    #desp = TA - (B)
-    res1 = hex(Nbit + Ibit + Bbit)
-    res2 = hex(objetiveAddress_TA - int(B, 16))
-    return [res1, res2]
-
-
-def flag_Obj_NIX(objetiveAddress_TA):
-    # TA = desp + (X) // (X) = 0
-    #desp = TA
-    res1 = hex(Nbit + Ibit + Xbit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_NIXE(objetiveAddress_TA):
-    # TA = dir + (X)// (X) = 0
-    #desp = TA
-    res1 = hex(Nbit + Ibit + Xbit + Ebit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_NIXP(objetiveAddress_TA, CP):
-    # TA = (CP)+desp+(X)// (X) = 0
-    #desp = TA - (CP)
-    res1 = hex(Nbit + Ibit + Xbit + Pbit)
-    res2 = hex(objetiveAddress_TA - int(CP, 16))
-    return [res1, res2]
-
-
-def flag_Obj_NIXB(objetiveAddress_TA, B):
-    # TA = (B)+desp+(X)// (X) = 0
-    #desp = TA - (B)
-    res1 = hex(Nbit + Ibit + Xbit + Bbit)
-    res2 = hex(objetiveAddress_TA - int(B, 16))
-    return [res1, res2]
-
-# INDIRECTO
-
-
-def flag_Obj_N(objetiveAddress_TA):
-    #TA = desp
-    #desp = TA
-    res1 = hex(Nbit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-# formato 4
-
-
-def flag_Obj_NE(objetiveAddress_TA):
-    #TA = dir
-    #dir = TA
-    res1 = hex(Nbit + Ebit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_NP(objetiveAddress_TA, CP):
-    #TA = (CP) + desp
-    #desp = TA - (CP)
-    res1 = hex(Nbit + Pbit)
-    res2 = hex(objetiveAddress_TA - int(CP, 16))
-    return [res1, res2]
-
-
-def flag_Obj_NB(objetiveAddress_TA, B):
-    #TA = (B) + desp
-    #desp = TA -(B)
-    res1 = hex(Nbit + Bbit)
-    res2 = hex(objetiveAddress_TA - int(B, 16))
-    return [res1, res2]
-
-# INMEDIATO
-
-
-def flag_Obj_I(objetiveAddress_TA):
-    #TA = desp
-    #desp = TA
-    res1 = hex(Ibit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_IE(objetiveAddress_TA):
-    #TA = dir
-    #dir = TA
-    res1 = hex(Ibit + Ebit)
-    res2 = hex(objetiveAddress_TA)
-    return [res1, res2]
-
-
-def flag_Obj_IP(objetiveAddress_TA, CP):
-    #TA = (PC) + desp
-    #desp = TA -(PC)
-    res1 = hex(Ibit + Pbit)
-    res2 = hex(objetiveAddress_TA - int(CP, 16))
-    return [res1, res2]
-
-
-def flag_Obj_IB(objetiveAddress_TA, B):
-    #TA = (B) + desp
-    #desp = TA - (B)
-    res1 = hex(Ibit + Bbit)
-    res2 = hex(objetiveAddress_TA - int(B, 16))
-    return [res1, res2]
-
 # asumimos que los pasos anteriores se relizaron
 
 
@@ -964,21 +866,6 @@ def byteCodObj(operand):
 def bindigit(n, bits):
     s = bin(n & int("1"*bits, 2))[2:]
     return ("{0:0>%s}" % (bits)).format(s)
-
-
-def flagsForF3andF4_Decimal(mnemonic, operand):
-    resFlags = 0
-    if (typeFour(mnemonic)):
-        resFlags += Ebit
-    if (operand.endswith(",X")):
-        resFlags += Xbit
-    if (operand[0] == '@'):
-        resFlags += Nbit
-    elif (operand[0] == '#'):
-        resFlags += Ibit
-    else:
-        resFlags += Nbit+Ibit
-    return resFlags
 
 
 def passTwo(archiInter, symTable):

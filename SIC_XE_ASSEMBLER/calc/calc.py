@@ -2,6 +2,7 @@ import ply.lex as lex
 import ply.yacc as yacc
 import sys
 import math
+import re
 
 # Create a list to hold all of the token names
 tokens = [
@@ -51,21 +52,20 @@ t_EQUALS = r'\='
 t_ignore = ' \t\n'
 
 
+def t_INTH(t):
+    r'[0-9a-fA-F]+(h|H)'  # (\d+(h|H))|
+    t.value = getIntByHexOInt(t.value)
+    return t
+
+
 # More complicated tokens, such as tokens that are more than 1 character in length
 # are defined using functions.
 # A float is 1 or more numbers followed by a dot (.) followed by 1 or more numbers again.
-
-
 def t_FLOAT(t):
     r'\d+\.\d+'
     t.value = float(t.value)
     return t
 
-
-def t_INTH(t):
-    r'\d+H|(A|B|C|D|E|F)+\d*H^'
-    t.value = getIntByHexOInt(t.value)
-    return t
 
 # An int is 1 or more numbers.
 
@@ -126,6 +126,8 @@ lexer = lex.lex()
 
 
 precedence = (
+    ('left', 'NAME'),
+    ('left', 'INTH'),
     ('left', 'OR', 'AND'),
     ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
     ('left', 'PLUS', 'MINUS'),
@@ -174,6 +176,16 @@ def p_expression_bin(p):
     p[0] = (p[2].value, p[1].value, p[3].value)
 
 
+def p_expression_int_float_name(p):
+    '''
+    expression : INTH
+               | INT
+               | FLOAT
+               | var
+    '''
+    p[0] = p[1].value
+
+
 def p_expression_assign(p):
     '''
     expression : NAME EQUALS expression
@@ -186,15 +198,6 @@ def p_var_expression(p):
     var : NAME
     '''
     p[0] = ('var', p[1].value)
-
-
-def p_expression_int_float_name(p):
-    '''
-    expression : INT
-               | FLOAT
-               | var
-    '''
-    p[0] = p[1].value
 
 
 def p_expression_parent(p):
@@ -428,11 +431,11 @@ def validateExSyntax(expression):
             if ("inexistente" in errorDescription):
                 return True
             else:
-                return (False, errorDescription)
+                return errorDescription
         else:
             return True
     except:
-        return (False, "Error expresion invalida")
+        return "Error expresion invalida"
 
 # valida la sintaxys total de la expresion:
 # es decir si es correcta lexica y sintacticamente
@@ -636,17 +639,18 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 #     if (sect):
 #         varSECT = sect
 
-# lexer = lex.lex()
-# while True:
-#     data = input("expression: ")
-#     data2 = validateExSyntax(data)
-#     if (data2 == True):
-#         print("correct expresion :D")
-#     else:
-#         print("expression invalida sintacticamente: " + errorDescription)
+lexer = lex.lex()
+while True:
+    data = input("expression: ")
+    # data2 = validateExSyntax(data)
+    # if (data2 == True):
+    #     print("correct expresion :D")
+    # else:
+    #     print("expression invalida sintacticamente: " + errorDescription)
+    getTokens(data)
 
 ################################################
-   # lexer.input(data)
+  # lexer.input(data)
 
     # while True:
     #     tok = lexer.token()
