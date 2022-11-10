@@ -6,6 +6,7 @@ import re
 
 # Create a list to hold all of the token names
 tokens = [
+    'INDEXED',  # --> ,X
     'OCTO',  # -->#
     'AT',  # -->@
     'INTH',
@@ -54,6 +55,12 @@ t_EQUALS = r'\='
 # Ply's special t_ignore variable allows us to define characters the lexer will ignore.
 # We're ignoring spaces.
 t_ignore = ' \t\n'
+
+
+def t_INDEXED(t):
+    r',X'
+    t.type = 'INDEXED'
+    return t
 
 
 def t_INTH(t):
@@ -119,8 +126,8 @@ def t_error(t):
     global err
     global errorDescription
     err = True
-    errorDescription = "Illegalllll characters:"+t.value+":"
-    print("Illegal____ characters:"+t.value+":")
+    errorDescription = "Illegal characters:"+t.value+":"
+    print("Illegal characters:"+t.value+":")
     t.lexer.skip(1)
 
 
@@ -130,7 +137,7 @@ lexer = lex.lex()
 
 precedence = (
     ('left', 'NAME'),
-    ('left', 'INTH'),
+    ('left', 'INTH', 'INDEXED'),
     ('left', 'OR', 'AND'),
     ('left', 'MORET', 'LESST', 'MOREEQ', 'LESSEQ'),
     ('left', 'PLUS', 'MINUS'),
@@ -143,8 +150,7 @@ precedence = (
 def p_calc(p):
     '''
     calc : expression
-        | OCTO expression
-        | AT expression
+        | expression INDEXED
         | empty
     '''
     print(run(p[1].value))
@@ -152,7 +158,7 @@ def p_calc(p):
 # for validation of expressions with dir mode
 
 
-def p_calc(p):
+def p_calc_octo_at(p):
     '''
     calc : OCTO expression
         | AT expression
