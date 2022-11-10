@@ -4,6 +4,14 @@ import sys
 import math
 import re
 
+
+######################################################
+#
+# Definicion de calculadora de expresiones para la SICXE
+# con la ayuda de ply: lex y yacc
+#
+######################################################
+
 # Create a list to hold all of the token names
 tokens = [
     'INDEXED',  # --> ,X
@@ -252,9 +260,15 @@ def p_error(p):
         err = True
         errorDescription = "Syntax error en EOF"
 
+###############################################################
+#
+#       Inician las funciones Utiles de la calculadora
+#
+###############################################################
+
 #####
 #
-# Variables necesarias para el funcionamiento
+# Definicion de variables necesarias para el funcionamiento
 #
 #####
 
@@ -276,6 +290,8 @@ tabBlockRow = {}
 tabSymRow = {}
 
 listaCSECTBlockCP = {}
+
+# las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
 
 
 def onInit():
@@ -304,6 +320,13 @@ def onInit():
     # instancia de
     tabBlock = {}
     tabSym = {}
+
+# las variables que tienen que ser inicializadas cada vez que se realize el paso dos
+
+
+def passTwoOnInit():
+
+    # funcion que resuelve las expresiones
 
 
 def run(p):
@@ -384,6 +407,9 @@ def run(p):
         # print(p)
         return p
 
+# cambia el bloque , cambiando el nombre varUSE -->cambiar por nameBLOCK
+# simplemente cambia el
+
 
 def changeUSE(name=''):
     global varUSE
@@ -395,6 +421,10 @@ def changeUSE(name=''):
 
 arrayBlocks = []
 
+# cambia la seccion , cambiando el nombre varSECT -->cambiar por nameSECT
+# simplemente cambia el
+nameSTART = ''  # nombre de la seccion principal
+
 
 def changeSECT(name=''):
     global varSECT
@@ -405,21 +435,9 @@ def changeSECT(name=''):
     else:
         varSECT = "omision"
 
-
-def listToString(s):
-
-    # initialize an empty string
-    str1 = ""
-
-    # traverse in the string
-    for ele in s:
-        str1 += ele
-
-    # return string
-    return str1
-
-
 # retorna un array con todos los tokens de una expresion dada
+
+
 def getTokens(expression):
     resTokens = []
     lexer.input(expression)
@@ -436,9 +454,11 @@ def getTokens(expression):
     return resTokens
 
 
-# valida la sintaxys total de la expresion:
+# valida la sintaxis total de la expresion:
 # es decir si es correcta lexica y sintacticamente
 # sin importarle si los terminos(simbolos) están definidos
+errorExSyntax = False
+msgExSyntax = ''
 
 
 def validateExSyntax(expression):
@@ -458,9 +478,12 @@ def validateExSyntax(expression):
     except:
         return "Error expresion invalida"
 
-# valida la sintaxys total de la expresion:
+
+# valida la sintaxys en especifico de una expresion:
 # es decir si es correcta lexica y sintacticamente
-# sin importarle si los terminos(simbolos) están definidos
+# tomando en cuenta si los simbolos están definidos y pertenecen al mismo bloque
+errorExSyntaxAndVariables = False
+msgExSyntaxAndVariables = ''
 
 
 def validateExSyntaxAndVariables(expression):
@@ -477,10 +500,8 @@ def validateExSyntaxAndVariables(expression):
     except:
         return (False, ":::Error expresion invalida :::")
 
-# valida si la expresion es  valida
-# y determina si es Absoluta, relativa o invalida por relatividad
 
-
+# efectua la regla de los signos [(+)*(+) = (+)], [(-)*(-) = (+) ] y [(-)*(+) = (-) ]  para un signo o un array de signos
 def singnsRulePositive(signOrSigns):
     if (type(signOrSigns) is list):
         if (len(signOrSigns) == 0):
@@ -494,6 +515,10 @@ def singnsRulePositive(signOrSigns):
             return True
         else:
             return False
+
+# valida si la expresion es  valida
+# y determina si es Absoluta, relativa o invalida por relatividad
+# todo mediante el recorrido de la expresion y la ayuda de stacks de operacion
 
 
 def validateExRelativity_A_R_I(expression):
@@ -604,6 +629,9 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 
 
+#############################
+# zona de pruebas
+#############################
 # while True:
 #     try:
 #         s = input('calc>>')

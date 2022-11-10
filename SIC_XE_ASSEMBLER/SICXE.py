@@ -519,29 +519,35 @@ def passOne(lines):
                 elif (dirInstr[0] == 'D'):  # is a directive
                     if (dirInstr[1] == 'START'):  # no suma nada
                         pass
+                    elif (dirInstr[1] == 'EXTDEF'):
+                        pass
+                    elif (dirInstr[1] == 'EXTREF'):
+                        pass
                     elif (dirInstr[1] == 'END'):  # no suma nada
                         pass
                     elif (dirInstr[1] == 'BYTE'):
                         pass
+                    # cambia el valor de la base, empieza en -1 comp2
                     elif (dirInstr[1] == 'BASE'):
                         pass
-                    elif (dirInstr[1] == 'WORD'):
+                    elif (dirInstr[1] == 'WORD'):  # suma 3 bytes
                         pass
-                    elif (dirInstr[1] == 'RESB'):
+                    elif (dirInstr[1] == 'RESB'):  # reserva el numero de bytes especificado
                         pass
+                    # reserva el numero de palabras especificado, 1 palabra = 3 bytes
                     elif (dirInstr[1] == 'RESW'):
                         pass
+                    # genera una entrada en la tabla de simbolos, segun el bloque y la seccion de control que se esté utilizando
                     elif (dirInstr[1] == 'EQU'):
                         pass
+                    # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
                         pass
+                    # cambia el contador de programa el valor especificado
                     elif (dirInstr[1] == 'ORG'):
                         pass
+                    # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
-                        pass
-                    elif (dirInstr[1] == 'EXTDEF'):
-                        pass
-                    elif (dirInstr[1] == 'EXTREF'):
                         pass
                 else:  # $ERROR$MNEMONICO$Instruccion no existe
 
