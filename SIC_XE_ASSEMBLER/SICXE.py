@@ -175,28 +175,9 @@ argumentTokens = {
 def xor(x, y):
     return bool((x and not y) or (not x and y))
 
-
-def getFineOperand(arrayOfPossibleOperands):
-    if (len(arrayOfPossibleOperands) == 1):  # if the operand is unique there is nothing to do
-        return arrayOfPossibleOperands[0]
-    elif (len(arrayOfPossibleOperands) == 2):
-        # it means the next operand is part of the ecuation
-        if (xor(arrayOfPossibleOperands[0][-1] == ',',  arrayOfPossibleOperands[1][0] == ',')):
-            return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1]
-        else:
-            return arrayOfPossibleOperands[0]
-    elif (len(arrayOfPossibleOperands) >= 3):
-        if (arrayOfPossibleOperands[1] == ','):
-            return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1] + arrayOfPossibleOperands[2]
-        # it means the next operand is part of the ecuation
-        elif (xor(',' == arrayOfPossibleOperands[0][-1], ',' == arrayOfPossibleOperands[1][0])):
-            return arrayOfPossibleOperands[0] + arrayOfPossibleOperands[1]
-        else:
-            return arrayOfPossibleOperands[0]
-
-
 # Optab = {}
 # Optab2 = {}
+
 
 symbolsTables = {}
 blocksTables = {}
@@ -277,9 +258,10 @@ def haslabel(c):
 def isComment(c):
     return c == '?'
 
+
+# function to return key for any value
+
 # analisis gramatical | parser
-
-
 def parseLine(line):
 
     # Si la linea empieza con punto la toma como comentario |
@@ -301,66 +283,18 @@ def parseLine(line):
 
     if baseMnemonic(lineWords[0]) in SICXE_Dictionary:
         mnemonic = lineWords[0]
-        if len(lineWords) >= 2:  # if has operands
-            operands = getFineOperand(lineWords[1:])  # lineWords[1]
-    else:
-        # has labels at the begining of the line, means its not aq space or tab
-        if haslabel(line[0]):
-            label = lineWords[0]
-            mnemonic = lineWords[1]
-            if len(lineWords) >= 3:  # if has one or more operands
-                operands = getFineOperand(lineWords[2:])  # lineWords[2]
-        else:
-            mnemonic = lineWords[0]
-            if len(lineWords) >= 2:  # if has operands
-                operands = getFineOperand(lineWords[1:])  # lineWords[1]
-    return (label, mnemonic, operands, '')
-
-# function to return key for any value
-
-
-def parseLine_HotFix(line):
-
-    # Si la linea empieza con punto la toma como comentario |
-    # If the line begins with a point it is a comment
-    if isComment(line[0]):
-        return ['', '', '', line]
-
-    label = ''
-    mnemonic = ''
-    operands = ''
-
-    findComment = line.find("?")
-    if (findComment >= 0):
-        comment = line[findComment:-1]
-        line = line[0:findComment]
-
-    findComma = line.find(",")
-    if (findComma >= 0):
-        Indexed = line[findComma:-1]
-        line = line[0:findComma]
-
-    # Split the words of the line
-    lineWords = line.split()
-
-    if baseMnemonic(lineWords[0]) in SICXE_Dictionary:
-        mnemonic = lineWords[0]
-        if len(lineWords) >= 2:  # if has operands
-            operands = getFineOperand(lineWords[1:])  # lineWords[1]
-            operands = lineWords[1:]
+        operands = "".join(lineWords[2:])
     else:
         # has labels at the begining of the line, means its not aq space or tab
         if haslabel(line[0]):  # if the label part is not used by space \s
             label = lineWords[0]
             mnemonic = lineWords[1]
-            if len(lineWords) >= 3:  # if has one or more operands
-                # operands = getFineOperand(lineWords[2:])  # lineWords[2]
-                operands = lineWords[2:]
+            if len(lineWords) >= 3:
+                operands = "".join(lineWords[2:])  # index 2 to beyond
         else:
             mnemonic = lineWords[0]
             if len(lineWords) >= 2:  # if has operands
-                # operands = getFineOperand(lineWords[1:])  # lineWords[1]
-                operands = lineWords[1:]
+                operands = "".join(lineWords[1:])  # index 1 to beyond
     return (label, mnemonic, operands, '')
 
 # function to return key for any value
@@ -526,7 +460,7 @@ def passOne(lines):
             else:
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
-                if (operands and (not operands[0].endswith(",X") or dirInstr[1] == 2)):
+                if (operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
                     operandsArray = operands.split(
                         ',')  # split operands with ","
                 else:
