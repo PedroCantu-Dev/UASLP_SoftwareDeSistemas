@@ -505,6 +505,8 @@ def validateExRelativity_A_R_I(expression):
     for tok in tokenes:
         if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
             operators.append(tok.value)
+            if (len(Rpos) != len(Rneg)):
+                return "ERROR: operador invalido para termino relativo"
         elif (tok.type == 'LPARENT'):
             if (len(operators) > 0):
                 parentesis.append(operators.pop())
@@ -660,15 +662,19 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 #     if (sect):
 #         varSECT = sect
 
-lexer = lex.lex()
-while True:
-    data = input("expression: ")
-    data2 = validateExSyntax(data)
-    if (data2 == True):
-        print("correct expresion :D")
-    else:
-        print("expression invalida sintacticamente: " + errorDescription)
-    # getTokens(data)
+# para validar las expresiones sintacticamente:
+# lexer = lex.lex()
+# while True:
+#     data = input("expression: ")
+#     data2 = validateExSyntax(data)
+#     if (data2 == True):
+#         print("CORRECT :D\n")
+#     else:
+#         # print("expression invalida sintacticamente: " + errorDescription)
+#         print("D: INCORRECT\n")
+
+# para obtener los tokens:
+# getTokens(data)
 
 ################################################
   # lexer.input(data)
