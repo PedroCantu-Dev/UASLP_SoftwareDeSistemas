@@ -504,9 +504,10 @@ def validateExRelativity_A_R_I(expression):
     operators = []
     for tok in tokenes:
         if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
-            operators.append(tok.value)
-            if (len(Rpos) != len(Rneg)):
+            if ((tok.type == 'MULTIPLY' or tok.type == 'DIVIDE') and len(Rpos) != len(Rneg)):
                 return "ERROR: operador invalido para termino relativo"
+            else:
+                operators.append(tok.value)
         elif (tok.type == 'LPARENT'):
             if (len(operators) > 0):
                 parentesis.append(operators.pop())
