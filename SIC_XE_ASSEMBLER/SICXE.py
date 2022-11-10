@@ -122,14 +122,14 @@ Ebit = 1
 
 # Tabla de simbolos |
 # Defined symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           and their dir values
-#tabSym = {}
+# tabSym = {}
 
 # codigo objeto
-#codOb = {}
+# codOb = {}
 
 # Contador de programa |
 # Program counter
-#PC = 0
+# PC = 0
 B = 0
 
 # c indica una constante o dir de memoria entre 0 y 4095
@@ -502,7 +502,7 @@ def passOne(lines):
                         operandValidation = calc.validateExSyntax(operands)
                         if (operandValidation == True):
                             if ('#' in operands):  # Inmediato
-                                if (typeFour(mnemonic)):
+                                if (typeFour(mnemonic)):  # extendido
                                     pass
                             elif ('@' in operands):  # Indirecto
                                 if (typeFour(mnemonic)):  # extendido
@@ -510,15 +510,17 @@ def passOne(lines):
                             else:  # Simple
                                 if (typeFour(mnemonic)):  # extendido
                                     pass
-                        else:  # $ERROR$Sintaxis$
-                            pass
+                        else:  # $ERROR$Sintaxis$Operando invalido$
+                            hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,uno o mas operandos no validos"]
                     elif (dirInstr[1] == 2):  # es formato 2
+                        operandValidation = calc.validateExSyntax(operands)
                         pass
                     else:  # es formato 1
                         pass
                 elif (dirInstr[0] == 'D'):  # is a directive
                     if (dirInstr[1] == 'START'):  # no suma nada
-                        pass
+                        if (not label):
+                            insertion = [hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
                     elif (dirInstr[1] == 'EXTDEF'):
                         pass
                     elif (dirInstr[1] == 'EXTREF'):
@@ -549,7 +551,8 @@ def passOne(lines):
                     # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
                         pass
-                else:  # $ERROR$MNEMONICO$Instruccion no existe
+                else:
+                    pass  # $ERROR$MNEMONICO$Instruccion no existe
 
                     ########################################################
                     ########################################################
@@ -559,7 +562,7 @@ def passOne(lines):
                     operandsArray = operands.split(
                         ',')  # split operands with ","
                 else:
-                    operandsArray = [operands]
+                    operandsArray=[operands]
                 if (not comment):
                     if (dirInstr):  # the instruction exist
                         if (dirInstr[0] == 'I'):  # if is an instruction
@@ -568,18 +571,18 @@ def passOne(lines):
                                 if (operands):  # si hay almenos un operando
                                     # solo se pide un operando
                                     if (len(dirInstr[3]) == 1 and len(operandsArray) == 1):
-                                        regAux = argumentTokens[dirInstr[3][0]]
+                                        regAux=argumentTokens[dirInstr[3][0]]
                                         # if(re.match(regAux,operandsArray[0]) or re.match(regAux+',X',operandsArray[0])):
                                         if (regexMatch(regAux+',X', operandsArray[0])):
                                             if ('@' in operandsArray[0]):
-                                                insertion = [hex(
+                                                insertion=[hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
 
                                             elif ('#' in operandsArray[0]):
-                                                insertion = [hex(
+                                                insertion=[hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento inmediato e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
                                             else:
-                                                insertion = [
+                                                insertion=[
                                                     hex(PC), label, mnemonic, operands, codop]
                                         elif (regexMatch(regAux, operandsArray[0])):
                                             insertion = [
@@ -927,7 +930,7 @@ def passTwo(archiInter, symTable):
             continue  # if there is an error continue without creating ob code
         else:
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[2]))
-            #[hex(PC), label, mnemonic, operands, codop]
+            # [hex(PC), label, mnemonic, operands, codop]
             # 'BASE'  : ['D','BASE',0],}
             # 'ADD'   : ['I',3,0x18,['m']],
             if (infoMnemonic[1] == 3):
@@ -966,9 +969,9 @@ def passTwo(archiInter, symTable):
                         finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
-                        #dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
+                        # dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
                         dir = bindigit(int(addressingModeRes[0][1], 16), 20)
-                        #nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
+                        # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + dir
                         finalHexStr = hex(int(finalBinString, 2))
@@ -999,9 +1002,9 @@ def passTwo(archiInter, symTable):
                         finalHexStr += ": " + addressingModeRes[1]
                     else:
                         hexOfFlags = addressingModeRes[0][0]
-                        #desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
+                        # desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
                         desp = bindigit(int(addressingModeRes[0][1], 16), 12)
-                        #nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
+                        # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
                         nixbpe = bindigit(int(hexOfFlags, 16), 6)
                         finalBinString = op + nixbpe + desp
                         finalHexStr = hex(int(finalBinString, 2))

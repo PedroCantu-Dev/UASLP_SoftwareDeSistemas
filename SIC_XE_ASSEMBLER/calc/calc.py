@@ -526,26 +526,33 @@ def validateExRelativity_A_R_I(expression):
     Rneg = []
     parentesis = []
     operators = []
+    lastToken = ''
     for tok in tokenes:
         if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
             if ((tok.type == 'MULTIPLY' or tok.type == 'DIVIDE') and len(Rpos) != len(Rneg)):
-                return "ERROR: operador invalido para termino relativo"
-            else:
-                operators.append(tok.value)
+                if (lastToken.type != 'A'):
+                    return "ERROR: operador invalido para termino relativo"
+            operators.append(tok.value)
         elif (tok.type == 'LPARENT'):
             if (len(operators) > 0):
                 parentesis.append(operators.pop())
             else:
                 parentesis.append('+')
         elif (tok.type == 'RPARENT'):
-            parentesis.pop()
-        elif (tok.type == 'INT'):
+            parOp = parentesis.pop()
+            if (parOp == '*' or parOp == '/'):
+                if (len(Rpos) != len(Rneg)):
+                    return "ERROR: operador invalido para termino relativo"
+        elif (tok.type == 'INT' or tok.type == 'INTH'):
+            tok.type == 'A'
             if (len(operators) > 0):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
             # if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
-            if (input(tok.value+": ") == 's'):
+            # if (input(tok.value+": ") == 'R'):
+            if (tok.value == 'R'):
+                tok.type == 'R'
                 if (singnsRulePositive(parentesis)):
                     if (len(operators) > 0):
                         operator = operators.pop()
@@ -584,8 +591,10 @@ def validateExRelativity_A_R_I(expression):
                         else:
                             Rpos.append(tok.value)
             else:
+                tok.type = 'A'
                 if (len(operators) > 0):
                     operators.pop()
+        lastToken = tok
     if (len(Rpos) == 0 and len(Rneg) == 0):
         # significa que es un termino absoluto
         return 'A'
@@ -596,19 +605,11 @@ def validateExRelativity_A_R_I(expression):
         # significa que es un error
         return 'Error: la expresion es invalida por relatividad'
 
-# determina si las operaciones de expresiones son válidas,
-# es decir que no se utilicen terminos relativos
-# para operaciones como multiplicación o división
-
-
-def validateExRelativityOp(expression):
-    pass
-
 
 #############################
 # operaciones para las tablas
 #############################
-blockCounter = 0
+blockCounter = 0  # -->mejor hacerlo con la tabla de simbolos
 
 
 def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock):
@@ -627,6 +628,29 @@ def appendTabBlockRow(numBlock, name, len=0, dirIniRel=0):
 def updateTabBlockLen(numBlock, len=0, section=varSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 
+
+nameSECT = ''
+nameBlock = ''
+##########################################################
+# funciones del Counter Location(Contador de programa: CP)
+#########################################################
+# suma a CP el numero de bytes indicado
+
+
+def addToCounterLoc(addition):
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] += addition
+
+# retorna el valor del contador de programa de la seccion y bloque actuales
+
+
+def getCounterLoc():
+    return secciones[nameSECT]['tabblock'][nameBlock]['len']
+
+# retorna el valor del contador de programa de la seccion y bloque actuales
+
+
+def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
+    return secciones[sectionN]['tabblock'][blockN]['len']
 
 #############################
 # zona de pruebas
@@ -714,3 +738,7 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     #     print(tok)
 #################################
 # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
+
+while True:
+    data = input("expression: ")
+    print(validateExRelativity_A_R_I(data))
