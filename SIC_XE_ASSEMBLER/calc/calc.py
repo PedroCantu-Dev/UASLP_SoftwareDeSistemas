@@ -6,6 +6,8 @@ import re
 
 # Create a list to hold all of the token names
 tokens = [
+    'OCTO',  # -->#
+    'AT',  # -->@
     'INTH',
     'INT',
     'FLOAT',
@@ -29,6 +31,8 @@ tokens = [
 ]
 
 # Use regular expressions to define what each token is
+t_OCTO = r'\#'
+t_AT = r'\@'
 t_LPARENT = r'\('
 t_RPARENT = r'\)'
 t_PLUS = r'\+'
@@ -114,14 +118,13 @@ def t_NAME(t):
 def t_error(t):
     global err
     global errorDescription
-    errorDescription = "Illegal characters:"+t.value+":"
-    print("Illegal characters:"+t.value+":")
-    t.lexer.skip(1)
     err = True
+    errorDescription = "Illegalllll characters:"+t.value+":"
+    print("Illegal____ characters:"+t.value+":")
+    t.lexer.skip(1)
 
 
 # Build the lexer
-
 lexer = lex.lex()
 
 
@@ -140,9 +143,21 @@ precedence = (
 def p_calc(p):
     '''
     calc : expression
-         | empty
+        | OCTO expression
+        | AT expression
+        | empty
     '''
     print(run(p[1].value))
+
+# for validation of expressions with dir mode
+
+
+def p_calc(p):
+    '''
+    calc : OCTO expression
+        | AT expression
+    '''
+    print(run(p[2].value))
 
 
 def p_expression_uminus(p):
@@ -642,12 +657,12 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
 lexer = lex.lex()
 while True:
     data = input("expression: ")
-    # data2 = validateExSyntax(data)
-    # if (data2 == True):
-    #     print("correct expresion :D")
-    # else:
-    #     print("expression invalida sintacticamente: " + errorDescription)
-    getTokens(data)
+    data2 = validateExSyntax(data)
+    if (data2 == True):
+        print("correct expresion :D")
+    else:
+        print("expression invalida sintacticamente: " + errorDescription)
+    # getTokens(data)
 
 ################################################
   # lexer.input(data)
