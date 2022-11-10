@@ -216,6 +216,7 @@ def baseMnemonic(mnemonic):
 
 def validateOperandSyntax(operand):
     auxOperand = operand
+    if (calc.validateExSyntax)
     if auxOperand[0] == "@" or auxOperand[0] == "#":
         auxOperand = operand[1:]
         if ("@" in auxOperand or "#" in auxOperand):
@@ -487,25 +488,66 @@ def passOne(lines):
             # parse the line and sign values to variables
             label, mnemonic, operands, comment = parseLine(line)
             codop = ""
-
-            if (comment):
+            if (comment):  # si toda la linea se trata de un comentario continua
                 continue
             else:
+                # identificando la instruccion en el diccionario
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
                 if (dirInstr[0] == 'I'):  # si es una instruccion
                     if (dirInstr[1] == 3):  # es instruccion formato 3
-                        if ('@' in operands):
+                        # si la validacion por sintaxis de toda la expresion es correcta.
+                        # Esto incluye el modo de direccionamiento y la indexacion
+                        # Por lo que mas adelante se asume que todo es correcto en los operandos
+                        operandValidation = calc.validateExSyntax(operands)
+                        if (operandValidation == True):
+                            if ('#' in operands):  # Inmediato
+                                if (typeFour(mnemonic)):
+                                    pass
+                            elif ('@' in operands):  # Indirecto
+                                if (typeFour(mnemonic)):  # extendido
+                                    pass
+                            else:  # Simple
+                                if (typeFour(mnemonic)):  # extendido
+                                    pass
+                        else:  # $ERROR$Sintaxis$
+                            pass
+                    elif (dirInstr[1] == 2):  # es formato 2
+                        pass
+                    else:  # es formato 1
+                        pass
+                elif (dirInstr[0] == 'D'):  # is a directive
+                    if (dirInstr[1] == 'START'):  # no suma nada
+                        pass
+                    elif (dirInstr[1] == 'END'):  # no suma nada
+                        pass
+                    elif (dirInstr[1] == 'BYTE'):
+                        pass
+                    elif (dirInstr[1] == 'BASE'):
+                        pass
+                    elif (dirInstr[1] == 'WORD'):
+                        pass
+                    elif (dirInstr[1] == 'RESB'):
+                        pass
+                    elif (dirInstr[1] == 'RESW'):
+                        pass
+                    elif (dirInstr[1] == 'EQU'):
+                        pass
+                    elif (dirInstr[1] == 'USE'):
+                        pass
+                    elif (dirInstr[1] == 'ORG'):
+                        pass
+                    elif (dirInstr[1] == 'CSECT'):
+                        pass
+                    elif (dirInstr[1] == 'EXTDEF'):
+                        pass
+                    elif (dirInstr[1] == 'EXTREF'):
+                        pass
+                else:  # $ERROR$MNEMONICO$Instruccion no existe
 
-                        elif ('#' in operands):
-
-                            # if (typeFour(mnemonic)):  # si es formato 4
-
-                    elif (dirInstr[1] == 2):
-
-                        ########################################################
-                        ########################################################
-                        ########################################################
+                    ########################################################
+                    ########################################################
+                    ########################################################
 
                 if (operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
                     operandsArray = operands.split(
