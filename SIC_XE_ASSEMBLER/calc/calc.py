@@ -94,8 +94,7 @@ def t_INT(t):
     t.value = int(t.value)
     return t
 
-
-# at this point the lexical analyzer made its work so, it suóse there is not error whenhex parsing
+# funcion que determina el valor de un numero entero hex o decimal a "decimal integer"
 
 
 def getIntByHexOInt(strConvert):
@@ -325,7 +324,7 @@ def onInit():
 
 
 def passTwoOnInit():
-
+    pass
     # funcion que resuelve las expresiones
 
 
