@@ -409,8 +409,27 @@ def regexMatch(regex, testStr):
 # valida los operandos para las instrucciones de formato 2
 
 
-def validateFormatTwo():
-    pass
+def validateFormatTwo(instru, operands):
+    # Hace un corte por el caracter ','
+    operandsSplited = operands.split(",")
+    instruOperands = instru[3]
+    if (len(instruOperands) == 2 and len(operandsSplited) == 2):
+        if (calc.regexMatch(instruOperands[0], operandsSplited[0]) and calc.regexMatch(instruOperands[1], operandsSplited[1])):
+            return True
+        else:
+            return "ERROR:al menos un operando inválido"
+    elif (len(instruOperands) == 1):
+        if (len(operandsSplited) == 1):
+            if (calc.regexMatch(instruOperands[0], operandsSplited[0])):
+                return True
+            else:
+                return "Error: el operando dado no es válido"
+        elif (operands == ''):
+            return True
+        else:
+            return "ERROR: sobran operandos en la instrucción"
+    else:
+        return "ERROR:el numero de operandos no coincide con los requeridos para la instrucción"
 
 
 # para determinar el valor de las bandera NIXBPE
@@ -509,7 +528,7 @@ def passOne(lines):
                     else:
                         if (dirInstr[1] == 2):  # es formato 2
                             operandValidation = validateFormatTwo(
-                                mnemonic, operands)
+                                dirInstr, operands)
                             # si la validacion para los operandos de la instruccion formato 2 es correcta (True)
                             if (operandValidation == True):
                                 # suma 2 bytes al contador de programa actual
@@ -546,9 +565,9 @@ def passOne(lines):
                                 # define la locacion inicial del programa
                                 calc.setLocSTART(operands)
                                 # añade una nueva seccion, la seccion inicial
-                                calc.addSection()
-                                calc.setCounterLoc()
-                                calc.addToCounterLoc()
+                                calc.appendSection()
+                                calc.setCounterLoc(
+                                    calc.getIntByHexOInt(operands))
                             else:
                                 insertion = [calc.getCounterLoc(
                                 ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,operando invalido para la directiva START"]

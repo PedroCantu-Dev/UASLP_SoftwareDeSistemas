@@ -336,16 +336,16 @@ def getIntByHexOInt(strConvert):
     res = None
     if isinstance(strConvert, int):
         res = strConvert
-    elif (strConvert.isdecimal()):
-        res = int(strConvert)
     elif (correctHex(strConvert)):
         strConvert = strConvert.replace('H', '').replace('h', '')
         res = int(strConvert, 16)
-    else:
+    elif (True):
         try:
             res = int(strConvert, 16)
         except:
             res = None
+    if (res == None and strConvert.isdecimal()):
+        res = int(strConvert)
     return res
 
 
@@ -715,14 +715,21 @@ def getNameSTART():
 #############################
 
 
-def appendSection(name=nameSECT):
-    secciones[name] = {
-        {'tabblock': {}},
-        {'tabsym': {}}
+def appendSection(name=''):
+    global secciones
+    name = nameSECT if not name else name
+
+    secciones = {name: {
+        'tabblock': {},
+        'tabsym': {}
     }
+    }
+    appendBlock()
 
 
-def appendBlock(name=nameBlock, dirIniRel=0, len=0):
+def appendBlock(name='', dirIniRel=0, len=0):
+    global secciones
+    name = nameBlock if not name else name
     secciones[nameSECT]['tabblock'][name] = {
         'len': len, 'dirIniRel': dirIniRel}
 
@@ -761,6 +768,34 @@ def getCounterLoc():
 
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
+
+# funcion--> evaluateExpPassOne()
+# evalua una expresion para el paso 1
+# i.e. todos los simbolos que se utilicen
+# deben de estar definidos
+# y dentro del el mismo bloque
+# NOTA: Si la expresion no es valida bajo
+# estos requerimientos retirna False
+
+
+def evaluateExpPassOne():
+    return False
+
+# funcion--> evaluateExpPassTwo()
+# evalua una expresion para el paso 2
+# i.e. todos los simbolos que se utilicen
+# deben de estar definidos
+# y pueden ser de bloques distintos
+# NOTA: Si la expresion no es valida bajo
+# estos requerimientos retirna False
+
+
+def evaluateExpPassTwo():
+    return False
+
+
+def evaluateExp():
+    return False
 
     #############################
     # zona de pruebas
