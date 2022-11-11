@@ -376,7 +376,7 @@ listaCSECTBlockCP = {}
 # las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
 
 
-def onInit():
+def passOneOnInit():
     global tabBlockRow
     global tabSymRow
     global err
@@ -427,6 +427,7 @@ arrayBlocks = []
 # cambia la seccion , cambiando el nombre varSECT -->cambiar por nameSECT
 # simplemente cambia el
 nameSTART = ''  # nombre de la seccion principal
+locSTART = 0
 
 
 def changeSECT(name=''):
@@ -437,6 +438,11 @@ def changeSECT(name=''):
         varSECT = name
     else:
         varSECT = "omision"
+
+
+def setLocSTART(location):
+    global locSTART
+    locSTART = getIntByHexOInt(location)
 
 # retorna un array con todos los tokens de una expresion dada
 
@@ -455,6 +461,15 @@ def getTokens(expression):
             resTokens.append(tok)
         print(tok)
     return resTokens
+
+# valida una expresion regular dado un string
+
+
+def regexMatch(regex, testStr):
+    if (re.match('^'+regex+'$', testStr)):
+        return True
+    else:
+        return False
 
 
 # valida la sintaxis total de la expresion:
@@ -747,6 +762,7 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     #     print(tok)
 #################################
 # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
+
 
 while True:
     data = input("expression: ")

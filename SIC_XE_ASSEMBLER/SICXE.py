@@ -22,9 +22,9 @@ import calc.calc as calc
 # Diccionario de directivas y nemonicos |
 # mnemonics and adressing modes dictioanary
 SICXE_Dictionary = {
-    'START': ['D', 'START', 0, ['simbol']],
-    'END': ['D', 'END', 0 ['simbolVoid']],
-    'BYTE': ['D', 'BYTE', -1, []],
+    'START': ['D', 'START', 0],
+    'END': ['D', 'END', 0],
+    'BYTE': ['D', 'BYTE', -1],
     'WORD': ['D', 'WORD', 3],
     'RESB': ['D', 'RESB', -1],
     'RESW': ['D', 'RESW', -1],
@@ -38,65 +38,65 @@ SICXE_Dictionary = {
     'EXTDEF': ['D', 'EXTDEF', 0],
     'EXTREF': ['D', 'EXTREF', 0],
     # todas las instrucciones
-    'ADD': ['I', 3, '0x18', ['expression']],
-    'ADDF': ['I', 3, '0x58', ['expression']],
+    'ADD': ['I', 3, '0x18', ['operand']],
+    'ADDF': ['I', 3, '0x58', ['operand']],
     'ADDR': ['I', 2, '0x90', ['r', 'r']],
-    'AND': ['I', 3, '0x40', ['expression']],
+    'AND': ['I', 3, '0x40', ['operand']],
     'CLEAR': ['I', 2, '0xB4', ['r']],
-    'COMP': ['I', 3, '0x28', ['expression']],
-    'COMF': ['I', 3, '0x88', ['expression']],
+    'COMP': ['I', 3, '0x28', ['operand']],
+    'COMF': ['I', 3, '0x88', ['operand']],
     'COMPR': ['I', 2, '0xA0', ['r', 'r']],
-    'DIV': ['I', 3, '0x24', ['expression']],
-    'DIVF': ['I', 3, '0x64', ['expression']],
+    'DIV': ['I', 3, '0x24', ['operand']],
+    'DIVF': ['I', 3, '0x64', ['operand']],
     'DIVR': ['I', 2, '0x9C', ['r', 'r']],
     'FIX': ['I', 1, '0xC4', ],
     'FLOAT': ['I', 1, '0xC0', ],
     'HIO': ['I', 1, '0xF4', ],
-    'J': ['I', 3, '0x3C', ['expression']],
-    'JEQ': ['I', 3, '0x30', ['expression']],
-    'JGT': ['I', 3, '0x34', ['expression']],
-    'JLT': ['I', 3, '0x38', ['expression']],
-    'JSUB': ['I', 3, '0x48', ['expression']],
-    'LDA': ['I', 3, '0x00', ['expression']],
-    'LDB': ['I', 3, '0x68', ['expression']],
-    'LDCH': ['I', 3, '0x50', ['expression']],
-    'LDF': ['I', 3, '0x70', ['expression']],
-    'LDL': ['I', 3, '0x08', ['expression']],
-    'LDS': ['I', 3, '0x6C', ['expression']],
-    'LDT': ['I', 3, '0x74', ['expression']],
-    'LDX': ['I', 3, '0x04', ['expression']],
-    'LPS': ['I', 3, '0xD0', ['expression']],
-    'MUL': ['I', 3, '0x20', ['expression']],
-    'MULF': ['I', 3, '0x60', ['expression']],
+    'J': ['I', 3, '0x3C', ['operand']],
+    'JEQ': ['I', 3, '0x30', ['operand']],
+    'JGT': ['I', 3, '0x34', ['operand']],
+    'JLT': ['I', 3, '0x38', ['operand']],
+    'JSUB': ['I', 3, '0x48', ['operand']],
+    'LDA': ['I', 3, '0x00', ['operand']],
+    'LDB': ['I', 3, '0x68', ['operand']],
+    'LDCH': ['I', 3, '0x50', ['operand']],
+    'LDF': ['I', 3, '0x70', ['operand']],
+    'LDL': ['I', 3, '0x08', ['operand']],
+    'LDS': ['I', 3, '0x6C', ['operand']],
+    'LDT': ['I', 3, '0x74', ['operand']],
+    'LDX': ['I', 3, '0x04', ['operand']],
+    'LPS': ['I', 3, '0xD0', ['operand']],
+    'MUL': ['I', 3, '0x20', ['operand']],
+    'MULF': ['I', 3, '0x60', ['operand']],
     'MULR': ['I', 2, '0x98', ['r', 'r']],
     'NORM': ['I', 1, '0xC8'],
-    'OR': ['I', 3, '0x44', ['expression']],
-    'RD': ['I', 3, '0xD8', ['expression']],
+    'OR': ['I', 3, '0x44', ['operand']],
+    'RD': ['I', 3, '0xD8', ['operand']],
     'RMO': ['I', 2, '0xAC', ['r', 'r']],
     'RSUB': ['I', 3, '0x4C'],
     'SHIFTL': ['I', 2, '0xA4', ['r', 'n']],
     'SHIFTR': ['I', 2, '0xA8', ['r', 'n']],
     'SIO': ['I', 1, '0xF0'],
-    'SSK': ['I', 3, '0xEC', ['expression']],
-    'STA': ['I', 3, '0x0C', ['expression']],
-    'STB': ['I', 3, '0x78', ['expression']],
-    'STCH': ['I', 3, '0x54', ['expression']],
-    'STF': ['I', 3, '0x80', ['expression']],
-    'STI': ['I', 3, '0xD4', ['expression']],
-    'STL': ['I', 3, '0x14', ['expression']],
-    'STS': ['I', 3, '0x7C', ['expression']],
-    'STSW': ['I', 3, '0xE8', ['expression']],
-    'STT': ['I', 3, '0x84', ['expression']],
-    'STX': ['I', 3, '0x10', ['expression']],
-    'SUB': ['I', 3, '0x1C', ['expression']],
-    'SUBF': ['I', 3, '0x5C', ['expression']],
+    'SSK': ['I', 3, '0xEC', ['operand']],
+    'STA': ['I', 3, '0x0C', ['operand']],
+    'STB': ['I', 3, '0x78', ['operand']],
+    'STCH': ['I', 3, '0x54', ['operand']],
+    'STF': ['I', 3, '0x80', ['operand']],
+    'STI': ['I', 3, '0xD4', ['operand']],
+    'STL': ['I', 3, '0x14', ['operand']],
+    'STS': ['I', 3, '0x7C', ['operand']],
+    'STSW': ['I', 3, '0xE8', ['operand']],
+    'STT': ['I', 3, '0x84', ['operand']],
+    'STX': ['I', 3, '0x10', ['operand']],
+    'SUB': ['I', 3, '0x1C', ['operand']],
+    'SUBF': ['I', 3, '0x5C', ['operand']],
     'SUBR': ['I', 2, '0x94', ['r', 'r']],
     'SVC': ['I', 2, '0xB0', ['n']],
-    'TD': ['I', 3, '0xE0', ['expression']],
+    'TD': ['I', 3, '0xE0', ['operand']],
     'TIO': ['I', 1, '0xF8'],
-    'TIX': ['I', 3, '0x2C', ['expression']],
+    'TIX': ['I', 3, '0x2C', ['operand']],
     'TIXR': ['I', 2, '0xB8', ['r']],
-    'WD': ['I', 3, '0xDC', ['expression']]}
+    'WD': ['I', 3, '0xDC', ['operand']]}
 
 # Registros SICXE |
 # SICXE Registers
@@ -135,7 +135,7 @@ B = 0
 argumentTokens = {
     # tokens para instrucciones|
     # instructions tokens
-    'expression': "(@|#)?(([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9])(\+|\-|\*|\/)*)(,X)?",
+    'operand': "(@|#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9])(,X)?",
     # can be a character constant or a hexadecimal
     'm': "([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)",
     'm,X': "([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*),X",
@@ -467,6 +467,8 @@ def passOne(lines):
     # Parse each line in the file
     codOp_LineCounter = 0
     errorDicArray = {}
+    firstInstruction = ''
+    alredyDirective = False
 
     for line in lines:  # for each line do
         if (line and line != '\s' and line != '\n' and line != '\t'):
@@ -481,6 +483,9 @@ def passOne(lines):
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
                 if (dirInstr[0] == 'I'):  # si es una instruccion
+                    # si aun no hay una primera instruccion definida( util para cuando END no tiene label al final)
+                    if (not firstInstruction):
+                        firstInstruction = calc.getCounterLoc()
                     if (dirInstr[1] == 3):  # es instruccion formato 3
                         # si la validacion por sintaxis de toda la expresion es correcta.
                         # Esto incluye el modo de direccionamiento y la indexacion
@@ -496,11 +501,12 @@ def passOne(lines):
                                 calc.addToCounterLoc(3)
                         else:  # $ERROR$Sintaxis$Operando invalido$
                             # hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,uno o mas operandos invalidos"
-                            calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," + \
-                                operandValidation
+                            insertion = [calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," +
+                                         operandValidation]
                     # solo las instrucciones formato 3 pueden ser extendidas, por lo que genera un error
                     if (typeFour(mnemonic)):
-                        calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Mnemonic:,la instruccion no puede ser extendida"
+                        insertion = [calc.getCounterLoc(), label, mnemonic, operands,
+                                     "!ERROR!,:Mnemonic:,la instruccion no puede ser extendida"]
                     else:
                         if (dirInstr[1] == 2):  # es formato 2
                             operandValidation = validateFormatTwo(
@@ -510,9 +516,8 @@ def passOne(lines):
                                 # suma 2 bytes al contador de programa actual
                                 calc.addToCounterLoc(2)
                             else:
-                                # hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,uno o mas operandos invalidos"
-                                calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," + \
-                                    operandValidation
+                                insertion = [calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," +
+                                             operandValidation]
                         elif (dirInstr[1] == 1):  # es formato 1
                             # si hay operandos para instrucciones formato 1, ocurre un error
                             if (operands):
@@ -520,228 +525,137 @@ def passOne(lines):
                             else:
                                 calc.addToCounterLoc(1)
                         else:
-                            hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,unreachable"
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!,:Mnemonic:,unreachable"]
                 elif (dirInstr[0] == 'D'):  # is a directive
                     if (dirInstr[1] == 'START'):  # no suma nada
-                        if (not label):
-                            insertion = [
-                                hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                        # si ya hay un nombre de programa ya definido, o el archivo no comienza con START
+                        if (calc.getNameSTART() != '' or lines.index(line) != 0):
+                            insertion = [calc.getCounterLoc(), label, mnemonic, operands,
+                                         "!ERROR!,:Sintaxis:,operando invalido para la directiva START"]
+                        else:
+                            if (not label):
+                                insertion = [
+                                    calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                            elif (calc.regexMatch(argumentTokens['dir'], operands)):
+                                calc.setNameSTART(label)
+                                calc.setLocSTART(operands)
+                            else:
+                                insertion = [calc.getCounterLoc(
+                                ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,operando invalido para la directiva START"]
                     elif (dirInstr[1] == 'EXTDEF'):
                         pass
                     elif (dirInstr[1] == 'EXTREF'):
                         pass
                     elif (dirInstr[1] == 'END'):  # no suma nada
-                        pass
+                        alredyDirective = True
+                        if (lines.index(line) != len(lines)-1):
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END debe ir solo al final del programa"]
+                        else:
+                            pass
                     elif (dirInstr[1] == 'BYTE'):
-                        pass
+                        alredyDirective = True
+                        if (regexMatch(argumentTokens['[simbol]'], label) and (regexMatch(argumentTokens["C'TEXT'"], operands) or regexMatch(argumentTokens["X'HEX'"], operands))):
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands]
+                        else:
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BYTE"]
                     # cambia el valor de la base, empieza en -1 comp2
                     elif (dirInstr[1] == 'BASE'):
-                        pass
+                        alredyDirective = True
+                        if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["simbol"], operands)):
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, codop]
+                        else:
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, "!ERROR!,Sintaxis:,Operando invalido para BASE"]
                     elif (dirInstr[1] == 'WORD'):  # suma 3 bytes
-                        pass
+                        alredyDirective = True
+                        operandValidation = calc.validateExpSyntax(operands)
+                        if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["c"], operands)):
+
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, codop]
+                        else:
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BASE"]
+
                     elif (dirInstr[1] == 'RESB'):  # reserva el numero de bytes especificado
-                        pass
+                        alredyDirective = True
+                        if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
+
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, codop]
+                        else:
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
+
                     # reserva el numero de palabras especificado, 1 palabra = 3 bytes
                     elif (dirInstr[1] == 'RESW'):
-                        pass
+                        alredyDirective = True
+                        if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, codop]
+                        else:
+                            insertion = [
+                                calc.getCounterLoc(
+                                ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
+
                     # genera una entrada en la tabla de simbolos, segun el bloque y la seccion de control que se esté utilizando
                     elif (dirInstr[1] == 'EQU'):
-                        pass
+                        alredyDirective = True
                     # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
-                        pass
+                        alredyDirective = True
                     # cambia el contador de programa el valor especificado
                     elif (dirInstr[1] == 'ORG'):
-                        pass
+                        alredyDirective = True
                     # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
-                        pass
+                        alredyDirective = False
                 else:
-                    hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,la instruccion o directiva no existe"
+                    calc.getCounterLoc(
+                    ), label, mnemonic, operands, "!ERROR!,:Mnemonic:,la instruccion o directiva no existe"
 
-                    ########################################################
-                    ########################################################
-                    ########################################################
+    # codOb.update({codOp_LineCounter: " . "})
+    # if there was not a syntax error
+    # if len(insertion) >= 5:
+    #     if (not "!ERROR!" in insertion[4]):
+    #         if (label):
+    #             if (tabSym.get(label)):  # if the symbol already exist
+    #                 er = [hex(PC), label, mnemonic, operands,"!ERROR!,:Simbolo:,Simbolo duplicado"]
+    #                             er.insert(0, codOp_LineCounter)
+    #                 errorDicArray.update({codOp_LineCounter: er})
+    #                 insertion.extend(
+    #                                 ["!ERROR!,:Simbolo:,Simbolo duplicado"])
+    #             elif (mnemonic != "START"):  # else insert the symbol into tabsym
+    #                             tabSym.update({label: hex(PC)})
+    #             else:  # es el nombre de programa ya que es START
+    #                             nombreDePrograma = label
+    #             if (dirInstr[0] == 'I'):
+    #                 PC += instruLen(mnemonic)
+    #             elif (dirInstr[0] == 'D' and dirInstr[1] != 'END'):
+    #                 PC += directiveLen(mnemonic, operands)
+    #             else:
+    #                     insertionCpy = insertion[:]
+    #                     insertionCpy.insert(0, codOp_LineCounter)
+    #                     errorDicArray.update({codOp_LineCounter: insertionCpy})
 
-                if (operands and (not operands.endswith(",X") or dirInstr[1] == 2)):
-                    operandsArray = operands.split(
-                        ',')  # split operands with ","
-                else:
-                    operandsArray = [operands]
-                if (not comment):
-                    if (dirInstr):  # the instruction exist
-                        if (dirInstr[0] == 'I'):  # if is an instruction
-                            # if the len of the array returned is 4 means uses operands
-                            if (len(dirInstr) == 4):
-                                if (operands):  # si hay almenos un operando
-                                    # solo se pide un operando
-                                    if (len(dirInstr[3]) == 1 and len(operandsArray) == 1):
-                                        regAux = argumentTokens[dirInstr[3][0]]
-                                        # if(re.match(regAux,operandsArray[0]) or re.match(regAux+',X',operandsArray[0])):
-                                        if (regexMatch(regAux+',X', operandsArray[0])):
-                                            if ('@' in operandsArray[0]):
-                                                insertion = [hex(
-                                                    PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
-
-                                            elif ('#' in operandsArray[0]):
-                                                insertion = [hex(
-                                                    PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento inmediato e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
-                                            else:
-                                                insertion = [
-                                                    hex(PC), label, mnemonic, operands, codop]
-                                        elif (regexMatch(regAux, operandsArray[0])):
-                                            insertion = [
-                                                hex(PC), label, mnemonic, operands, codop]
-                                        else:
-                                            insertion = [hex(
-                                                PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, El operando no coincide con algun token valido"]
-
-                                    # se piden dos operandos
-                                    elif ((len(dirInstr[3]) == 2 and len(operandsArray) == 2)):
-                                        regAux = [
-                                            argumentTokens[dirInstr[3][0]], argumentTokens[dirInstr[3][1]]]
-                                        # if(re.match(regAux[0],operandsArray[0]) and re.match(regAux[1],operandsArray[1])):
-                                        if (regexMatch(regAux[0], operandsArray[0]) and regexMatch(regAux[1], operandsArray[1])):
-                                            insertion = [
-                                                hex(PC), label, mnemonic, operands, codop]
-                                        else:  # if any operand is invalid
-                                            insertion = [
-                                                hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,uno o mas operandos no validos"]
-                                    else:
-                                        insertion = [
-                                            hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Falta  o sobra un operando en la operacion"]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Falta almenos un operando en la operacion"]
-                            else:  # means not uses operands
-                                if (not operands or operands.startswith('?')):
-                                    insertion = [
-                                        hex(PC), label, mnemonic, '', '']
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,sobra un operando"]
-                        elif (dirInstr[0] == 'D'):  # is a directive
-                            if (dirInstr[1] == 'START'):  # no suma nada
-                                if (not label):
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
-                                elif (len(operandsArray) == 1):  # only need one operand
-                                    # if(re.match(argumentTokens["dir"],operands)):
-                                    if (regexMatch(argumentTokens["dir"], operands)):
-                                        insertion = [
-                                            hex(PC), label, mnemonic, operands, codop]
-                                    else:
-                                        insertion = [
-                                            hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,El operando de la directiva no es valido"]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,operandos de sobra"]
-                                initialDirection = PC
-                            elif (dirInstr[1] == 'END'):  # no suma nada
-                                if (label):
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END no lleva label"]
-                                # elif(re.match(argumentTokens["[simbol]"],operands)):#only need one operand
-                                # only need one operand
-                                elif (regexMatch(argumentTokens["[simbol]"], operands)):
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,El simbolo no es valido"]
-                            elif (dirInstr[1] == 'BYTE'):
-                                # if(re.match(argumentTokens['[simbol]'],operands) and (re.match(argumentTokens["C'TEXT'"],operands) or re.match(argumentTokens["X'HEX'"],operands)) ):
-                                if (regexMatch(argumentTokens['[simbol]'], label) and (regexMatch(argumentTokens["C'TEXT'"], operands) or regexMatch(argumentTokens["X'HEX'"], operands))):
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC),  label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BYTE"]
-                            elif (dirInstr[1] == 'BASE'):
-                                # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["simbol"],operands)):
-                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["simbol"], operands)):
-
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,Sintaxis:,Operando invalido para BASE"]
-                            elif (dirInstr[1] == 'WORD'):
-                                # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["c"],operands)):
-                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["c"], operands)):
-
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BASE"]
-                            elif (dirInstr[1] == 'RESB'):
-                                # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["num"],operands)):
-                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
-
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
-                            elif (dirInstr[1] == 'RESW'):
-                                # if(re.match(argumentTokens["[simbol]"],label) and re.match(argumentTokens["num"],operands)):
-                                if (regexMatch(argumentTokens["[simbol]"], label) and regexMatch(argumentTokens["num"], operands)):
-
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, codop]
-                                else:
-                                    insertion = [
-                                        hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
-                            elif (dirInstr[1] == 'EQU'):
-                                calc.insertSymbol(label, operands)
-                            elif (dirInstr[1] == 'USE'):
-                                pass
-                            elif (dirInstr[1] == 'ORG'):
-                                pass
-                            elif (dirInstr[1] == 'CSECT'):
-                                pass
-                            elif (dirInstr[1] == 'EXTDEF'):
-                                pass
-                            elif (dirInstr[1] == 'EXTREF'):
-                                pass
-                    else:  # error mnemonico no encontrado.
-                        insertion = [
-                            hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,Instruccion no existe"]
-                else:
-                    codOb.update({codOp_LineCounter: " . "})
-                # if there was not a syntax error
-                if len(insertion) >= 5:
-                    if (not "!ERROR!" in insertion[4]):
-                        if (label):
-                            if (tabSym.get(label)):  # if the symbol already exist
-                                er = [hex(PC), label, mnemonic, operands,
-                                      "!ERROR!,:Simbolo:,Simbolo duplicado"]
-                                er.insert(0, codOp_LineCounter)
-                                errorDicArray.update({codOp_LineCounter: er})
-                                insertion.extend(
-                                    ["!ERROR!,:Simbolo:,Simbolo duplicado"])
-                            elif (mnemonic != "START"):  # else insert the symbol into tabsym
-                                tabSym.update({label: hex(PC)})
-                            else:  # es el nombre de programa ya que es START
-                                nombreDePrograma = label
-                        if (dirInstr[0] == 'I'):
-                            PC += instruLen(mnemonic)
-                        elif (dirInstr[0] == 'D' and dirInstr[1] != 'END'):
-                            PC += directiveLen(mnemonic, operands)
-                    else:
-                        insertionCpy = insertion[:]
-                        insertionCpy.insert(0, codOp_LineCounter)
-                        errorDicArray.update({codOp_LineCounter: insertionCpy})
-                else:
-                    {}
-                codOb.update({codOp_LineCounter: insertion})
-                codOp_LineCounter += 1  # line counter for identify
-                if (dirInstr and dirInstr[1] == 'END'):
-                    break  # break the loop if the directive END shows up
-    tam = PC - initialDirection
-    return [codOb, tabSym, initialDirection, tam, errorDicArray]
-
+    #         codOb.update({codOp_LineCounter: insertion})
+    #             codOp_LineCounter += 1  # line counter for identify
+    #             if (dirInstr and dirInstr[1] == 'END'):
+    #                 break  # break the loop if the directive END shows up
+    # tam = PC - initialDirection
+    # return [codOb, tabSym, initialDirection, tam, errorDicArray]
 
 # Calculo de la direccion objetivo para SIC-XE
 # Adressing for SIC-XE
@@ -754,7 +668,7 @@ def passOne(lines):
 def getObjAddr(argument, tab):
     withVariable = False
     argu = baseOperand(argument)
-    res = getHexadecimalByString(argu)
+    res  # = getHexadecimalByString(argu)
     if (res is None):  # it means needs get a value from the symTable
         try:
             res = int(tab.get(argu), 16)
