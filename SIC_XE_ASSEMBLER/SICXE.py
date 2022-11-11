@@ -461,7 +461,7 @@ Flags = 0
 
 
 def passOne(lines):
-    calc.onInit()
+    calc.passOneOnInit()
     initialDirection = 0
     # Por cada linea en el archivo se hace un analisis gramatical |
     # Parse each line in the file
@@ -469,7 +469,6 @@ def passOne(lines):
     errorDicArray = {}
     firstInstruction = ''
     alredyDirective = False
-
     for line in lines:  # for each line do
         if (line and line != '\s' and line != '\n' and line != '\t'):
             insertion = "."
@@ -535,11 +534,17 @@ def passOne(lines):
                                          "!ERROR!,:Sintaxis:,operando invalido para la directiva START"]
                         else:
                             if (not label):
-                                insertion = [
-                                    calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                                if (calc.regexMatch(argumentTokens['dir'], operands)):
+                                    insertion = [
+                                        calc.SIC_HEX(operands), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                                else:
+                                    insertion = [
+                                        0, label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
                             elif (calc.regexMatch(argumentTokens['dir'], operands)):
                                 calc.setNameSTART(label)
                                 calc.setLocSTART(operands)
+                                calc.setCounterLoc()
+                                calc.addToCounterLoc()
                             else:
                                 insertion = [calc.getCounterLoc(
                                 ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,operando invalido para la directiva START"]

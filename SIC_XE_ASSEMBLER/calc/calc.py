@@ -322,25 +322,85 @@ def run(p):
 #########################################################################
 
 # funcion que determina el valor de un numero entero hex o decimal a "decimal integer"
+# valida una expresion regular dado un string
+
+
+def regexMatch(regex, testStr):
+    if (re.match('^'+regex+'$', testStr)):
+        return True
+    else:
+        return False
 
 
 def getIntByHexOInt(strConvert):
     res = None
-    if (strConvert.isdecimal()):
+    if isinstance(strConvert, int):
+        res = strConvert
+    elif (strConvert.isdecimal()):
         res = int(strConvert)
     elif (correctHex(strConvert)):
-        if ("h" in strConvert):
-            res = int(strConvert.replace("h", ""), 16)
-        else:
-            res = int(strConvert.replace("h".upper(), ""), 16)
+        strConvert = strConvert.replace('H', '').replace('h', '')
+        res = int(strConvert, 16)
+    else:
+        try:
+            res = int(strConvert, 16)
+        except:
+            res = None
     return res
 
 
 def correctHex(possibleHex):
-    if (('h' in possibleHex or 'H' in possibleHex) and (possibleHex.endswith('h'.upper()) or possibleHex.endswith('h'))):
+    if (regexMatch('[0-9a-fA-F]+(H|h)', possibleHex)):
         return True
     else:
         return False
+
+
+def correctBin(possibleBin):
+    if (regexMatch('(0|1)+(B|b)', possibleBin)
+        or regexMatch('0b(0|1)+', possibleBin)
+            or regexMatch('(0|1)+', possibleBin)):
+        return True
+    else:
+        return False
+
+
+def fillOrCutL(strFOC, numFinal=6, charFill='0'):
+    if (len(strFOC) < numFinal):
+        return strFOC.ljust(numFinal, charFill)
+    else:
+        return strFOC[0:numFinal]
+
+
+def fillOrCutR(strFOC, numFinal=6, charFill='0'):
+    if (len(strFOC) < numFinal):
+        return strFOC.rjust(numFinal, charFill)
+    else:
+        return strFOC[0:numFinal]
+
+
+def cleanHex(hexa, numFinal=6, charfill='0'):
+    if (type(hexa) == str):
+        hexAuxi = hexa.replace('0x', '')
+        return fillOrCutR(hexAuxi, numFinal, charfill)
+    elif (type(hexa) == int):
+        return fillOrCutR(int(hexa, 16), numFinal, charfill)
+
+
+# retorna un numero como hexadecimal en formato de la arquitectura SICXE
+def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
+    try:
+        res = cleanHex(hex(getIntByHexOInt(operand)), digits, charfill).upper()
+    except:
+        res = cleanHex(hex(0), digits, charfill).upper()
+    if (hexi):
+        res += 'H'
+    return res
+
+
+# def SIC_HEX_ToInt(SIC_HEX):
+#     try:
+#         if correctHex(SIC_HEX):
 
 ###############################################################
 #
@@ -353,8 +413,6 @@ def correctHex(possibleHex):
 # Definicion de variables necesarias para el funcionamiento
 #
 #####
-
-
 err = False
 errorDescription = ""
 varUSE = "omision"
@@ -410,40 +468,6 @@ def passTwoOnInit():
     pass
     # funcion que resuelve las expresiones
 
-# cambia el bloque , cambiando el nombre varUSE -->cambiar por nameBLOCK
-# simplemente cambia el
-
-
-def changeUSE(name=''):
-    global varUSE
-    if (name):
-        varUSE = name
-    else:
-        varUSE = "omision"
-
-
-arrayBlocks = []
-
-# cambia la seccion , cambiando el nombre varSECT -->cambiar por nameSECT
-# simplemente cambia el
-nameSTART = ''  # nombre de la seccion principal
-locSTART = 0
-
-
-def changeSECT(name=''):
-    global varSECT
-    if (name and name in secciones.keys()):
-        pass  # error porque se quiere volver a nombrar una seccion de control igual
-    elif (name):
-        varSECT = name
-    else:
-        varSECT = "omision"
-
-
-def setLocSTART(location):
-    global locSTART
-    locSTART = getIntByHexOInt(location)
-
 # retorna un array con todos los tokens de una expresion dada
 
 
@@ -461,15 +485,6 @@ def getTokens(expression):
             resTokens.append(tok)
         print(tok)
     return resTokens
-
-# valida una expresion regular dado un string
-
-
-def regexMatch(regex, testStr):
-    if (re.match('^'+regex+'$', testStr)):
-        return True
-    else:
-        return False
 
 
 # valida la sintaxis total de la expresion:
@@ -652,16 +667,96 @@ def updateTabBlockLen(numBlock, len=0, section=varSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 
 
-nameSECT = ''
-nameBlock = ''
 ##########################################################
 # funciones del Counter Location(Contador de programa: CP)
 #########################################################
+nameSECT = ''  # nombre de la seccion actual
+nameBlock = ''  # nombre del bloque actual
+nameSTART = ''  # nombre de la seccion principal y del bloque por omision
+locSTART = 0
+
+# cambia el nombre del bloque, se llama con la directiva USE
+
+
+def setNameBlock(name=''):
+    global nameBlock
+    if (name):
+        nameBlock = name
+    else:
+        nameBlock = nameSTART
+
+
+arrayBlocks = []
+
+# cambia la seccion de trabajo
+
+
+def setNameSECT(name=''):
+    global nameSECT
+    if (name and name in secciones.keys()):
+        # error porque se quiere volver a nombrar una seccion de control igual
+        return 'Error: Solo se puede definir una seccion de control una vez'
+    elif (name):
+        nameSECT = name
+    else:
+        nameSECT = nameSTART
+    return ''
+
+#####
+# Localidades de start
+#####
+
+
+def setLocSTART(location):
+    global locSTART
+    locSTART = getIntByHexOInt(location)
+
+
+def gettLocSTART():
+    global locSTART
+    return locSTART
+#####
+# Nombres de start( bloque por omision y seccion principal)
+#####
+
+
+def setNameSTART(nameST):
+    global nameSTART
+    global nameSECT
+    global nameBlock
+    nameSTART = nameST
+    # inicializando los nombres de seccion y bloques por omision
+    nameSECT = nameSTART
+    nameBlock = nameSTART
+
+
+def getNameSTART():
+    return nameSTART
+
+# añade una seccion de programa
+
+
+def addSection(name=nameSECT):
+    secciones[name] = {
+        {'tabblock': {}},
+        {'tabsym': {}}
+    }
+
+
+def addBlock(name=nameBlock, dirIniRel=0, len=0):
+    secciones[nameSECT]['tabblock'][name] = {
+        'len': len, 'dirIniRel': dirIniRel}
+
 # suma a CP el numero de bytes indicado
 
 
-def addToCounterLoc(addition):
+def addToCounterLoc(addition=0):
     secciones[nameSECT]['tabblock'][nameBlock]['len'] += addition
+
+
+#
+def setCounterLoc(counter=0):
+    secciones[nameSECT]['tabblock'][nameBlock]['init'] = counter
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 
@@ -675,84 +770,50 @@ def getCounterLoc():
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
 
-#############################
-# zona de pruebas
-#############################
-# while True:
-#     try:
-#         s = input('calc>>')
-#     except EOFError:
-#         break
-#     print(parser.parse(s))
+    #############################
+    # zona de pruebas
+    #############################
+    # while True:
+    #     try:
+    #         s = input('calc>>')
+    #     except EOFError:
+    #         break
+    #     print(parser.parse(s))
 
+    # # Give the lexer some input
+    # while True:
+    #     tok = lexer.token()
+    #     if not tok:
+    #         break
+    #     print(tok)
+    #     try:
+    #         s = input('>> ')
 
-# while True:
-#     try:
-#         errorDescription = ""
-#         err = False
-#         s = input('calc>> ')
-#     except EOFError:
-#         err = True
-#         errorDescription = "EOF"
-#         break
-#     parser.parse(s)
-#     if (err == True):
-#         print(":::ERROR::: " + errorDescription)
-#     else:
-#         print("well done")
+    # except EOFError:
+    # break
+    # parser.parse(s)
 
+    # while True:
+    #     sect = input(seccion)
+    #     if (sect):
+    #         varSECT = sect
 
-# Ensure our parser understands the correct order of operations.
-# The precedence variable is a special Ply variable.
-# precedence = (
+    # para validar las expresiones sintacticamente:
+    # lexer = lex.lex()
+    # while True:
+    #     data = input("expression: ")
+    #     # data2 = validateExpSyntax(data)
+    #     data2 = regexMatch('[0-9a-fA-F]+(H|h)', data)
+    #     if (data2 == True):
+    #         print("CORRECT :D\n")
+    #     else:
+    #         print("D: INCORRECT")
+    #         print("expression invalida sintacticamente: " + errorDescription+"\n")
 
-#     ('left', 'PLUS', 'MINUS'),
-#     ('left', 'MULTIPLY', 'DIVIDE')
+    # para obtener los tokens:
+    # getTokens(data)
 
-# )
-
-# Test it out
-# data = '''
-#  3 + 4 * 10
-#    + -20 / 34 >=2 >(ssdR- 50) || 45<(89)*!76 <= 45
-#  '''
-
-# # Give the lexer some input
-
-
-# while True:
-#     tok = lexer.token()
-#     if not tok:
-#         break
-#     print(tok)
-#     try:
-#         s = input('>> ')
-
-# except EOFError:
-# break
-# parser.parse(s)
-
-# while True:
-#     sect = input(seccion)
-#     if (sect):
-#         varSECT = sect
-
-# para validar las expresiones sintacticamente:
-# lexer = lex.lex()
-# while True:
-#     data = input("expression: ")
-#     data2 = validateExpSyntax(data)
-#     if (data2 == True):
-#         print("CORRECT :D\n")
-#     else:
-#         print("D: INCORRECT")
-#         print("expression invalida sintacticamente: " + errorDescription+"\n")
-
-
-# para obtener los tokens:
-# getTokens(data)
-
-################################################
+    ################################################
   # lexer.input(data)
 
     # while True:
@@ -760,10 +821,20 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     #     if not tok:
     #         break
     #     print(tok)
-#################################
-# print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
+    #################################
+    # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
+    # while True:
+    #    data = input("expression: ")
+    #
+    #     print(validateExRelativity_A_R_I(data))
 
-while True:
-    data = input("expression: ")
-    print(validateExRelativity_A_R_I(data))
+    # retorna un numero como hexadecimal en formato de la arquitectura SICXE
+    # print(SIC_HEX(15))
+    # print(SIC_HEX('0030'))
+    # print(SIC_HEX('0x03'))
+    # print(SIC_HEX('5H'))
+    # print(SIC_HEX(15, hexi=True))
+    # print(SIC_HEX('0030', hexi=True))
+    # print(SIC_HEX('0x03', hexi=True))
+    # print(SIC_HEX('5H', hexi=True))
