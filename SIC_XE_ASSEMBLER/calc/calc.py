@@ -644,29 +644,6 @@ def validateExRelativity_A_R_I(expression):
         return 'Error: la expresion es invalida por relatividad'
 
 
-#############################
-# operaciones para las tablas
-#############################
-blockCounter = 0  # -->mejor hacerlo con la tabla de simbolos
-
-
-def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock):
-    if (not symbol in secciones[varSECT]['tabsym'].keys()):
-        secciones[varSECT]['tabsym'].append({symbol: {
-            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}})
-    else:
-        pass  # error simbolo duplicado
-
-
-def appendTabBlockRow(numBlock, name, len=0, dirIniRel=0):
-    secciones[varSECT]['tabblock'].append({numBlock: {
-        'name': name, 'len': len, 'dirIniRel': dirIniRel}})
-
-
-def updateTabBlockLen(numBlock, len=0, section=varSECT):
-    secciones[section]['tabblock'][numBlock]['len'] = len
-
-
 ##########################################################
 # funciones del Counter Location(Contador de programa: CP)
 #########################################################
@@ -733,19 +710,34 @@ def setNameSTART(nameST):
 def getNameSTART():
     return nameSTART
 
-# añade una seccion de programa
+#############################
+# operaciones para las tablas
+#############################
 
 
-def addSection(name=nameSECT):
+def appendSection(name=nameSECT):
     secciones[name] = {
         {'tabblock': {}},
         {'tabsym': {}}
     }
 
 
-def addBlock(name=nameBlock, dirIniRel=0, len=0):
+def appendBlock(name=nameBlock, dirIniRel=0, len=0):
     secciones[nameSECT]['tabblock'][name] = {
         'len': len, 'dirIniRel': dirIniRel}
+
+
+def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock=0):
+    if (not symbol in secciones[varSECT]['tabsym'].keys()):
+        secciones[varSECT]['tabsym'].append({symbol: {
+            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}})
+    else:
+        pass  # error simbolo duplicado
+
+
+def updateTabBlockLen(numBlock, len=0, section=varSECT):
+    secciones[section]['tabblock'][numBlock]['len'] = len
+# añade una seccion de programa
 
 # suma a CP el numero de bytes indicado
 

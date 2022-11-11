@@ -541,8 +541,12 @@ def passOne(lines):
                                     insertion = [
                                         0, label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
                             elif (calc.regexMatch(argumentTokens['dir'], operands)):
+                                # define el nombre del programa
                                 calc.setNameSTART(label)
+                                # define la locacion inicial del programa
                                 calc.setLocSTART(operands)
+                                # añade una nueva seccion, la seccion inicial
+                                calc.addSection()
                                 calc.setCounterLoc()
                                 calc.addToCounterLoc()
                             else:
