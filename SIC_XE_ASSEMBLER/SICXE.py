@@ -22,9 +22,9 @@ import calc.calc as calc
 # Diccionario de directivas y nemonicos |
 # mnemonics and adressing modes dictioanary
 SICXE_Dictionary = {
-    'START': ['D', 'START', 0],
-    'END': ['D', 'END', 0],
-    'BYTE': ['D', 'BYTE', -1],
+    'START': ['D', 'START', 0, ['simbol']],
+    'END': ['D', 'END', 0 ['simbolVoid']],
+    'BYTE': ['D', 'BYTE', -1, []],
     'WORD': ['D', 'WORD', 3],
     'RESB': ['D', 'RESB', -1],
     'RESW': ['D', 'RESW', -1],
@@ -38,65 +38,65 @@ SICXE_Dictionary = {
     'EXTDEF': ['D', 'EXTDEF', 0],
     'EXTREF': ['D', 'EXTREF', 0],
     # todas las instrucciones
-    'ADD': ['I', 3, '0x18', ['operand']],
-    'ADDF': ['I', 3, '0x58', ['operand']],
+    'ADD': ['I', 3, '0x18', ['expression']],
+    'ADDF': ['I', 3, '0x58', ['expression']],
     'ADDR': ['I', 2, '0x90', ['r', 'r']],
-    'AND': ['I', 3, '0x40', ['operand']],
+    'AND': ['I', 3, '0x40', ['expression']],
     'CLEAR': ['I', 2, '0xB4', ['r']],
-    'COMP': ['I', 3, '0x28', ['operand']],
-    'COMF': ['I', 3, '0x88', ['operand']],
+    'COMP': ['I', 3, '0x28', ['expression']],
+    'COMF': ['I', 3, '0x88', ['expression']],
     'COMPR': ['I', 2, '0xA0', ['r', 'r']],
-    'DIV': ['I', 3, '0x24', ['operand']],
-    'DIVF': ['I', 3, '0x64', ['operand']],
+    'DIV': ['I', 3, '0x24', ['expression']],
+    'DIVF': ['I', 3, '0x64', ['expression']],
     'DIVR': ['I', 2, '0x9C', ['r', 'r']],
     'FIX': ['I', 1, '0xC4', ],
     'FLOAT': ['I', 1, '0xC0', ],
     'HIO': ['I', 1, '0xF4', ],
-    'J': ['I', 3, '0x3C', ['operand']],
-    'JEQ': ['I', 3, '0x30', ['operand']],
-    'JGT': ['I', 3, '0x34', ['operand']],
-    'JLT': ['I', 3, '0x38', ['operand']],
-    'JSUB': ['I', 3, '0x48', ['operand']],
-    'LDA': ['I', 3, '0x00', ['operand']],
-    'LDB': ['I', 3, '0x68', ['operand']],
-    'LDCH': ['I', 3, '0x50', ['operand']],
-    'LDF': ['I', 3, '0x70', ['operand']],
-    'LDL': ['I', 3, '0x08', ['operand']],
-    'LDS': ['I', 3, '0x6C', ['operand']],
-    'LDT': ['I', 3, '0x74', ['operand']],
-    'LDX': ['I', 3, '0x04', ['operand']],
-    'LPS': ['I', 3, '0xD0', ['operand']],
-    'MUL': ['I', 3, '0x20', ['operand']],
-    'MULF': ['I', 3, '0x60', ['operand']],
+    'J': ['I', 3, '0x3C', ['expression']],
+    'JEQ': ['I', 3, '0x30', ['expression']],
+    'JGT': ['I', 3, '0x34', ['expression']],
+    'JLT': ['I', 3, '0x38', ['expression']],
+    'JSUB': ['I', 3, '0x48', ['expression']],
+    'LDA': ['I', 3, '0x00', ['expression']],
+    'LDB': ['I', 3, '0x68', ['expression']],
+    'LDCH': ['I', 3, '0x50', ['expression']],
+    'LDF': ['I', 3, '0x70', ['expression']],
+    'LDL': ['I', 3, '0x08', ['expression']],
+    'LDS': ['I', 3, '0x6C', ['expression']],
+    'LDT': ['I', 3, '0x74', ['expression']],
+    'LDX': ['I', 3, '0x04', ['expression']],
+    'LPS': ['I', 3, '0xD0', ['expression']],
+    'MUL': ['I', 3, '0x20', ['expression']],
+    'MULF': ['I', 3, '0x60', ['expression']],
     'MULR': ['I', 2, '0x98', ['r', 'r']],
     'NORM': ['I', 1, '0xC8'],
-    'OR': ['I', 3, '0x44', ['operand']],
-    'RD': ['I', 3, '0xD8', ['operand']],
+    'OR': ['I', 3, '0x44', ['expression']],
+    'RD': ['I', 3, '0xD8', ['expression']],
     'RMO': ['I', 2, '0xAC', ['r', 'r']],
     'RSUB': ['I', 3, '0x4C'],
     'SHIFTL': ['I', 2, '0xA4', ['r', 'n']],
     'SHIFTR': ['I', 2, '0xA8', ['r', 'n']],
     'SIO': ['I', 1, '0xF0'],
-    'SSK': ['I', 3, '0xEC', ['operand']],
-    'STA': ['I', 3, '0x0C', ['operand']],
-    'STB': ['I', 3, '0x78', ['operand']],
-    'STCH': ['I', 3, '0x54', ['operand']],
-    'STF': ['I', 3, '0x80', ['operand']],
-    'STI': ['I', 3, '0xD4', ['operand']],
-    'STL': ['I', 3, '0x14', ['operand']],
-    'STS': ['I', 3, '0x7C', ['operand']],
-    'STSW': ['I', 3, '0xE8', ['operand']],
-    'STT': ['I', 3, '0x84', ['operand']],
-    'STX': ['I', 3, '0x10', ['operand']],
-    'SUB': ['I', 3, '0x1C', ['operand']],
-    'SUBF': ['I', 3, '0x5C', ['operand']],
+    'SSK': ['I', 3, '0xEC', ['expression']],
+    'STA': ['I', 3, '0x0C', ['expression']],
+    'STB': ['I', 3, '0x78', ['expression']],
+    'STCH': ['I', 3, '0x54', ['expression']],
+    'STF': ['I', 3, '0x80', ['expression']],
+    'STI': ['I', 3, '0xD4', ['expression']],
+    'STL': ['I', 3, '0x14', ['expression']],
+    'STS': ['I', 3, '0x7C', ['expression']],
+    'STSW': ['I', 3, '0xE8', ['expression']],
+    'STT': ['I', 3, '0x84', ['expression']],
+    'STX': ['I', 3, '0x10', ['expression']],
+    'SUB': ['I', 3, '0x1C', ['expression']],
+    'SUBF': ['I', 3, '0x5C', ['expression']],
     'SUBR': ['I', 2, '0x94', ['r', 'r']],
     'SVC': ['I', 2, '0xB0', ['n']],
-    'TD': ['I', 3, '0xE0', ['operand']],
+    'TD': ['I', 3, '0xE0', ['expression']],
     'TIO': ['I', 1, '0xF8'],
-    'TIX': ['I', 3, '0x2C', ['operand']],
+    'TIX': ['I', 3, '0x2C', ['expression']],
     'TIXR': ['I', 2, '0xB8', ['r']],
-    'WD': ['I', 3, '0xDC', ['operand']]}
+    'WD': ['I', 3, '0xDC', ['expression']]}
 
 # Registros SICXE |
 # SICXE Registers
@@ -110,7 +110,7 @@ SIXE_Registers = {'A': 0,  # Acumulador para operaciones aritmeticas |
                   'PC': 8,  # Contador de programa. Contiene la dirección de la siguiente instrucciona ejecutar |
                   'SW': 9}  # Palabra de estado, diversa información de banderas |
 
-# Valor de las banderas
+# Valor de las banderas de direccionamiento
 # flags value
 NIXBPE = ''
 Nbit = 32
@@ -120,20 +120,10 @@ Bbit = 4
 Pbit = 2
 Ebit = 1
 
-# Tabla de simbolos |
-# Defined symbols                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           and their dir values
-# tabSym = {}
-
-# codigo objeto
-# codOb = {}
-
-# Contador de programa |
-# Program counter
-# PC = 0
 B = 0
 
-# c indica una constante o dir de memoria entre 0 y 4095
-# m indica una direccion de memoria o un valor constante mayor que 4095
+# c indica una constante o dir de memoria entre 0 y 4095 --> expresion absoluta
+# m indica una direccion de memoria o un valor constante mayor que 4095 -> expresion relativa o absoluta>4095
 # el diccionario retorna las expresiones regulares para cada token |
 # This dictionary return regex for each token
 # Descripcion de la notacion:
@@ -145,7 +135,7 @@ B = 0
 argumentTokens = {
     # tokens para instrucciones|
     # instructions tokens
-    'operand': "(@|#)?([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)(,X)*",
+    'expression': "(@|#)?(([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9])(\+|\-|\*|\/)*)(,X)?",
     # can be a character constant or a hexadecimal
     'm': "([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*)",
     'm,X': "([0-9]+|[0-9a-fA-F]+H|[a-zA-Z]+[a-zA-Z0-9]*),X",
@@ -211,41 +201,13 @@ def baseMnemonic(mnemonic):
         return mnemonic[1:]
     return mnemonic
 
-# retorna el operando sin tipo de direccionamiento
-
-
-def validateOperandSyntax(operand):
-    auxOperand = operand
-    if (calc.validateExSyntax)
-    if auxOperand[0] == "@" or auxOperand[0] == "#":
-        auxOperand = operand[1:]
-        if ("@" in auxOperand or "#" in auxOperand):
-            return {'valid': False, 'msg': 'Error en modo de direccionamiento'}
-        else:
-            exSyntaxValidation = calc.validateExSyntax(auxOperand)
-            if (exSyntaxValidation == True):
-
-    if (res.endswith(',X')):
-        res = res.replace(',X', '')
-    return res
+# determina si una instruccion pertenece a la arquitectura SIC
 
 
 def typeSIC(mnemonic):
     if mnemonic in ("FIX" or "FLOAT" or "HIO" or "SIO" or "TIO"):
         return True
     return None
-
-
-def isString(operands):
-    return operands[0] == 'C'
-
-# Retorna 1 si el primer caracter es diferente a espacios lo que quiere decir que hay una etiqueta|
-# Return 1 if the first character is different to any type of space, that means it is a label
-
-
-def haslabel(c):
-    return c != ' ' and c != '\t' and c != '\n'
-
 
 # determina si una direccion es relativa a la base, esta tiene que ser hexadecimal |
 # determine if a given address is relative to the base, the address must be in hexadecimal
@@ -263,6 +225,58 @@ def addressIsBaseRelative(hexAddress):
 
 def addressIsPCRelative(hexAddress):
     if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
+        return True
+    else:
+        return False
+
+# determina si el operando de la directiva byte es una cadena de caracteres
+
+
+def isCharByte(operands):
+    return operands[0] == 'C'
+
+
+# determina si el operando de la directiva byte representa un numero hexadecimal
+def isHexByte(operands):
+    return operands[0] == 'X'
+
+# determina si el numero de carateres hexadecimales es par o impar para completar los bytes
+
+
+def padHexEven(string):
+    if (len(string) % 2):
+        return '0'+string
+    return string
+
+
+# this function extracts the substring between markers
+# extrae los caracteres entre marcadores
+def byteOperandExtract(raw_string, start_marker="'", end_marker="'"):
+    start = raw_string.index(start_marker) + len(start_marker)
+    end = raw_string.index(end_marker, start)
+    return raw_string[start:end]
+
+# Retorna 1 si el primer caracter es diferente a espacios lo que quiere decir que hay una etiqueta|
+# Return 1 if the first character is different to any type of space, that means it is a label
+
+
+def haslabel(c):
+    return c != ' ' and c != '\t' and c != '\n'
+
+# return True if the range of the costant is between 0 and 4095
+
+
+def argumentIsA_c_Constant(argument):
+    if (int(argument, 16) >= 0 and int(argument, 16) <= 4095):
+        return True
+    else:
+        return False
+
+# return True if the range of the costant is between grader than 4095
+
+
+def argumentIsA_m_Constant(argument):
+    if (int(argument, 16) > 4095):
         return True
     else:
         return False
@@ -312,25 +326,6 @@ def parseLine(line):
                 operands = "".join(lineWords[1:])  # index 1 to beyond
     return (label, mnemonic, operands, '')
 
-
-# return True if the range of the costant is between 0 and 4095
-
-
-def argumentIsA_c_Constant(argument):
-    if (int(argument, 16) >= 0 and int(argument, 16) <= 4095):
-        return True
-    else:
-        return False
-
-# return True if the range of the costant is between grader than 4095
-
-
-def argumentIsA_m_Constant(argument):
-    if (int(argument, 16) > 4095):
-        return True
-    else:
-        return False
-
 # determina el numero de bytes que se tienen que reservar según la instruccion
 
 
@@ -346,21 +341,6 @@ def instruLen(instru):
     else:
         return 0x01
 
-# determina si el numero de carateres hexadecimales es par o impar para completar los bytes
-
-
-def padHexEven(string):
-    if (len(string) % 2):
-        return '0'+string
-    return string
-
-
-# this function extracts the substring between markers
-# extrae los caracteres entre marcadores
-def byteOperandExtract(raw_string, start_marker="'", end_marker="'"):
-    start = raw_string.index(start_marker) + len(start_marker)
-    end = raw_string.index(end_marker, start)
-    return raw_string[start:end]
 
 # metodo ya incluido en calc
 
@@ -396,9 +376,9 @@ def directiveLen(directive, operand):
     # BYTE C'Texto' or X'025A'
     if (directiveDefArray[1] == 'BYTE'):  # for byte directive
         strExtract = byteOperandExtract(operand)
-        if (operand.startswith('c'.upper())):
+        if (operand.startswith('c', 'C')):
             res = len(strExtract)
-        elif (operand.startswith('x'.upper())):
+        elif (operand.startswith('x', 'X')):
             # divided by two becuse each byte uses two nibbles
             res = int(len(padHexEven(strExtract))/2)
     # WORD Valor. El valor puede expresarse en decimal o hexadecimal.
@@ -425,6 +405,12 @@ def regexMatch(regex, testStr):
         return True
     else:
         return False
+
+# valida los operandos para las instrucciones de formato 2
+
+
+def validateFormatTwo():
+    pass
 
 
 # para determinar el valor de las bandera NIXBPE
@@ -499,28 +485,47 @@ def passOne(lines):
                         # si la validacion por sintaxis de toda la expresion es correcta.
                         # Esto incluye el modo de direccionamiento y la indexacion
                         # Por lo que mas adelante se asume que todo es correcto en los operandos
-                        operandValidation = calc.validateExSyntax(operands)
+                        # si la validacion para los operandos de la instruccion formato 3 es correcta (True)
+                        operandValidation = calc.validateExpSyntax(operands)
                         if (operandValidation == True):
-                            if ('#' in operands):  # Inmediato
-                                if (typeFour(mnemonic)):  # extendido
-                                    pass
-                            elif ('@' in operands):  # Indirecto
-                                if (typeFour(mnemonic)):  # extendido
-                                    pass
-                            else:  # Simple
-                                if (typeFour(mnemonic)):  # extendido
-                                    pass
+                            if (typeFour(mnemonic)):
+                                # suma cuatro bytes al contador de programa actual (de la seccion y bloque)
+                                calc.addToCounterLoc(4)
+                            else:
+                                # suma 3 bytes al contador de programa actual (de la seccion y bloque)
+                                calc.addToCounterLoc(3)
                         else:  # $ERROR$Sintaxis$Operando invalido$
-                            hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,uno o mas operandos no validos"]
-                    elif (dirInstr[1] == 2):  # es formato 2
-                        operandValidation = calc.validateExSyntax(operands)
-                        pass
-                    else:  # es formato 1
-                        pass
+                            # hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,uno o mas operandos invalidos"
+                            calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," + \
+                                operandValidation
+                    # solo las instrucciones formato 3 pueden ser extendidas, por lo que genera un error
+                    if (typeFour(mnemonic)):
+                        calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Mnemonic:,la instruccion no puede ser extendida"
+                    else:
+                        if (dirInstr[1] == 2):  # es formato 2
+                            operandValidation = validateFormatTwo(
+                                mnemonic, operands)
+                            # si la validacion para los operandos de la instruccion formato 2 es correcta (True)
+                            if (operandValidation == True):
+                                # suma 2 bytes al contador de programa actual
+                                calc.addToCounterLoc(2)
+                            else:
+                                # hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,uno o mas operandos invalidos"
+                                calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:," + \
+                                    operandValidation
+                        elif (dirInstr[1] == 1):  # es formato 1
+                            # si hay operandos para instrucciones formato 1, ocurre un error
+                            if (operands):
+                                calc.getCounterLoc(), label, mnemonic, operands, "!ERROR!,:Sintaxis:,sobran operandos"
+                            else:
+                                calc.addToCounterLoc(1)
+                        else:
+                            hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,unreachable"
                 elif (dirInstr[0] == 'D'):  # is a directive
                     if (dirInstr[1] == 'START'):  # no suma nada
                         if (not label):
-                            insertion = [hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                            insertion = [
+                                hex(PC), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
                     elif (dirInstr[1] == 'EXTDEF'):
                         pass
                     elif (dirInstr[1] == 'EXTREF'):
@@ -552,7 +557,7 @@ def passOne(lines):
                     elif (dirInstr[1] == 'CSECT'):
                         pass
                 else:
-                    pass  # $ERROR$MNEMONICO$Instruccion no existe
+                    hex(PC), label, mnemonic, operands, "!ERROR!,:Mnemonic:,la instruccion o directiva no existe"
 
                     ########################################################
                     ########################################################
@@ -562,7 +567,7 @@ def passOne(lines):
                     operandsArray = operands.split(
                         ',')  # split operands with ","
                 else:
-                    operandsArray=[operands]
+                    operandsArray = [operands]
                 if (not comment):
                     if (dirInstr):  # the instruction exist
                         if (dirInstr[0] == 'I'):  # if is an instruction
@@ -571,18 +576,18 @@ def passOne(lines):
                                 if (operands):  # si hay almenos un operando
                                     # solo se pide un operando
                                     if (len(dirInstr[3]) == 1 and len(operandsArray) == 1):
-                                        regAux=argumentTokens[dirInstr[3][0]]
+                                        regAux = argumentTokens[dirInstr[3][0]]
                                         # if(re.match(regAux,operandsArray[0]) or re.match(regAux+',X',operandsArray[0])):
                                         if (regexMatch(regAux+',X', operandsArray[0])):
                                             if ('@' in operandsArray[0]):
-                                                insertion=[hex(
+                                                insertion = [hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento indirecto e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
 
                                             elif ('#' in operandsArray[0]):
-                                                insertion=[hex(
+                                                insertion = [hex(
                                                     PC), label, mnemonic, operands, "!ERROR!, :Sintaxis:, Direccionamiento inmediato e indexado a la vez ( solo el direccionamieto simple puede ser indexado)"]
                                             else:
-                                                insertion=[
+                                                insertion = [
                                                     hex(PC), label, mnemonic, operands, codop]
                                         elif (regexMatch(regAux, operandsArray[0])):
                                             insertion = [

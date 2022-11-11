@@ -94,27 +94,6 @@ def t_INT(t):
     t.value = int(t.value)
     return t
 
-# funcion que determina el valor de un numero entero hex o decimal a "decimal integer"
-
-
-def getIntByHexOInt(strConvert):
-    res = None
-    if (strConvert.isdecimal()):
-        res = int(strConvert)
-    elif (correctHex(strConvert)):
-        if ("h" in strConvert):
-            res = int(strConvert.replace("h", ""), 16)
-        else:
-            res = int(strConvert.replace("h".upper(), ""), 16)
-    return res
-
-
-def correctHex(possibleHex):
-    if (('h' in possibleHex or 'H' in possibleHex) and (possibleHex.endswith('h'.upper()) or possibleHex.endswith('h'))):
-        return True
-    else:
-        return False
-
 # A NAME is a variable name. A variable can be 1 or more characters in length.
 # The first character must be in the ranges a-z A-Z or be an underscore.
 # Any character following the first character can be a-z A-Z 0-9 or an underscore.
@@ -259,74 +238,6 @@ def p_error(p):
         err = True
         errorDescription = "Syntax error en EOF"
 
-###############################################################
-#
-#       Inician las funciones Utiles de la calculadora
-#
-###############################################################
-
-#####
-#
-# Definicion de variables necesarias para el funcionamiento
-#
-#####
-
-
-err = False
-errorDescription = ""
-varUSE = "omision"
-varSECT = "omision"
-parser = yacc.yacc()
-# arreglo de secciones
-secciones = {}
-# instancia de seccion
-seccion = {}
-# instancia de
-tabBlock = {}
-tabSym = {}
-
-tabBlockRow = {}
-tabSymRow = {}
-
-listaCSECTBlockCP = {}
-
-# las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
-
-
-def onInit():
-    global tabBlockRow
-    global tabSymRow
-    global err
-    global errorDescription
-    global varUSE
-    global varSECT
-    global parser
-    global secciones
-    global seccion
-    global tabBlock
-    global tabSym
-    tabBlockRow = {}
-    tabSymRow = {}
-    err = False
-    errorDescription = ""
-    varUSE = "omision"
-    varSECT = "omision"
-    parser = yacc.yacc()
-    # arreglo de secciones
-    secciones = {}
-    # instancia de seccion
-    seccion = {}
-    # instancia de
-    tabBlock = {}
-    tabSym = {}
-
-# las variables que tienen que ser inicializadas cada vez que se realize el paso dos
-
-
-def passTwoOnInit():
-    pass
-    # funcion que resuelve las expresiones
-
 
 def run(p):
     global err
@@ -406,6 +317,99 @@ def run(p):
         # print(p)
         return p
 
+#########################################################################
+# Funciones utiles, y a parte necesarias en la calculadora
+#########################################################################
+
+# funcion que determina el valor de un numero entero hex o decimal a "decimal integer"
+
+
+def getIntByHexOInt(strConvert):
+    res = None
+    if (strConvert.isdecimal()):
+        res = int(strConvert)
+    elif (correctHex(strConvert)):
+        if ("h" in strConvert):
+            res = int(strConvert.replace("h", ""), 16)
+        else:
+            res = int(strConvert.replace("h".upper(), ""), 16)
+    return res
+
+
+def correctHex(possibleHex):
+    if (('h' in possibleHex or 'H' in possibleHex) and (possibleHex.endswith('h'.upper()) or possibleHex.endswith('h'))):
+        return True
+    else:
+        return False
+
+###############################################################
+#
+#       Inician las funciones Utiles de la calculadora
+#
+###############################################################
+
+#####
+#
+# Definicion de variables necesarias para el funcionamiento
+#
+#####
+
+
+err = False
+errorDescription = ""
+varUSE = "omision"
+varSECT = "omision"
+parser = yacc.yacc()
+# arreglo de secciones
+secciones = {}
+# instancia de seccion
+seccion = {}
+# instancia de
+tabBlock = {}
+tabSym = {}
+
+tabBlockRow = {}
+tabSymRow = {}
+
+listaCSECTBlockCP = {}
+
+# las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
+
+
+def onInit():
+    global tabBlockRow
+    global tabSymRow
+    global err
+    global errorDescription
+    global varUSE
+    global varSECT
+    global parser
+    global secciones
+    global seccion
+    global tabBlock
+    global tabSym
+    tabBlockRow = {}
+    tabSymRow = {}
+    err = False
+    errorDescription = ""
+    varUSE = "omision"
+    varSECT = "omision"
+    parser = yacc.yacc()
+    # arreglo de secciones
+    secciones = {}
+    # instancia de seccion
+    seccion = {}
+    # instancia de
+    tabBlock = {}
+    tabSym = {}
+
+# las variables que tienen que ser inicializadas cada vez que se realize el paso dos
+
+
+def passTwoOnInit():
+    pass
+    # funcion que resuelve las expresiones
+
 # cambia el bloque , cambiando el nombre varUSE -->cambiar por nameBLOCK
 # simplemente cambia el
 
@@ -460,7 +464,7 @@ errorExSyntax = False
 msgExSyntax = ''
 
 
-def validateExSyntax(expression):
+def validateExpSyntax(expression):
     global err
     err = False
     global errorDescription
@@ -485,7 +489,7 @@ errorExSyntaxAndVariables = False
 msgExSyntaxAndVariables = ''
 
 
-def validateExSyntaxAndVariables(expression):
+def validateExpSyntaxAndVariables(expression):
     global err
     err = False
     global errorDescription
@@ -526,6 +530,8 @@ def validateExRelativity_A_R_I(expression):
     Rneg = []
     parentesis = []
     operators = []
+    RParentPos = []
+    RParentNeg = []
     lastToken = ''
     for tok in tokenes:
         if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
@@ -534,6 +540,8 @@ def validateExRelativity_A_R_I(expression):
                     return "ERROR: operador invalido para termino relativo"
             operators.append(tok.value)
         elif (tok.type == 'LPARENT'):
+            RParentNeg = []
+            LParentPos = []
             if (len(operators) > 0):
                 parentesis.append(operators.pop())
             else:
@@ -718,12 +726,13 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
 # lexer = lex.lex()
 # while True:
 #     data = input("expression: ")
-#     data2 = validateExSyntax(data)
+#     data2 = validateExpSyntax(data)
 #     if (data2 == True):
 #         print("CORRECT :D\n")
 #     else:
-#         # print("expression invalida sintacticamente: " + errorDescription)
-#         print("D: INCORRECT\n")
+#         print("D: INCORRECT")
+#         print("expression invalida sintacticamente: " + errorDescription+"\n")
+
 
 # para obtener los tokens:
 # getTokens(data)
