@@ -302,21 +302,16 @@ def parseLine(line):
 
     # Split the words of the line
     lineWords = line.split()
-
-    if baseMnemonic(lineWords[0]) in SICXE_Dictionary:
+    pass
+    if baseMnemonic(lineWords[0]) in SICXE_Dictionary.keys():
         mnemonic = lineWords[0]
-        operands = "".join(lineWords[2:])
-    else:
-        # has labels at the begining of the line, means its not aq space or tab
-        if haslabel(line[0]):  # if the label part is not used by space \s
-            label = lineWords[0]
-            mnemonic = lineWords[1]
-            if len(lineWords) >= 3:
-                operands = "".join(lineWords[2:])  # index 2 to beyond
-        else:
-            mnemonic = lineWords[0]
-            if len(lineWords) >= 2:  # if has operands
-                operands = "".join(lineWords[1:])  # index 1 to beyond
+        operands = "".join(lineWords[1:])
+    elif baseMnemonic(lineWords[1]) in SICXE_Dictionary.keys():
+        label = lineWords[0]
+        mnemonic = lineWords[1]
+        if (len(lineWords) >= 3):
+            operands = "".join(lineWords[2:])
+    pass
     return (label, mnemonic, operands, '')
 
 # determina el numero de bytes que se tienen que reservar según la instruccion
@@ -521,9 +516,10 @@ def passOne(lines):
                         alredyDirective = False
                         if (operands):
                             if (calc.regexMatch(dirInstr[3], operands)):
-                                if (calc.appendSection() != True):
+                                successInsertion = calc.appendSection()
+                                if (successInsertion != True):
                                     intermediateFileInsertion = [calc.getCounterLoc(
-                                    ), label, mnemonic, operands, ":ERROR:Sintaxis:El nombre de la seccion ya ha sido definido antes"]
+                                    ), label, mnemonic, operands, ":ERROR:Sintaxis:" + successInsertion]
                             else:
                                 intermediateFileInsertion = [calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para CSECT, se espera un sibolo"]
@@ -549,11 +545,16 @@ def passOne(lines):
                     elif (dirInstr[1] == 'EQU'):
                         alredyDirective = True
                         if (label):
-                            successInsertion = False
+                            successInsertion = ''
+                            operandValidation = True
                             # retorna una tupla con información
                             if (operands == '*'):
                                 successInsertion = calc.addSymbol(
                                     label, 'R', calc.getCounterLoc())
+                                if (successInsertion != True):
+                                    intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                    )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
+
                             else:
                                 operandValidation = calc.evaluateExpPassOne(
                                     operands)
@@ -563,9 +564,10 @@ def passOne(lines):
                                 else:
                                     successInsertion = calc.addSymbol(
                                         label, operandValidation[1], operandValidation[2])
-                            if (successInsertion != True):
-                                intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
-                                )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
+                                    if (successInsertion != True):
+                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                        )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
+
                         else:
                             intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
                             )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Definicion de simbolo invalida, falta nombre de simbolo"]

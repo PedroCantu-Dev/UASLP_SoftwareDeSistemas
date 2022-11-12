@@ -799,7 +799,7 @@ def appendSection(name=''):
     global secciones
     name = nameSECT if not name else name
     if (name in seccion.keys()):
-        return False
+        return 'El nombre de la seccion ya ha sido definido'
     else:
         secciones[name] = {
             'tabblock': {},
