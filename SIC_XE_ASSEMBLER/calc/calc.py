@@ -4,10 +4,16 @@ import sys
 import math
 import re
 
+######
+# Variables que ocupa el parser
+######
+expError = False
+expErrorDescription = ""
+
 
 ######################################################
 #
-# Definicion de calculadora de expresiones para la SICXE
+# Definicion del parser para la calculadora de expresiones de la SICXE
 # con la ayuda de ply: lex y yacc
 #
 ######################################################
@@ -246,10 +252,31 @@ def p_error(p):
 # "passOneOperation":Para operaciones del paso 1
 # "passTwoOperation":Para operaciones del paso 2
 # "syntaxOperation":Solo para verificar la sintaxis
+
+#####
+#
+# Definicion de variables necesarias para el funcionamiento
+#
+#####
 operationTypeOption = ''
+parser = yacc.yacc()
+# arreglo de secciones
+secciones = {}
+# instancia de seccion
+seccion = {}
+# instancia de
+tabBlock = {}
+tabSym = {}
+
+tabBlockRow = {}
+tabSymRow = {}
+
+listaCSECTBlockCP = {}
 
 
 def run(p):
+    global expError
+    global expErrorDescription
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
@@ -299,8 +326,6 @@ def run(p):
             # codigo original para la calculadora de expresiones completa
             # env[p[1]] = run(p[2])
             # return env[p[1]]
-            global expError
-            global expErrorDescription
             expError = True
             expErrorDescription = "Caracter invalido '=' dentro de expresion: no se pueden hacer definiciones internas en la expresion"
             return 0
@@ -308,8 +333,6 @@ def run(p):
             #print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
-            global expError
-            global expErrorDescription
             try:
                 # codigo original:
                 # return env[p[1]]
@@ -435,26 +458,6 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
 #
 ###############################################################
 
-#####
-#
-# Definicion de variables necesarias para el funcionamiento
-#
-#####
-expError = False
-expErrorDescription = ""
-parser = yacc.yacc()
-# arreglo de secciones
-secciones = {}
-# instancia de seccion
-seccion = {}
-# instancia de
-tabBlock = {}
-tabSym = {}
-
-tabBlockRow = {}
-tabSymRow = {}
-
-listaCSECTBlockCP = {}
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
 
@@ -551,7 +554,7 @@ def evaluateExpSICXE(expression):
             # significa que la expresion es correcta por relatividad
             # si no, el error por relatividad estara asignado a la variable
             if (len(relativityValidation) == 1):
-                return (True, value, relativityValidation)
+                return (True, relativityValidation, value)
             else:
                 return (False, relativityValidation)
     except:
@@ -777,8 +780,6 @@ def appendSection(name=''):
         'tabblock': {},
         'tabsym': {}}
 
-    appendBlock()
-
 
 def appendBlock(name='', dirIniRel=0, len=0):
     global secciones
@@ -787,7 +788,7 @@ def appendBlock(name='', dirIniRel=0, len=0):
         'len': len, 'dirIniRel': dirIniRel}
 
 
-def addSymbol(symbol, dirVal=-1, typ='A', extBool=False, nameBloc=None):
+def addSymbol(symbol, typ='A', dirVal=-1,  extBool=False, nameBloc=None):
     nameBloc = nameBlock if nameBloc == None else nameBloc
     if (not symbol in secciones[nameSECT]['tabsym'].keys()):
         secciones[nameSECT]['tabsym'][symbol] = {
@@ -825,18 +826,17 @@ def getCounterLoc():
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
 
-
     #############################
     # zona de pruebas
     #############################
-while True:
-    try:
-        s = input('calc>>')
-    except EOFError:
-        break
-    ss = parser.parse(s)
-    sss = s * 2
-    print(sss)
+# while True:
+#     try:
+#         s = input('calc>>')
+#     except EOFError:
+#         break
+#     ss = parser.parse(s)
+#     sss = s * 2
+#     print(sss)
 
     # # Give the lexer some input
     # while True:

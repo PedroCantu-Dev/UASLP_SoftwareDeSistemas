@@ -22,21 +22,21 @@ import calc.calc as calc
 # Diccionario de directivas y nemonicos |
 # mnemonics and adressing modes dictioanary
 SICXE_Dictionary = {
-    'START': ['D', 'START', 0],
-    'END': ['D', 'END', 0],
-    'BYTE': ['D', 'BYTE', -1],
-    'WORD': ['D', 'WORD', 3],
-    'RESB': ['D', 'RESB', -1],
-    'RESW': ['D', 'RESW', -1],
-    'BASE': ['D', 'BASE', 0],
+    'START': ['D', 'START', 0, ['dir']],
+    'END': ['D', 'END', 0, ['[simbol]']],
+    'BYTE': ['D', 'BYTE', -1, ['byteOperands']],
+    'WORD': ['D', 'WORD', 3, ['operand']],
+    'RESB': ['D', 'RESB', -1, ['num']],
+    'RESW': ['D', 'RESW', -1, ['num']],
+    'BASE': ['D', 'BASE', 0, ['simbol']],
     # las directivas añadidas para los nuevos features
-    'EQU': ['D', 'EQU', 0],
-    'USE': ['D', 'USE', 0],
-    'ORG': ['D', 'ORG', 0],
+    'EQU': ['D', 'EQU', 0, ['operand']],
+    'USE': ['D', 'USE', 0 ['[simbol']],
+    'ORG': ['D', 'ORG', 0, ['operand']],
     # directivas para secciones de control
-    'CSECT': ['D', 'CSECT', 0],
-    'EXTDEF': ['D', 'EXTDEF', 0],
-    'EXTREF': ['D', 'EXTREF', 0],
+    'CSECT': ['D', 'CSECT', 0, ['simbol']],
+    'EXTDEF': ['D', 'EXTDEF', 0, ['simbolList']],
+    'EXTREF': ['D', 'EXTREF', 0, ['simbolList']],
     # todas las instrucciones
     'ADD': ['I', 3, '0x18', ['operand']],
     'ADDF': ['I', 3, '0x58', ['operand']],
@@ -146,8 +146,10 @@ argumentTokens = {
     # addressing tokens
     'simbol': "[a-zA-Z]+[a-zA-Z0-9]*",
     '[simbol]': "([a-zA-Z]+[a-zA-Z0-9]*)*",  # con lo mismo que labels
-    "C'TEXT'": "(C|c)'[a-zA-Z0-9]*'",
+    'simbolList': "[a-zA-Z]+[a-zA-Z0-9]|[a-zA-Z]+[a-zA-Z0-9](\s?,\s?[a-zA-Z]+[a-zA-Z0-9])*",
+    "C'TEXT'": "(C|c)'[a-zA-Z0-9]+'",
     "X'HEX'": "(X|x)'[0-9a-fA-F]+'",
+    "byteOperands": "(C|c)'[a-zA-Z0-9]+'|(X|x)'[0-9a-fA-F]+'",
     "dir": "[0-9]+|[0-9a-fA-F]+H",
     "val": "[0-9]+|[0-9a-fA-F]+H",
     "num": "[0-9]+|[0-9a-fA-F]+H",
@@ -155,9 +157,6 @@ argumentTokens = {
     # tokens for operants
     'c': "[0-9]+|[0-9a-fA-F]+H",  # int or a hexadecimal
     'c,X': "([0-9]+|[0-9a-fA-F]+H),X",
-
-    # tokens for new included expresions
-    'EXP': '[a-zA-Z]+[a-zA-Z0-9]*',
 }
 
 # dice si una instruccion es tipo 4
@@ -636,17 +635,29 @@ def passOne(lines):
                     # genera una entrada en la tabla de simbolos, segun el bloque y la seccion de control que se esté utilizando
                     elif (dirInstr[1] == 'EQU'):
                         alredyDirective = True
+                        # retorna una tupla con información
                         operandValidation = calc.evaluateExpPassOne()
-                        if (operandValidation == False):
+                        if (operandValidation[0] == False):
                             insertion = [calc.getCounterLoc(
-                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
+                            ), label, mnemonic, operands, "!ERROR!"+operandValidation[1]]
                         else:
-                            calc.addSymbol(label)
-                    # cambia el bloque en el que se está trabajando
-                    elif (dirInstr[1] == 'USE'):
-                        alredyDirective = True
+                            calc.addSymbol(
+                                label, operandValidation[1], operandValidation[2])
                     # cambia el contador de programa el valor especificado
                     elif (dirInstr[1] == 'ORG'):
+                        alredyDirective = True
+                        # retorna una tupla con información
+                        operandValidation = calc.evaluateExpPassOne()
+                        if (operandValidation[0] == False):
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!"+operandValidation[1]]
+                        elif (operandValidation[1] == 'R'):
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!"+"el operando no puede ser relativo"]
+                        else:
+                            calc.setCounterLoc(operandValidation[2])
+                            # cambia el bloque en el que se está trabajando
+                    elif (dirInstr[1] == 'USE'):
                         alredyDirective = True
                     # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
