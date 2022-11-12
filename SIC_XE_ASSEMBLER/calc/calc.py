@@ -847,7 +847,7 @@ def addToCounterLoc(addition=0):
 
 #
 def setCounterLoc(counter=0):
-    secciones[nameSECT]['tabblock'][nameBlock]['dirIniRel'] = counter
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] = counter
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 

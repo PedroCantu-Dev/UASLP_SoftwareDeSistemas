@@ -302,7 +302,6 @@ def parseLine(line):
 
     # Split the words of the line
     lineWords = line.split()
-    pass
     if baseMnemonic(lineWords[0]) in SICXE_Dictionary.keys():
         mnemonic = lineWords[0]
         operands = "".join(lineWords[1:])
@@ -311,7 +310,6 @@ def parseLine(line):
         mnemonic = lineWords[1]
         if (len(lineWords) >= 3):
             operands = "".join(lineWords[2:])
-    pass
     return (label, mnemonic, operands, '')
 
 # determina el numero de bytes que se tienen que reservar según la instruccion
@@ -372,12 +370,12 @@ def validateFormatTwo(instru, operands):
     operandsSplited = operands.split(",")
     instruOperands = instru[3]
     if (len(instruOperands) == 2 and len(operandsSplited) == 2):
-        if (calc.regexMatch(instruOperands[0], operandsSplited[0]) and calc.regexMatch(instruOperands[1], operandsSplited[1])):
+        if (calc.regexMatch(argumentTokens[instruOperands[0]], operandsSplited[0]) and calc.regexMatch(argumentTokens[instruOperands[1]], operandsSplited[1])):
             return True
         else:
             return "ERROR:al menos un operando inválido"
     elif (len(instruOperands) == 1 and len(operandsSplited) == 1):
-        if (calc.regexMatch(instruOperands[0], operandsSplited[0])):
+        if (calc.regexMatch(argumentTokens[instruOperands[0]], operandsSplited[0])):
             return True
         else:
             return "Error: el operando dado no es válido"
@@ -424,14 +422,15 @@ def flagsValue(mnemonic, operand):
 
 def passOne(lines):
     calc.passOneOnInit()
-    initialDirection = 0
     # Por cada linea en el archivo se hace un analisis gramatical |
     # Parse each line in the file
-    codOp_LineCounter = 0
     errorDicArray = {}
+    # banderas para informacion
     firstInstruction = ''
     alredyDirective = False
+    errorFlag = False
     for line in lines:  # for each line do
+        errorFlag = False
         if (line and line != '\s' and line != '\n' and line != '\t'):
             intermediateFileInsertion = "."
             # parse the line and sign values to variables
@@ -459,12 +458,14 @@ def passOne(lines):
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido:"+operandValidation]
+                            errorFlag = True
                     # solo las instrucciones formato 3 pueden ser extendidas, por lo que genera un error
                     elif (typeFour(mnemonic)):
                         intermediateFileInsertion = [
                             calc.SIC_HEX(calc.getCounterLoc(
                             )), calc.getNameBlock(), label, mnemonic, operands,
                             "!ERROR!,:Mnemonic:,la instruccion no puede ser extendida"]
+                        errorFlag = True
                     else:
                         if (dirInstr[1] == 2):  # es formato 2
                             operandValidation = validateFormatTwo(
@@ -476,18 +477,27 @@ def passOne(lines):
                             else:
                                 intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc()), calc.getNameBlock(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation]
+                                errorFlag = True
                         elif (dirInstr[1] == 1):  # es formato 1
                             # si hay operandos para instrucciones formato 1, ocurre un error
                             if (operands):
                                 intermediateFileInsertion = [
                                     calc.SIC_HEX(calc.getCounterLoc(
                                     )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:sobran operandos"]
+                                errorFlag = True
                             else:
                                 calc.addToCounterLoc(instruLen(mnemonic))
                         else:
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Unknowed:unreachable"]
+                            errorFlag = True
+                    if (errorFlag == False):  # si no hubo error de sintaxis
+                        successInsertion = calc.addSymbol(
+                            label, 'R', calc.getCounterLoc())
+                        if (successInsertion != True):
+                            intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                            )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
                 elif (dirInstr[0] == 'D'):  # es una directiva
                     if (dirInstr[1] == 'START'):  # no suma nada
                         # si el nombre de programa ya ha sido definido
@@ -495,11 +505,13 @@ def passOne(lines):
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Uso incorrecto de la directiva START, debe ir solo al inicio del programa"]
+                            errorFlag = True
                         else:
                             if (not label):
                                 intermediateFileInsertion = [
                                     calc.SIC_HEX(calc.getCounterLoc(
                                     )), calc.getNameBlock(), label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                                errorFlag = True
                             elif (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
                                 # define el nombre del programa
                                 calc.setNameSTART(label)
@@ -511,6 +523,7 @@ def passOne(lines):
                             else:
                                 intermediateFileInsertion = [calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:operando invalido para la directiva START"]
+                                errorFlag = True
                     # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
                         alredyDirective = False
@@ -520,23 +533,28 @@ def passOne(lines):
                                 if (successInsertion != True):
                                     intermediateFileInsertion = [calc.getCounterLoc(
                                     ), label, mnemonic, operands, ":ERROR:Sintaxis:" + successInsertion]
+                                    errorFlag = True
                             else:
                                 intermediateFileInsertion = [calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para CSECT, se espera un sibolo"]
+                                errorFlag = True
                         else:
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Falta el nombre de la seccion de control"]
+                            errorFlag = True
                         calc.appendSection()
                     elif (dirInstr[1] == 'EXTDEF'):
                         if (calc.regexMatch(dirInstr[3], operands) != True):
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
+                            errorFlag = True
                     elif (dirInstr[1] == 'EXTREF'):
                         if (calc.regexMatch(dirInstr[3], operands) == True):
                             calc.addEXTREF(operands)
                         else:
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
+                            errorFlag = True
                      # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
                         alredyDirective = True
@@ -554,35 +572,45 @@ def passOne(lines):
                                 if (successInsertion != True):
                                     intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
                                     )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
-
+                                    errorFlag = True
                             else:
                                 operandValidation = calc.evaluateExpPassOne(
                                     operands)
                                 if (operandValidation[0] == False):
-                                    intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
-                                    )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]]
+                                    successInsertion = calc.addSymbol(
+                                        label, 'A', -1)
+                                    if (successInsertion != True):
+                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                        )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]+"ERROR:Simbolo:"successInsertion]
+                                    else:
+                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                        )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]]
+                                    errorFlag = True
                                 else:
                                     successInsertion = calc.addSymbol(
                                         label, operandValidation[1], operandValidation[2])
                                     if (successInsertion != True):
                                         intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
                                         )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
-
+                                        errorFlag = True
                         else:
                             intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
                             )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Definicion de simbolo invalida, falta nombre de simbolo"]
+                            errorFlag = True
 
                     # cambia el contador de programa el valor especificado
                     elif (dirInstr[1] == 'ORG'):
                         alredyDirective = True
                         # retorna una tupla con información
-                        operandValidation = calc.evaluateExpPassOne()
+                        operandValidation = calc.evaluateExpPassOne(operands)
                         if (operandValidation[0] == False):
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, "!ERROR!"+operandValidation[1]]
+                            errorFlag = True
                         elif (operandValidation[1] == 'R'):
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, "!ERROR!"+"el operando no puede ser relativo"]
+                            errorFlag = True
                         else:
                             calc.setCounterLoc(operandValidation[2])
                     elif (dirInstr[1] == 'BYTE'):
@@ -593,6 +621,7 @@ def passOne(lines):
                         else:
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BYTE"]
+                            errorFlag = True
                     # cambia el valor de la base, empieza en -1 comp2
                     elif (dirInstr[1] == 'BASE'):
                         alredyDirective = True
@@ -605,36 +634,43 @@ def passOne(lines):
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido:"+operandValidation]
+                            errorFlag = True
                     elif (dirInstr[1] == 'RESB'):  # reserva el numero de bytes especificado
                         alredyDirective = True
-                        if (calc.regexMatch(argumentTokens[dirInstr[1]], operands)):
+                        if (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
                             calc.addToCounterLoc(
                                 directiveLen('RESB', operands))
                         else:
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESB"]
+                            errorFlag = True
                     elif (dirInstr[1] == 'RESW'):
                         alredyDirective = True
-                        if (calc.regexMatch(argumentTokens[dirInstr[1]], operands)):
+                        if (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
                             calc.addToCounterLoc(
                                 directiveLen('RESW', operands))
                         else:
                             intermediateFileInsertion = [
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESW"]
+                            errorFlag = True
                     elif (dirInstr[1] == 'END'):  # no suma nada
                         alredyDirective = True
                         if (lines.index(line) != len(lines)-1):
                             intermediateFileInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END debe ir solo al final del programa"]
+                            errorFlag = True
                         else:
                             pass
                 else:
                     intermediateFileInsertion = [
                         calc.SIC_HEX(calc.getCounterLoc(
                         )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Mnemonic:la instruccion o directiva no existe o está mal referenciada"]
+                    errorFlag = True
+            if (label and errorFlag == False):
 
+    calc.getCounterLoc()
     # codOb.update({codOp_LineCounter: " . "})
     # if there was not a syntax error
     # if len(insertion) >= 5:
