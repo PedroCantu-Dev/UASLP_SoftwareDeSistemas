@@ -517,42 +517,46 @@ msgExSyntax = ''
 
 def validateExpSyntax(expression):
     global expError
-    expError = False
     global expErrorDescription
+    global operationTypeOption
+    expError = False
     expErrorDescription = ""
+    operationTypeOption = "syntaxOperation"
     try:
         parser.parse(expression)
-        if (err == True):
-            if ("inexistente" in expErrorDescription):
-                return True
-            else:
-                return expErrorDescription
+        if (expError == True):
+            return expErrorDescription
         else:
             return True
     except:
         return "Error expresion invalida"
 
 
-# valida la sintaxys en especifico de una expresion:
-# es decir si es correcta lexica y sintacticamente
-# tomando en cuenta si los simbolos están definidos y pertenecen al mismo bloque
-errorExSyntaxAndVariables = False
-msgExSyntaxAndVariables = ''
-
-
-def validateExpSyntaxAndVariables(expression):
+# funcion--> evaluateExpSICXE(expression)
+# es llamada por las evaluaciones para el paso 1 y el paso 2
+# i.e. evaluateExpPassOne() y evaluateExpPassTwo()
+def evaluateExpSICXE(expression):
     global expError
-    expError = False
     global expErrorDescription
+    expError = False
     expErrorDescription = ""
     try:
-        parser.parse(expression)
-        if (err == True):
+        value = parser.parse(expression)
+        if (expError == True):
             return (False, expErrorDescription)
         else:
-            return True
+            # validacion de relatividad
+            relativityValidation = validateExRelativity_A_R_I(expression)
+            # si el tamaño de la validacion de relatividad es 1
+            # significa que la expresion es correcta por relatividad
+            # si no, el error por relatividad estara asignado a la variable
+            if (len(relativityValidation) == 1):
+                return (True, value, relativityValidation)
+            else:
+                return (False, relativityValidation)
     except:
-        return (False, ":::Error expresion invalida :::")
+        return (False, "Error expresion invalida")
+
 
 # funcion--> evaluateExpPassOne()
 # evalua una expresion para el paso 1
@@ -561,10 +565,14 @@ def validateExpSyntaxAndVariables(expression):
 # y dentro del el mismo bloque
 # NOTA: Si la expresion no es valida bajo
 # estos requerimientos retorna False
+# dentro de una tupla con la descripcino del error
 
 
-def evaluateExpPassOne():
-    return False
+def evaluateExpPassOne(expression):
+    global operationTypeOption
+    operationTypeOption = "passOneOperation"
+    return evaluateExpSICXE(expression)
+
 
 # funcion--> evaluateExpPassTwo()
 # evalua una expresion para el paso 2
@@ -573,14 +581,13 @@ def evaluateExpPassOne():
 # y pueden ser de bloques distintos
 # NOTA: Si la expresion no es valida bajo
 # estos requerimientos retirna False
+# dentro de una tupla con la descripcino del error
 
 
-def evaluateExpPassTwo():
-    return False
-
-
-def evaluateExp():
-    return False
+def evaluateExpPassTwo(expression):
+    global operationTypeOption
+    operationTypeOption = "passTwoOperation"
+    return evaluateExpSICXE(expression)
 
 # efectua la regla de los signos [(+)*(+) = (+)], [(-)*(-) = (+) ] y [(-)*(+) = (-) ]  para un signo o un array de signos
 
@@ -712,9 +719,6 @@ def setNameBlock(name=''):
     else:
         nameBlock = nameSTART
 
-
-arrayBlocks = []
-
 # cambia la seccion de trabajo
 
 
@@ -722,12 +726,12 @@ def setNameSECT(name=''):
     global nameSECT
     if (name and name in secciones.keys()):
         # error porque se quiere volver a nombrar una seccion de control igual
-        return 'Error: Solo se puede definir una seccion de control una vez'
+        return 'Error: Solo se puede definir la seccion de control una vez'
     elif (name):
         nameSECT = name
     else:
         nameSECT = nameSTART
-    return ''
+    return True
 
 #####
 # Localidades de start
@@ -766,7 +770,7 @@ def getNameSTART():
 
 
 def appendSection(name=''):
-    secciones
+    global secciones
     name = nameSECT if not name else name
 
     secciones[name] = {
@@ -820,6 +824,7 @@ def getCounterLoc():
 
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
+
 
     #############################
     # zona de pruebas
