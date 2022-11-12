@@ -410,7 +410,7 @@ def regexMatch(regex, testStr):
 
 
 def validateFormatTwo(instru, operands):
-    # Hace un corte por el caracter ','
+    # Hace un corte de los operandos por el caracter ','
     operandsSplited = operands.split(",")
     instruOperands = instru[3]
     if (len(instruOperands) == 2 and len(operandsSplited) == 2):
@@ -418,18 +418,13 @@ def validateFormatTwo(instru, operands):
             return True
         else:
             return "ERROR:al menos un operando inválido"
-    elif (len(instruOperands) == 1):
-        if (len(operandsSplited) == 1):
-            if (calc.regexMatch(instruOperands[0], operandsSplited[0])):
-                return True
-            else:
-                return "Error: el operando dado no es válido"
-        elif (operands == ''):
+    elif (len(instruOperands) == 1 and len(operandsSplited) == 1):
+        if (calc.regexMatch(instruOperands[0], operandsSplited[0])):
             return True
         else:
-            return "ERROR: sobran operandos en la instrucción"
+            return "Error: el operando dado no es válido"
     else:
-        return "ERROR:el numero de operandos no coincide con los requeridos para la instrucción"
+        return "ERROR:los operandos no coinciden con los requeridos para la instrucción"
 
 
 # para determinar el valor de las bandera NIXBPE
@@ -641,6 +636,12 @@ def passOne(lines):
                     # genera una entrada en la tabla de simbolos, segun el bloque y la seccion de control que se esté utilizando
                     elif (dirInstr[1] == 'EQU'):
                         alredyDirective = True
+                        operandValidation = calc.evaluateExpPassOne()
+                        if (operandValidation == False):
+                            insertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para  directiva de reserva"]
+                        else:
+                            calc.addSymbol(label)
                     # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
                         alredyDirective = True

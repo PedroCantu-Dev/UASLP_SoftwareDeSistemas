@@ -109,11 +109,12 @@ def t_NAME(t):
 
 
 def t_error(t):
-    global err
-    global errorDescription
-    err = True
-    errorDescription = "Illegal characters:"+t.value+":"
-    print("Illegal characters:"+t.value+":")
+    global expError
+    global expErrorDescription
+    expError = True
+    expErrorDescription = "Caracter ilegal:" + \
+        t.value + ": en la posision:" + t.lexpos
+    # print("Illegal characters:"+t.value+":")
     t.lexer.skip(1)
 
 
@@ -139,7 +140,7 @@ def p_calc(p):
         | expression INDEXED
         | empty
     '''
-    print(run(p[1].value))
+    p[0] = run(p[1].value)
 
 # for validation of expressions with dir mode
 
@@ -149,7 +150,7 @@ def p_calc_octo_at(p):
     calc : OCTO expression
         | AT expression
     '''
-    print(run(p[2].value))
+    p[0] = run(p[2].value)
 
 
 def p_expression_uminus(p):
@@ -222,26 +223,33 @@ def p_empty(p):
 
 
 def p_error(p):
-    global err
-    global errorDescription
+    global expError
+    global expErrorDescription
     if p:
-        print("syntax error en el token: " + p.type +
-              "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno))
-
-        errorDescription = "syntax error en el token: " + p.type + \
-            "\ncon valor: " + str(p.value) + "\nen la linea: " + str(p.lineno)
-        err = True
+        expErrorDescription = "token: " + p.type + \
+            "\ncon valor: " + str(p.value) + \
+            "\nen la posisión: " + str(p.lexpos)
+        expError = True
         # Just discard the token and tell the parser it's okay.
         # parser.errok()
     else:
         print("Syntax error at EOF")
-        err = True
-        errorDescription = "Syntax error en EOF"
+        expError = True
+        expErrorDescription = "tipo: EOF" + "token: " + p.type + \
+            "\ncon valor: " + str(p.value) + \
+            "\nen la posisión: " + str(p.lexpos)
+
+
+# variable para definir que
+# tipo de operación se está realizando
+# i.e.
+# "syntaxOperation":solo para verificar la sintaxis
+# "passOneOperation":para operaciones del paso 1
+# "passTwo":para operaciones del paso 2
+operationTypeOption = ''
 
 
 def run(p):
-    global err
-    global errorDescription
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
@@ -288,27 +296,26 @@ def run(p):
             else:
                 return 0
         elif p[0] == '=':
-            try:
-                # env[p[1]] = run(p[2])
-                # return env[p[1]]
-                appendTabSymRow(p[1], run(p[2]),
-                                validateExRelativity_A_R_I(p[2]), False)
-                return secciones[varSECT]['tabsym'][p[1]]['dirVal']
-
-            except:
-                errorDescription = "variable inexistente en el ambito 2"
-                err = True
-                return 0
+            # codigo original para la calculadora de expresiones completa
+            # env[p[1]] = run(p[2])
+            # return env[p[1]]
+            global expError
+            global expErrorDescription
+            expErrorDescription = "Caracter invalido '=' dentro de expresion: no se pueden hacer definiciones internas en la expresion"
+            expError = True
+            return 0
         elif p[0] == 'uminus':
             print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
             try:
                 # return env[p[1]]
-                return secciones[varSECT]['tabsym'][p[1]]['dirVal']
+                return secciones[nameSECT]['tabsym'][p[1]]['dirVal']
             except:
-                errorDescription = "variable inexistente en el ambito 1"
-                err = True
+                global expError
+                global expErrorDescription
+                expErrorDescription = "variable inexistente en el ambito 1"
+                expError = True
                 return 0
 
         elif p[0] == '!':
@@ -413,10 +420,8 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
 # Definicion de variables necesarias para el funcionamiento
 #
 #####
-err = False
-errorDescription = ""
-varUSE = "omision"
-varSECT = "omision"
+expError = False
+expErrorDescription = ""
 parser = yacc.yacc()
 # arreglo de secciones
 secciones = {}
@@ -437,10 +442,8 @@ listaCSECTBlockCP = {}
 def passOneOnInit():
     global tabBlockRow
     global tabSymRow
-    global err
-    global errorDescription
-    global varUSE
-    global varSECT
+    global expError
+    global expErrorDescription
     global parser
     global secciones
     global seccion
@@ -448,10 +451,8 @@ def passOneOnInit():
     global tabSym
     tabBlockRow = {}
     tabSymRow = {}
-    err = False
-    errorDescription = ""
-    varUSE = "omision"
-    varSECT = "omision"
+    expError = False
+    expErrorDescription = ""
     parser = yacc.yacc()
     # arreglo de secciones
     secciones = {}
@@ -495,17 +496,17 @@ msgExSyntax = ''
 
 
 def validateExpSyntax(expression):
-    global err
-    err = False
-    global errorDescription
-    errorDescription = ""
+    global expError
+    expError = False
+    global expErrorDescription
+    expErrorDescription = ""
     try:
         parser.parse(expression)
         if (err == True):
-            if ("inexistente" in errorDescription):
+            if ("inexistente" in expErrorDescription):
                 return True
             else:
-                return errorDescription
+                return expErrorDescription
         else:
             return True
     except:
@@ -520,21 +521,50 @@ msgExSyntaxAndVariables = ''
 
 
 def validateExpSyntaxAndVariables(expression):
-    global err
-    err = False
-    global errorDescription
-    errorDescription = ""
+    global expError
+    expError = False
+    global expErrorDescription
+    expErrorDescription = ""
     try:
         parser.parse(expression)
         if (err == True):
-            return (False, errorDescription)
+            return (False, expErrorDescription)
         else:
             return True
     except:
         return (False, ":::Error expresion invalida :::")
 
+# funcion--> evaluateExpPassOne()
+# evalua una expresion para el paso 1
+# i.e. todos los simbolos que se utilicen
+# deben de estar definidos
+# y dentro del el mismo bloque
+# NOTA: Si la expresion no es valida bajo
+# estos requerimientos retorna False
+
+
+def evaluateExpPassOne():
+    return False
+
+# funcion--> evaluateExpPassTwo()
+# evalua una expresion para el paso 2
+# i.e. todos los simbolos que se utilicen
+# deben de estar definidos
+# y pueden ser de bloques distintos
+# NOTA: Si la expresion no es valida bajo
+# estos requerimientos retirna False
+
+
+def evaluateExpPassTwo():
+    return False
+
+
+def evaluateExp():
+    return False
 
 # efectua la regla de los signos [(+)*(+) = (+)], [(-)*(-) = (+) ] y [(-)*(+) = (-) ]  para un signo o un array de signos
+
+
 def singnsRulePositive(signOrSigns):
     if (type(signOrSigns) is list):
         if (len(signOrSigns) == 0):
@@ -716,14 +746,13 @@ def getNameSTART():
 
 
 def appendSection(name=''):
-    global secciones
+    secciones
     name = nameSECT if not name else name
 
-    secciones = {name: {
+    secciones[name] = {
         'tabblock': {},
-        'tabsym': {}
-    }
-    }
+        'tabsym': {}}
+
     appendBlock()
 
 
@@ -734,12 +763,15 @@ def appendBlock(name='', dirIniRel=0, len=0):
         'len': len, 'dirIniRel': dirIniRel}
 
 
-def appendTabSymRow(symbol, dirVal, typ, extBool, numBlock=0):
+def addSymbol(symbol, dirVal=-1, typ='A', extBool=False, nameBloc=None):
+    nameBloc = nameBlock if nameBloc == None else nameBloc
     if (not symbol in secciones[varSECT]['tabsym'].keys()):
-        secciones[varSECT]['tabsym'].append({symbol: {
-            'dirVal': dirVal, 'typ': typ, 'numBlock': numBlock, 'extBool': extBool}})
+        secciones[varSECT]['tabsym'][symbol] = {
+            'dirVal': SIC_HEX(dirVal), 'type': typ, 'block': nameBloc, 'symExt': extBool
+        }
+        return True
     else:
-        pass  # error simbolo duplicado
+        return 'Error: simbolo duplicado'
 
 
 def updateTabBlockLen(numBlock, len=0, section=varSECT):
@@ -769,43 +801,18 @@ def getCounterLoc():
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
 
-# funcion--> evaluateExpPassOne()
-# evalua una expresion para el paso 1
-# i.e. todos los simbolos que se utilicen
-# deben de estar definidos
-# y dentro del el mismo bloque
-# NOTA: Si la expresion no es valida bajo
-# estos requerimientos retirna False
-
-
-def evaluateExpPassOne():
-    return False
-
-# funcion--> evaluateExpPassTwo()
-# evalua una expresion para el paso 2
-# i.e. todos los simbolos que se utilicen
-# deben de estar definidos
-# y pueden ser de bloques distintos
-# NOTA: Si la expresion no es valida bajo
-# estos requerimientos retirna False
-
-
-def evaluateExpPassTwo():
-    return False
-
-
-def evaluateExp():
-    return False
 
     #############################
     # zona de pruebas
     #############################
-    # while True:
-    #     try:
-    #         s = input('calc>>')
-    #     except EOFError:
-    #         break
-    #     print(parser.parse(s))
+while True:
+    try:
+        s = input('calc>>')
+    except EOFError:
+        break
+    ss = parser.parse(s)
+    sss = s * 2
+    print(sss)
 
     # # Give the lexer some input
     # while True:
@@ -835,7 +842,7 @@ def evaluateExp():
     #         print("CORRECT :D\n")
     #     else:
     #         print("D: INCORRECT")
-    #         print("expression invalida sintacticamente: " + errorDescription+"\n")
+    #         print("expression invalida sintacticamente: " + expErrorDescription+"\n")
 
     # para obtener los tokens:
     # getTokens(data)
