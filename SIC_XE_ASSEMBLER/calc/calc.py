@@ -383,7 +383,7 @@ def regexMatch(regex, testStr):
 
 
 def getIntByHexOInt(strConvert):
-    res = None
+    res = 0
     if isinstance(strConvert, int):
         res = strConvert
     elif (correctHex(strConvert)):
@@ -736,6 +736,11 @@ def setNameBlock(name=''):
     else:
         nameBlock = nameSTART
 
+
+def getNameBlock(name=''):
+    global nameBlock
+    return nameBlock
+
 # cambia la seccion de trabajo
 
 
@@ -760,7 +765,7 @@ def setLocSTART(location):
     locSTART = getIntByHexOInt(location)
 
 
-def gettLocSTART():
+def getLocSTART():
     global locSTART
     return locSTART
 #####
@@ -789,15 +794,24 @@ def getNameSTART():
 def appendSection(name=''):
     global secciones
     name = nameSECT if not name else name
+    if (name in seccion.keys()):
+        return False
+    else:
+        secciones[name] = {
+            'tabblock': {},
+            'tabsym': {}}
+        return True
 
-    secciones[name] = {
-        'tabblock': {},
-        'tabsym': {}}
+
+def addEXTREF(operands):
+    symbols = operands.split(',')
 
 
 def appendBlock(name='', dirIniRel=0, len=0):
     global secciones
     name = nameBlock if not name else name
+    dirIniRel = getIntByHexOInt(dirIniRel)
+    len = getIntByHexOInt(dirIniRel)
     secciones[nameSECT]['tabblock'][name] = {
         'len': len, 'dirIniRel': dirIniRel}
 
@@ -821,18 +835,22 @@ def updateTabBlockLen(numBlock, len=0, section=nameSECT):
 
 
 def addToCounterLoc(addition=0):
+    addition = getIntByHexOInt(addition)
     secciones[nameSECT]['tabblock'][nameBlock]['len'] += addition
 
 
 #
 def setCounterLoc(counter=0):
-    secciones[nameSECT]['tabblock'][nameBlock]['init'] = counter
+    secciones[nameSECT]['tabblock'][nameBlock]['dirIniRel'] = counter
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 
 
 def getCounterLoc():
-    return secciones[nameSECT]['tabblock'][nameBlock]['len']
+    try:
+        return secciones[nameSECT]['tabblock'][nameBlock]['len']
+    except:
+        return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 
