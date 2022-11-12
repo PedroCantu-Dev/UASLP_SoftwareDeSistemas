@@ -243,9 +243,9 @@ def p_error(p):
 # variable para definir que
 # tipo de operación se está realizando
 # i.e.
-# "syntaxOperation":solo para verificar la sintaxis
-# "passOneOperation":para operaciones del paso 1
-# "passTwo":para operaciones del paso 2
+# "passOneOperation":Para operaciones del paso 1
+# "passTwoOperation":Para operaciones del paso 2
+# "syntaxOperation":Solo para verificar la sintaxis
 operationTypeOption = ''
 
 
@@ -301,23 +301,43 @@ def run(p):
             # return env[p[1]]
             global expError
             global expErrorDescription
-            expErrorDescription = "Caracter invalido '=' dentro de expresion: no se pueden hacer definiciones internas en la expresion"
             expError = True
+            expErrorDescription = "Caracter invalido '=' dentro de expresion: no se pueden hacer definiciones internas en la expresion"
             return 0
         elif p[0] == 'uminus':
-            print("funciono muminus")
+            #print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
+            global expError
+            global expErrorDescription
             try:
+                # codigo original:
                 # return env[p[1]]
-                return secciones[nameSECT]['tabsym'][p[1]]['dirVal']
+                # para operaciones del paso 1, el mas estricto
+                if (operationTypeOption == "passOneOperation"):
+                    # hacemos una instancia de la variable de interes:
+                    variable = secciones[nameSECT]['tabsym'][p[1]]
+                    # si la variable referenciada no es del bloque actual
+                    if (variable['block'] != nameBlock):
+                        expError = True
+                        expErrorDescription = "variable de distinto bloque"
+                        return 0
+                    else:
+                        return variable['dirVal']
+                # para operaciones del paso 0 donde
+                elif (operationTypeOption == "passTwoOperation"):
+                    # hacemos una instancia de la variable de interes:
+                    variable = secciones[nameSECT]['tabsym'][p[1]]
+                    return variable['dirVal']
+                # exclusivamente para analisis sintactico,
+                # no nos importa el estado de las variables o la relatividad
+                # solo que la expresion sea correcta lexica y sintacticamente
+                else:
+                    return 0
             except:
-                global expError
-                global expErrorDescription
-                expErrorDescription = "variable inexistente en el ambito 1"
                 expError = True
+                expErrorDescription = "variable inexistente en el ambito"
                 return 0
-
         elif p[0] == '!':
             return math.factorial(int(run(p[1])))
     else:
@@ -617,7 +637,7 @@ def validateExRelativity_A_R_I(expression):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            # if (secciones[varSECT]['tabsym'][tok.value]['typ'] == 'R'):
+            # if (secciones[nameSECT]['tabsym'][tok.value]['typ'] == 'R'):
             # if (input(tok.value+": ") == 'R'):
             if (tok.value == 'R'):
                 tok.type == 'R'
@@ -765,8 +785,8 @@ def appendBlock(name='', dirIniRel=0, len=0):
 
 def addSymbol(symbol, dirVal=-1, typ='A', extBool=False, nameBloc=None):
     nameBloc = nameBlock if nameBloc == None else nameBloc
-    if (not symbol in secciones[varSECT]['tabsym'].keys()):
-        secciones[varSECT]['tabsym'][symbol] = {
+    if (not symbol in secciones[nameSECT]['tabsym'].keys()):
+        secciones[nameSECT]['tabsym'][symbol] = {
             'dirVal': SIC_HEX(dirVal), 'type': typ, 'block': nameBloc, 'symExt': extBool
         }
         return True
@@ -774,7 +794,7 @@ def addSymbol(symbol, dirVal=-1, typ='A', extBool=False, nameBloc=None):
         return 'Error: simbolo duplicado'
 
 
-def updateTabBlockLen(numBlock, len=0, section=varSECT):
+def updateTabBlockLen(numBlock, len=0, section=nameSECT):
     secciones[section]['tabblock'][numBlock]['len'] = len
 # añade una seccion de programa
 
@@ -800,7 +820,6 @@ def getCounterLoc():
 
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
-
 
     #############################
     # zona de pruebas
@@ -830,7 +849,7 @@ while True:
     # while True:
     #     sect = input(seccion)
     #     if (sect):
-    #         varSECT = sect
+    #         nameSECT = sect
 
     # para validar las expresiones sintacticamente:
     # lexer = lex.lex()
