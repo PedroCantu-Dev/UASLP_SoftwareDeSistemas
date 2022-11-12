@@ -414,6 +414,20 @@ def correctBin(possibleBin):
     else:
         return False
 
+# this function return the binary digit with the specific number of
+# bits, if its negative it make the twos complement
+
+
+def bindigit(n, bits):
+    s = bin(n & int("1"*bits, 2))[2:]
+    return ("{0:0>%s}" % (bits)).format(s)
+
+# funcion xor
+
+
+def xor(x, y):
+    return bool((x and not y) or (not x and y))
+
 
 def fillOrCutL(strFOC, numFinal=6, charFill='0'):
     if (len(strFOC) < numFinal):

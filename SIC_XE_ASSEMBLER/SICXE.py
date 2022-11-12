@@ -120,8 +120,6 @@ Bbit = 4
 Pbit = 2
 Ebit = 1
 
-B = 0
-
 # c indica una constante o dir de memoria entre 0 y 4095 --> expresion absoluta
 # m indica una direccion de memoria o un valor constante mayor que 4095 -> expresion relativa o absoluta>4095
 # el diccionario retorna las expresiones regulares para cada token |
@@ -185,11 +183,6 @@ def validMnemonic(mnemonic):
     else:
         return False
 
-# funcion xor
-
-
-def xor(x, y):
-    return bool((x and not y) or (not x and y))
 
 # Regresa el nemonico como tal, sin signo + |
 # Return the mnemonic strin with any leading + striped off
@@ -340,31 +333,6 @@ def instruLen(instru):
     else:
         return 0x01
 
-
-# metodo ya incluido en calc
-
-
-def correctHex(possibleHex):
-    if (possibleHex.count('h'.upper()) == 1 and possibleHex.endswith('h'.upper())):
-        return True
-    else:
-        return False
-
-# converts any decimal or hexadecimal string into a hexadecimal value
-# at this point the lexical analyzer made its work so, it asume there is not error when hex parsing
-
-# estos metodos ya se incluyen en calc
-
-
-def getHexadecimalByString(strConvert):
-    res = None
-    if (strConvert.isdecimal()):
-        res = int(strConvert)
-    elif (correctHex(strConvert)):
-        res = int(strConvert.replace("h".upper(), ""), 16)
-    return res
-
-
 # retorna la cantidad de bytes necesarios segun la directiva |
 # return the number of bytes needed deppending of the directive
 
@@ -398,12 +366,6 @@ def getBytesByString(strOperand):
     pattern = "'(.*?)'"
     substring = re.match(pattern, strOperand).group(1)
 
-
-def regexMatch(regex, testStr):
-    if (re.match('^'+regex+'$', testStr)):
-        return True
-    else:
-        return False
 
 # valida los operandos para las instrucciones de formato 2
 
@@ -462,16 +424,6 @@ def flagsValue(mnemonic, operand):
 
 # Analizador Léxico/Sintáctico SIC-XE |
 # SIC-XE Lexical and syntax análisis
-
-# Optab = {}
-# Optab2 = {}
-symbolsTables = {}
-blocksTables = {}
-X = 0
-isBase = False
-BaseLoc = 0
-Flags = 0
-
 
 def passOne(lines):
     calc.passOneOnInit()
@@ -869,14 +821,6 @@ def byteCodObj(operand):
         res = padHexEven(strExtract).replace("'", "")
     return res
 
-# this function return the binary digit with the specific number of
-# bits, if its negative it make the twos complement
-
-
-def bindigit(n, bits):
-    s = bin(n & int("1"*bits, 2))[2:]
-    return ("{0:0>%s}" % (bits)).format(s)
-
 
 def passTwo(archiInter, symTable):
     codObj = {}  # this function return the codObj
@@ -1033,163 +977,3 @@ def passTwo(archiInter, symTable):
                     codObj[indexArchi] = "----"
                     archiInter[indexArchi][4] = "----"
     return codObj
-
-
-def fillOrCutL(strFOC, numFinal=6, charFill='0'):
-    if (len(strFOC) < numFinal):
-        return strFOC.ljust(numFinal, charFill)
-    else:
-        return strFOC[0:numFinal]
-
-
-def fillOrCutR(strFOC, numFinal=6, charFill='0'):
-    if (len(strFOC) < numFinal):
-        return strFOC.rjust(numFinal, charFill)
-    else:
-        return strFOC[0:numFinal]
-
-
-def cleanHexForCodObj(hexa, numFinal=6, charfill='0'):
-    if (type(hexa) == str):
-        hexAuxi = hexa.replace('0x', '')
-        return fillOrCutR(hexAuxi, numFinal, charfill)
-    elif (type(hexa) == int):
-        return fillOrCutR(int(hexa, 16), numFinal, charfill)
-
-
-def SIC_hex_value(s, hexi=False):
-    try:
-        if isinstance(s, int):
-            if (hexi):
-                exa = hex(s)
-                return exa
-            return s
-        elif (re.match('[0-9a-fA-F]+(H|h)', s)):
-            s = s.replace("H", "")
-            s = s.replace("h", "")
-            if (hexi):
-                inte = int(s, 16)
-                exa = hex(inte)
-                return exa
-            return int(s, 16)
-        elif (re.match('[0-9]+$', s)):
-            if (hexi):
-                inte = int(s, 10)
-                exa = hex(inte)
-                return exa
-            return int(s, 10)
-    except:
-        return hex(0)
-
-
-def getExpressionValue_(self, input):
-    debug = False
-    ops_ = ['-', '+', '*', '/']
-    operands = []
-    one_operand = ''
-    operators = []
-
-    # we have a special case; and that is where the input is simply '*'
-    if input == '*':
-        return t.getCorrespondingNumber('*')
-
-    for bit in input:
-        if bit in ops_:
-            if len(one_operand) == 0:
-                return -1
-
-            # returns [value, 'A' or 'R']
-            num = t.getCorrespondingNumber(one_operand)
-            if num == -1:
-                self.errors.append("Cannot find", one_operand, "in the symtab")
-                return -1
-            operands.append(num)
-            one_operand = ''
-
-            if len(operators) != 0:
-                while ops_.index(operators[-1]) >= ops_.index(bit):
-                    op1 = operands.pop()  # because we used up 2 operands
-                    op2 = operands.pop()
-                    abs_or_rel = [op1[1], op2[1]]
-                    op1 = op1[0]
-                    op2 = op2[0]
-                    single = operators.pop()
-                    if single == '-':
-                        if abs_or_rel != ['R', 'R']:
-                            self.errors.append(
-                                "Cannot find value of expression; check whether the args are absolute")
-                            return
-                        operands.append([op2 - op1, 'A'])
-                    else:
-                        if abs_or_rel != ['A', 'A']:
-                            self.errors.append(
-                                "Cannot find value of expression; check whether the args are absolute")
-                            return
-                    if single == '+':
-                        operands.append([op2 + op1, 'A'])
-                    elif single == '*':
-                        operands.append([op2 * op1, 'A'])
-                    else:
-                        operands.append([op2 // op1, 'A'])
-                    if len(operators) == 0:
-                        break
-            operators.append(bit)
-        else:
-            one_operand += bit
-        if debug:
-            print("\n\n")
-            print("new bit: ", bit)
-            print("operands: ", operands)
-            print("operators: ", operators)
-
-    if len(one_operand) == 0:
-        return -1
-    num = t.getCorrespondingNumber(one_operand)
-    if num == -1:
-        self.errors.append("Cannot find", one_operand, "in the symtab")
-        return
-    operands.append(num)
-
-    if debug:
-        print("finished main loop")
-        print("\n\n")
-        print("operands: ", operands)
-        print("operators: ", operators)
-
-    while (len(operands) != 1):
-        op1 = operands.pop()  # because we used up 2 operands
-        op2 = operands.pop()
-        abs_or_rel = [op1[1], op2[1]]
-        op1 = op1[0]
-        op2 = op2[0]
-        single = operators.pop()
-
-        if debug:
-            print("just before the first iteration")
-            print("\n\n")
-            print("operands: ", operands)
-            print("operators: ", operators)
-
-        if single == '-':
-            if abs_or_rel != ['R', 'R']:
-                self.errors.append(
-                    "Cannot find value of expression; check whether the args are absolute")
-                return
-            operands.append([op2 - op1, 'A'])
-        else:
-            if abs_or_rel != ['A', 'A']:
-                self.errors.append(
-                    "Cannot find value of expression; check whether the args are absolute")
-                return
-            if single == '+':
-                operands.append([op2 + op1, 'A'])
-            elif single == '*':
-                operands.append([op2 * op1, 'A'])
-            else:
-                operands.append([op2 // op1, 'A'])
-        if debug:
-            print("\n\n")
-            print("operands: ", operands)
-            print("operators: ", operators)
-
-    return operands[0]
