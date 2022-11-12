@@ -345,6 +345,10 @@ def run(p):
                         expError = True
                         expErrorDescription = "variable de distinto bloque"
                         return 0
+                    if (variable['extBool'] == True):
+                        expError = True
+                        expErrorDescription = "variable de referencia Externa"
+                        return 0
                     else:
                         return variable['dirVal']
                 # para operaciones del paso 0 donde
@@ -805,6 +809,8 @@ def appendSection(name=''):
 
 def addEXTREF(operands):
     symbols = operands.split(',')
+    for symbol in symbols:
+        addSymbol(symbol, '----', 0, True, '----')
 
 
 def appendBlock(name='', dirIniRel=0, len=0):

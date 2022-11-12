@@ -532,14 +532,19 @@ def passOne(lines):
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Falta el nombre de la seccion de control"]
                         calc.appendSection()
                     elif (dirInstr[1] == 'EXTDEF'):
-                        if(calc.regexMatch()):
-                        else:
-
+                        if (calc.regexMatch(dirInstr[3], operands) != True):
+                            intermediateFileInsertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
                     elif (dirInstr[1] == 'EXTREF'):
-                        pass
+                        if (calc.regexMatch(dirInstr[3], operands) == True):
+                            calc.addEXTREF(operands)
+                        else:
+                            intermediateFileInsertion = [calc.getCounterLoc(
+                            ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
                      # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
                         alredyDirective = True
+                        calc.setNameBlock(operands)
                     # genera una entrada en la tabla de simbolos, segun el bloque y la seccion de control que se esté utilizando
                     elif (dirInstr[1] == 'EQU'):
                         alredyDirective = True
