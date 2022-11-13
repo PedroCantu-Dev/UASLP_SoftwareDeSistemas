@@ -79,7 +79,7 @@ def t_INDEXED(t):
 
 def t_INTH(t):
     r'[0-9a-fA-F]+(h|H)'  # (\d+(h|H))|
-    t.value = getIntByHexOInt(t.value)
+    t.value = getIntBySICXEHexOInt(t.value)
     return t
 
 
@@ -330,7 +330,7 @@ def run(p):
             expErrorDescription = "Caracter invalido '=' dentro de expresion: no se pueden hacer definiciones internas en la expresion"
             return 0
         elif p[0] == 'uminus':
-            #print("funciono muminus")
+            # print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
             try:
@@ -350,12 +350,12 @@ def run(p):
                         expErrorDescription = "variable de referencia Externa"
                         return 0
                     else:
-                        return variable['dirVal']
+                        return getIntBySICXEHexOInt(variable['dirVal'])
                 # para operaciones del paso 0 donde
                 elif (operationTypeOption == "passTwoOperation"):
                     # hacemos una instancia de la variable de interes:
                     variable = secciones[nameSECT]['tabsym'][p[1]]
-                    return variable['dirVal']
+                    return getIntBySICXEHexOInt(variable['dirVal'])
                 # exclusivamente para analisis sintactico,
                 # no nos importa el estado de las variables o la relatividad
                 # solo que la expresion sea correcta lexica y sintacticamente
@@ -386,6 +386,11 @@ def regexMatch(regex, testStr):
         return False
 
 
+def bindigit(n, bits):
+    s = bin(n & int("1"*bits, 2))[2:]
+    return ("{0:0>%s}" % (bits)).format(s)
+
+
 def twosComplement(binaryNumber):
     onesComplement = ''
     for binDigit in binaryNumber:
@@ -398,64 +403,36 @@ def twosComplement(binaryNumber):
     return res
 
 
-def getIntByHexOInt(strConvert):
-    res = 0
-    if isinstance(strConvert, int):
-        res = strConvert
-    elif (possibleHex(strConvert)):
-        strConvert = strConvert.replace('H', '').replace('h', '')
-        res = bindigit(int(strConvert, 16), len(strConvert)*4)
-        if (len(res) > 0 and res[0] == '1'):  # es un numero negativo
-            res = - int(twosComplement(res), 2)
-        else:
-            res = int(strConvert, 16)
-    elif (True):
-        try:
-            res = int(strConvert, 16)
-        except:
-            res = None
-    if (res == None and strConvert.isdecimal()):
-        res = int(strConvert)
-    if (res == None):
-        res = 0
-    return res
-
-
-def correctHex(possibleHex):
+def correctSicXeHex(possibleHex):
     if (regexMatch('[0-9a-fA-F]+(H|h)', possibleHex)):
         return True
     else:
         return False
 
 
-def possibleHex(possibleHex):
-    if (regexMatch('[0-9a-fA-F]+(H|h)', possibleHex) or regexMatch('[0-9a-fA-F]+', possibleHex)):
-        return True
+def getIntBy_SicXe_HexOrInt(strConvert, dirMem=False):
+    res = 0
+    if isinstance(strConvert, int):
+        res = strConvert
+    elif (correctSicXeHex(strConvert)):
+        strConvert = strConvert.replace('H', '').replace('h', '')
+        res = bindigit(int(strConvert, 16), len(strConvert)*4)
+        if (len(res) > 0 and res[0] == '1'):  # es un numero negativo
+            res = - int(twosComplement(res), 2)
+        else:
+            res = int(strConvert, 16)
+    elif (strConvert.isdecimal() and dirMem == False):
+        res = int(strConvert)
     else:
-        return False
+        try:
+            res = int(strConvert, 16)
+        except:
+            res = 0
+    return res
 
-
-def correctBin(possibleBin):
-    if (regexMatch('(0|1)+(B|b)', possibleBin)
-        or regexMatch('0b(0|1)+', possibleBin)
-            or regexMatch('(0|1)+', possibleBin)):
-        return True
-    else:
-        return False
-
-# this function return the binary digit with the specific number of
-# bits, if its negative it make the twos complement
-
-
-def bindigit(n, bits):
-    s = bin(n & int("1"*bits, 2))[2:]
-    return ("{0:0>%s}" % (bits)).format(s)
-
-# funcion xor
-
-
-def xor(x, y):
-    return bool((x and not y) or (not x and y))
+#############################################################################
+# Obtener un numero hexadecimal con representacion de la arquitectura SICXE
+#############################################################################
 
 
 def fillOrCutL(strFOC, numFinal=6, charFill='0'):
@@ -479,25 +456,23 @@ def cleanHex(hexa, numFinal=6, charfill='0'):
     elif (type(hexa) == int):
         return fillOrCutR(int(hexa, 16), numFinal, charfill)
 
-
 # retorna un numero como hexadecimal en formato de la arquitectura SICXE
+
+
 def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
     try:
         if (isinstance(operand, int) and operand < 0):
             res = bindigit(operand, digits*4)
             res = cleanHex(hex(int(res, 2)), digits)
         else:
-            res = cleanHex(hex(getIntByHexOInt(operand)),
+            res = cleanHex(hex(getIntBy_SicXe_HexOrInt(operand)),
                            digits, charfill)
     except:
         res = cleanHex(hex(0), digits, charfill)
     if (hexi):
         res += 'H'
-    return res.upper()
+    return str(res).upper()
 
-# def SIC_HEX_ToInt(SIC_HEX):
-#     try:
-#         if correctHex(SIC_HEX):
 
 ###############################################################
 #
@@ -768,6 +743,10 @@ def setNameBlock(name=''):
         nameBlock = name
     else:
         nameBlock = nameSTART
+    # si el boque al que se quiere acceder no existe lo crea
+    if (nameBlock not in secciones[nameSECT]['tabblock'].keys()):
+        appendBlock(name)
+    pass
 
 
 def getNameBlock(name=''):
@@ -824,8 +803,9 @@ def getNameSTART():
 #############################
 
 
-def appendSection(name=''):
+def appendSection(name='', appendBlock=True):
     global secciones
+    global nameSECT
     name = nameSECT if not name else name
     if (name in seccion.keys()):
         return 'El nombre de la seccion ya ha sido definido'
@@ -833,13 +813,16 @@ def appendSection(name=''):
         secciones[name] = {
             'tabblock': {},
             'tabsym': {}}
+        nameSECT = name
+        if (appendBlock):
+            setNameBlock(name)
         return True
 
 
 def addEXTREF(operands):
     symbols = operands.split(',')
     for symbol in symbols:
-        addSymbol(symbol, '----', 0, True, '----')
+        addSymbol(symbol, '----', '----', True, '----')
 
 
 def appendBlock(name='', dirIniRel=0, len=0):
@@ -848,7 +831,8 @@ def appendBlock(name='', dirIniRel=0, len=0):
     dirIniRel = getIntByHexOInt(dirIniRel)
     len = getIntByHexOInt(dirIniRel)
     secciones[nameSECT]['tabblock'][name] = {
-        'len': len, 'dirIniRel': dirIniRel}
+        'len': SIC_HEX(len), 'dirIniRel': SIC_HEX(dirIniRel)}
+    pass
 
 
 def addSymbol(symbol, typ='A', dirVal=-1,  extBool=False, nameBloc=None):
@@ -859,11 +843,18 @@ def addSymbol(symbol, typ='A', dirVal=-1,  extBool=False, nameBloc=None):
         }
         return True
     else:
-        return 'Error: simbolo duplicado'
+        return 'simbolo duplicado'
 
 
 def updateTabBlockLen(numBlock, len=0, section=nameSECT):
-    secciones[section]['tabblock'][numBlock]['len'] = len
+    secciones[section]['tabblock'][numBlock]['len'] = SIC_HEX(len)
+
+# actualiza la tabla de bloques con e tamaño de los bloques anteriores
+
+
+def updateTabBlocks():
+    pass
+
 # añade una seccion de programa
 
 # suma a CP el numero de bytes indicado
@@ -871,12 +862,16 @@ def updateTabBlockLen(numBlock, len=0, section=nameSECT):
 
 def addToCounterLoc(addition=0):
     addition = getIntByHexOInt(addition)
-    secciones[nameSECT]['tabblock'][nameBlock]['len'] += addition
+    actualCounterLoc = getIntByHexOInt(
+        secciones[nameSECT]['tabblock'][nameBlock]['len'])
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] = SIC_HEX(
+        actualCounterLoc + addition)
 
 
 #
 def setCounterLoc(counter=0):
-    secciones[nameSECT]['tabblock'][nameBlock]['len'] = counter
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] = SIC_HEX(counter)
+    pass
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 
@@ -886,6 +881,7 @@ def getCounterLoc():
         return SIC_HEX(secciones[nameSECT]['tabblock'][nameBlock]['len'])
     except:
         return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
+
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
 
@@ -954,15 +950,14 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     #
     #     print(validateExRelativity_A_R_I(data))
 
-
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))
-print(SIC_HEX(-1))
-print(getIntByHexOInt('FFFF'))
-print(SIC_HEX(-3))
-print(getIntByHexOInt('FFFD'))
-###############################
-print(SIC_HEX(15, hexi=True))
-print(SIC_HEX('0030', hexi=True))
-print(SIC_HEX('0x03', hexi=True))
-print(SIC_HEX('5H', hexi=True))
+# print(SIC_HEX(-1))
+# print(getIntByHexOInt('FFFF'))
+# print(SIC_HEX(-3))
+# print(getIntByHexOInt('FFFD'))
+# ###############################
+# print(SIC_HEX(15, hexi=True))
+# print(SIC_HEX('0030', hexi=True))
+# print(SIC_HEX('0x03', hexi=True))
+# print(SIC_HEX('5H', hexi=True))
