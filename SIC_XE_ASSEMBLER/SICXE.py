@@ -429,6 +429,9 @@ def passOne(lines):
     firstInstruction = ''
     alredyDirective = False
     errorFlag = False
+    # definicion del archivo intermedio:
+    intermediateFileInsertion = '.'
+    interFile = []
     for line in lines:  # for each line do
         errorFlag = False
         if (line and line != '\s' and line != '\n' and line != '\t'):
@@ -453,6 +456,13 @@ def passOne(lines):
                         # si la validacion para los operandos de la instruccion formato 3 es correcta (True)
                         operandValidation = calc.validateExpSyntax(operands)
                         if (operandValidation == True):
+                            if (label):
+                                # suma 2 bytes al contador de programa actual
+                                successInsertion = calc.addSymbol(
+                                    label, 'R', calc.getCounterLoc())
+                                if (successInsertion != True):
+                                    intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                    )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
                             calc.addToCounterLoc(instruLen(mnemonic))
                         else:
                             intermediateFileInsertion = [
@@ -473,6 +483,13 @@ def passOne(lines):
                             # si la validacion para los operandos de la instruccion formato 2 es correcta (True)
                             if (operandValidation == True):
                                 # suma 2 bytes al contador de programa actual
+                                if (label):
+                                    # suma 2 bytes al contador de programa actual
+                                    successInsertion = calc.addSymbol(
+                                        label, 'R', calc.getCounterLoc())
+                                    if (successInsertion != True):
+                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
+                                        )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
                                 calc.addToCounterLoc(instruLen(mnemonic))
                             else:
                                 intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc()), calc.getNameBlock(
@@ -492,12 +509,7 @@ def passOne(lines):
                                 calc.SIC_HEX(calc.getCounterLoc(
                                 )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Unknowed:unreachable"]
                             errorFlag = True
-                    if (errorFlag == False):  # si no hubo error de sintaxis
-                        successInsertion = calc.addSymbol(
-                            label, 'R', calc.getCounterLoc())
-                        if (successInsertion != True):
-                            intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
-                            )), calc.getNameBlock(), label, mnemonic, operands, successInsertion]
+                      # si no hubo error de sintaxis
                 elif (dirInstr[0] == 'D'):  # es una directiva
                     if (dirInstr[1] == 'START'):  # no suma nada
                         # si el nombre de programa ya ha sido definido
@@ -580,8 +592,8 @@ def passOne(lines):
                                     successInsertion = calc.addSymbol(
                                         label, 'A', -1)
                                     if (successInsertion != True):
-                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
-                                        )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]+"ERROR:Simbolo:"successInsertion]
+                                        intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc()), calc.getNameBlock(
+                                        ), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]+"ERROR:Simbolo:"+successInsertion]
                                     else:
                                         intermediateFileInsertion = [calc.SIC_HEX(calc.getCounterLoc(
                                         )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]]
@@ -669,7 +681,8 @@ def passOne(lines):
                         )), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Mnemonic:la instruccion o directiva no existe o está mal referenciada"]
                     errorFlag = True
             if (label and errorFlag == False):
-
+                pass
+        interFile.append(intermediateFileInsertion)
     calc.getCounterLoc()
     # codOb.update({codOp_LineCounter: " . "})
     # if there was not a syntax error
@@ -892,7 +905,8 @@ def passTwo(archiInter, symTable):
             if (infoMnemonic[1] == 3):
                 if (baseMnemonic(line[2]) == 'RSUB'):
                     opAux = int(infoMnemonic[2], 16)
-                    op = '{0:08b}'.format(opAux)
+                    n = 9
+                    op = '{0:0b}'.format(opAux)
                     op = op[: len(op)-2]
                     decFlags = Nbit + Ibit
                     nixbpe = '{0:06b}'.format(decFlags)

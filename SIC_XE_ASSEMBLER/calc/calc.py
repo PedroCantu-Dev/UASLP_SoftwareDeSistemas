@@ -386,13 +386,29 @@ def regexMatch(regex, testStr):
         return False
 
 
+def twosComplement(binaryNumber):
+    onesComplement = ''
+    for binDigit in binaryNumber:
+        if binDigit == '0':
+            onesComplement += '1'
+        elif binDigit == '1':
+            onesComplement += '0'
+    res = int(onesComplement, 2) + 1
+    res = bindigit(res, len(binaryNumber))
+    return res
+
+
 def getIntByHexOInt(strConvert):
     res = 0
     if isinstance(strConvert, int):
         res = strConvert
-    elif (correctHex(strConvert)):
+    elif (possibleHex(strConvert)):
         strConvert = strConvert.replace('H', '').replace('h', '')
-        res = int(strConvert, 16)
+        res = bindigit(int(strConvert, 16), len(strConvert)*4)
+        if (len(res) > 0 and res[0] == '1'):  # es un numero negativo
+            res = - int(twosComplement(res), 2)
+        else:
+            res = int(strConvert, 16)
     elif (True):
         try:
             res = int(strConvert, 16)
@@ -400,11 +416,20 @@ def getIntByHexOInt(strConvert):
             res = None
     if (res == None and strConvert.isdecimal()):
         res = int(strConvert)
+    if (res == None):
+        res = 0
     return res
 
 
 def correctHex(possibleHex):
     if (regexMatch('[0-9a-fA-F]+(H|h)', possibleHex)):
+        return True
+    else:
+        return False
+
+
+def possibleHex(possibleHex):
+    if (regexMatch('[0-9a-fA-F]+(H|h)', possibleHex) or regexMatch('[0-9a-fA-F]+', possibleHex)):
         return True
     else:
         return False
@@ -458,13 +483,17 @@ def cleanHex(hexa, numFinal=6, charfill='0'):
 # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
     try:
-        res = cleanHex(hex(getIntByHexOInt(operand)), digits, charfill).upper()
+        if (isinstance(operand, int) and operand < 0):
+            res = bindigit(operand, digits*4)
+            res = cleanHex(hex(int(res, 2)), digits)
+        else:
+            res = cleanHex(hex(getIntByHexOInt(operand)),
+                           digits, charfill)
     except:
-        res = cleanHex(hex(0), digits, charfill).upper()
+        res = cleanHex(hex(0), digits, charfill)
     if (hexi):
         res += 'H'
-    return res
-
+    return res.upper()
 
 # def SIC_HEX_ToInt(SIC_HEX):
 #     try:
@@ -854,7 +883,7 @@ def setCounterLoc(counter=0):
 
 def getCounterLoc():
     try:
-        return secciones[nameSECT]['tabblock'][nameBlock]['len']
+        return SIC_HEX(secciones[nameSECT]['tabblock'][nameBlock]['len'])
     except:
         return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
 
@@ -925,12 +954,15 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     #
     #     print(validateExRelativity_A_R_I(data))
 
+
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
-    # print(SIC_HEX(15))
-    # print(SIC_HEX('0030'))
-    # print(SIC_HEX('0x03'))
-    # print(SIC_HEX('5H'))
-    # print(SIC_HEX(15, hexi=True))
-    # print(SIC_HEX('0030', hexi=True))
-    # print(SIC_HEX('0x03', hexi=True))
-    # print(SIC_HEX('5H', hexi=True))
+# print(SIC_HEX(15))
+print(SIC_HEX(-1))
+print(getIntByHexOInt('FFFF'))
+print(SIC_HEX(-3))
+print(getIntByHexOInt('FFFD'))
+###############################
+print(SIC_HEX(15, hexi=True))
+print(SIC_HEX('0030', hexi=True))
+print(SIC_HEX('0x03', hexi=True))
+print(SIC_HEX('5H', hexi=True))
