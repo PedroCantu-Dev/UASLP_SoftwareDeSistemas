@@ -91,8 +91,12 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
             res = bindigit(operand, digits*4)
             res = cleanHex(hex(int(res, 2)), digits)
         else:
-            res = cleanHex(hex(getIntBy_SicXe_HexOrInt(operand)),
-                           digits, charfill)
+            if (isinstance(operand, str)):
+                res = cleanHex(
+                    hex(getIntBy_SicXe_HexOrInt(operand, True)), digits, charfill)
+            else:
+                res = cleanHex(
+                    hex(getIntBy_SicXe_HexOrInt(operand)), digits, charfill)
     except:
         res = cleanHex(hex(0), digits, charfill)
     if (hexi):
@@ -109,14 +113,19 @@ print(SIC_HEX(15, 3))
 print(SIC_HEX(15, 6))
 print(SIC_HEX(15))
 print(SIC_HEX(15, 7))
+print(SIC_HEX(SIC_HEX(15)))
 print(SIC_HEX(-1))
+print(SIC_HEX(SIC_HEX(-1)))
 print(SIC_HEX(-1, 12))
 print(SIC_HEX(-3))
 print(SIC_HEX(-3, 12))
+
 print("los get int")
 print(getIntBy_SicXe_HexOrInt('0010', True))
 print(getIntBy_SicXe_HexOrInt('0010', False))
 print(getIntBy_SicXe_HexOrInt('0010'))
+print(getIntBy_SicXe_HexOrInt('0010H'))
+print(getIntBy_SicXe_HexOrInt('0010H', True))
 ###############################
 # print(SIC_HEX(15, hexi=True))
 # print(SIC_HEX('0030', hexi=True))

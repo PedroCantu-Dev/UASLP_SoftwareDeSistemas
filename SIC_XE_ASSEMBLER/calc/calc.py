@@ -79,7 +79,7 @@ def t_INDEXED(t):
 
 def t_INTH(t):
     r'[0-9a-fA-F]+(h|H)'  # (\d+(h|H))|
-    t.value = getIntBySICXEHexOInt(t.value)
+    t.value = getIntBy_SicXe_HexOrInt(t.value)
     return t
 
 
@@ -350,12 +350,12 @@ def run(p):
                         expErrorDescription = "variable de referencia Externa"
                         return 0
                     else:
-                        return getIntBySICXEHexOInt(variable['dirVal'])
+                        return getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
                 # para operaciones del paso 0 donde
                 elif (operationTypeOption == "passTwoOperation"):
                     # hacemos una instancia de la variable de interes:
                     variable = secciones[nameSECT]['tabsym'][p[1]]
-                    return getIntBySICXEHexOInt(variable['dirVal'])
+                    return getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
                 # exclusivamente para analisis sintactico,
                 # no nos importa el estado de las variables o la relatividad
                 # solo que la expresion sea correcta lexica y sintacticamente
@@ -465,8 +465,12 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
             res = bindigit(operand, digits*4)
             res = cleanHex(hex(int(res, 2)), digits)
         else:
-            res = cleanHex(hex(getIntBy_SicXe_HexOrInt(operand)),
-                           digits, charfill)
+            if (isinstance(operand, str)):
+                res = cleanHex(
+                    hex(getIntBy_SicXe_HexOrInt(operand, True)), digits, charfill)
+            else:
+                res = cleanHex(
+                    hex(getIntBy_SicXe_HexOrInt(operand)), digits, charfill)
     except:
         res = cleanHex(hex(0), digits, charfill)
     if (hexi):
@@ -529,7 +533,7 @@ def getTokens(expression):
         else:
             # resTokens.append({'type': tok.type, 'value': tok.value})
             resTokens.append(tok)
-        print(tok)
+        # print(tok)
     return resTokens
 
 
@@ -774,7 +778,7 @@ def setNameSECT(name=''):
 
 def setLocSTART(location):
     global locSTART
-    locSTART = getIntByHexOInt(location)
+    locSTART = getIntBy_SicXe_HexOrInt(location)
 
 
 def getLocSTART():
@@ -828,8 +832,8 @@ def addEXTREF(operands):
 def appendBlock(name='', dirIniRel=0, len=0):
     global secciones
     name = nameBlock if not name else name
-    dirIniRel = getIntByHexOInt(dirIniRel)
-    len = getIntByHexOInt(dirIniRel)
+    dirIniRel = getIntBy_SicXe_HexOrInt(dirIniRel)
+    len = getIntBy_SicXe_HexOrInt(dirIniRel)
     secciones[nameSECT]['tabblock'][name] = {
         'len': SIC_HEX(len), 'dirIniRel': SIC_HEX(dirIniRel)}
     pass
@@ -839,8 +843,8 @@ def addSymbol(symbol, typ='A', dirVal=-1,  extBool=False, nameBloc=None):
     nameBloc = nameBlock if nameBloc == None else nameBloc
     if (not symbol in secciones[nameSECT]['tabsym'].keys()):
         secciones[nameSECT]['tabsym'][symbol] = {
-            'dirVal': SIC_HEX(dirVal), 'type': typ, 'block': nameBloc, 'symExt': extBool
-        }
+            'dirVal': SIC_HEX(dirVal), 'type': typ, 'block': nameBloc, 'symExt': extBool}
+
         return True
     else:
         return 'simbolo duplicado'
@@ -861,9 +865,9 @@ def updateTabBlocks():
 
 
 def addToCounterLoc(addition=0):
-    addition = getIntByHexOInt(addition)
-    actualCounterLoc = getIntByHexOInt(
-        secciones[nameSECT]['tabblock'][nameBlock]['len'])
+    addition = getIntBy_SicXe_HexOrInt(addition)
+    actualCounterLoc = getIntBy_SicXe_HexOrInt(
+        getCounterLoc(), True)
     secciones[nameSECT]['tabblock'][nameBlock]['len'] = SIC_HEX(
         actualCounterLoc + addition)
 
@@ -878,7 +882,7 @@ def setCounterLoc(counter=0):
 
 def getCounterLoc():
     try:
-        return SIC_HEX(secciones[nameSECT]['tabblock'][nameBlock]['len'])
+        return secciones[nameSECT]['tabblock'][nameBlock]['len']
     except:
         return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
 
