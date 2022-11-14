@@ -345,7 +345,7 @@ def run(p):
                         expError = True
                         expErrorDescription = "variable de distinto bloque"
                         return 0
-                    if (variable['extBool'] == True):
+                    if (variable['symExt'] == True):
                         expError = True
                         expErrorDescription = "variable de referencia Externa"
                         return 0
@@ -646,8 +646,6 @@ def validateExRelativity_A_R_I(expression):
     Rneg = []
     parentesis = []
     operators = []
-    RParentPos = []
-    RParentNeg = []
     lastToken = ''
     for tok in tokenes:
         if (tok.type == 'MINUS' or tok.type == 'PLUS' or tok.type == 'MULTIPLY' or tok.type == 'DIVIDE'):
@@ -656,8 +654,6 @@ def validateExRelativity_A_R_I(expression):
                     return "ERROR: operador invalido para termino relativo"
             operators.append(tok.value)
         elif (tok.type == 'LPARENT'):
-            RParentNeg = []
-            LParentPos = []
             if (len(operators) > 0):
                 parentesis.append(operators.pop())
             else:
@@ -673,10 +669,10 @@ def validateExRelativity_A_R_I(expression):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            # if (secciones[nameSECT]['tabsym'][tok.value]['typ'] == 'R'):
-            # if (input(tok.value+": ") == 'R'):
-            if (tok.value == 'R'):
-                tok.type == 'R'
+            if (secciones[nameSECT]['tabsym'][tok.value]['typ'] == 'R'):
+                # if (input(tok.value+": ") == 'R'):
+                # if (tok.value == 'R'):
+                # tok.type == 'R'
                 if (singnsRulePositive(parentesis)):
                     if (len(operators) > 0):
                         operator = operators.pop()
@@ -868,13 +864,15 @@ def addToCounterLoc(addition=0):
     addition = getIntBy_SicXe_HexOrInt(addition)
     actualCounterLoc = getIntBy_SicXe_HexOrInt(
         getCounterLoc(), True)
-    secciones[nameSECT]['tabblock'][nameBlock]['len'] = SIC_HEX(
+    res = SIC_HEX(
         actualCounterLoc + addition)
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] = res
 
 
 #
 def setCounterLoc(counter=0):
-    secciones[nameSECT]['tabblock'][nameBlock]['len'] = SIC_HEX(counter)
+    setTo = SIC_HEX(counter)
+    secciones[nameSECT]['tabblock'][nameBlock]['len'] = setTo
     pass
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
@@ -882,7 +880,8 @@ def setCounterLoc(counter=0):
 
 def getCounterLoc():
     try:
-        return secciones[nameSECT]['tabblock'][nameBlock]['len']
+        res = secciones[nameSECT]['tabblock'][nameBlock]['len']
+        return res
     except:
         return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
 
