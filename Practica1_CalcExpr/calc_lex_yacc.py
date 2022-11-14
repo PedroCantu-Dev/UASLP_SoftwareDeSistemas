@@ -119,8 +119,8 @@ def p_calc(p):
 
 def p_expression_uminus(p):
     '''expression : MINUS expression %prec UMINUS'''
-    p[0] = -p[2].value
-    # p[0] = ('uminus', p[2])
+    # p[0] = -p[2].value
+    p[0] = ('UMINUS', p[2].value)
 
 
 def p_expression_uni(p):
@@ -267,7 +267,7 @@ def run(p):
                 errorDescription = "variable inexistente en el ambito 2"
                 err = True
                 return 0
-        elif p[0] == 'uminus':
+        elif p[0] == 'UMINUS':
             print("funciono muminus")
             return -(run(p[1]))
         elif p[0] == 'var':
@@ -336,7 +336,7 @@ while True:
         s = input('calc>> ')
     except EOFError:
         break
-    parser.parse(s)
+    parser.parse(s, debug=True)
 # parser.parse(s)
 
 # lexer = lex.lex()

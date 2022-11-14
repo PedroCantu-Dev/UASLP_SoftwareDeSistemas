@@ -161,8 +161,8 @@ def p_calc_octo_at(p):
 
 def p_expression_uminus(p):
     '''expression : MINUS expression %prec UMINUS'''
-    p[0] = -p[2].value
-    # p[0] = ('uminus', p[2])
+    # p[0] = -p[2].value
+    p[0] = ('uminus', p[2].value)
 
 
 def p_expression_uni(p):
@@ -236,8 +236,9 @@ def p_error(p):
             "\ncon valor: " + str(p.value) + \
             "\nen la posisión: " + str(p.lexpos)
         expError = True
+        print(expErrorDescription)
         # Just discard the token and tell the parser it's okay.
-        # parser.errok()
+
     else:
         print("Syntax error at EOF")
         expError = True
@@ -570,7 +571,7 @@ def evaluateExpSICXE(expression):
     expError = False
     expErrorDescription = ""
     try:
-        value = parser.parse(expression)
+        value = parser.parse(expression)  # , debug=True)
         if (expError == True):
             return (False, expErrorDescription)
         else:
@@ -669,7 +670,7 @@ def validateExRelativity_A_R_I(expression):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            if (secciones[nameSECT]['tabsym'][tok.value]['typ'] == 'R'):
+            if (secciones[nameSECT]['tabsym'][tok.value]['type'] == 'R'):
                 # if (input(tok.value+": ") == 'R'):
                 # if (tok.value == 'R'):
                 # tok.type == 'R'
