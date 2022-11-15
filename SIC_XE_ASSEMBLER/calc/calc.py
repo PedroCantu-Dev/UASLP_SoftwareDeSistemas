@@ -670,10 +670,8 @@ def validateExRelativity_A_R_I(expression):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            if (secciones[nameSECT]['tabsym'][tok.value]['type'] == 'R'):
-                # if (input(tok.value+": ") == 'R'):
-                # if (tok.value == 'R'):
-                # tok.type == 'R'
+            # if (secciones[nameSECT]['tabsym'][tok.value]['type'] == 'R'):
+            if (tok.value == 'R'):
                 if (singnsRulePositive(parentesis)):
                     if (len(operators) > 0):
                         operator = operators.pop()
@@ -727,9 +725,23 @@ def validateExRelativity_A_R_I(expression):
         return 'Error: la expresion es invalida por relatividad'
 
 
-##########################################################
-# funciones del Counter Location(Contador de programa: CP)
-#########################################################
+def interParensPop(RPosInter, Index):
+    try:
+        return RPosInter.pop()
+    except:
+        pass
+
+
+def isRelative():
+    try:
+        pass
+    except:
+        pass
+
+
+    ##########################################################
+    # funciones del Counter Location(Contador de programa: CP)
+    #########################################################
 nameSECT = ''  # nombre de la seccion actual
 nameBlock = ''  # nombre del bloque actual
 nameSTART = ''  # nombre de la seccion principal y del bloque por omision
@@ -953,10 +965,10 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     #################################
     # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
-    # while True:
-    #    data = input("expression: ")
-    #
-    #     print(validateExRelativity_A_R_I(data))
+
+while True:
+    data = input("expression: ")
+    print(validateExRelativity_A_R_I(data))
 
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))
