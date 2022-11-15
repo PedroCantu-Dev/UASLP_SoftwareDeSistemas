@@ -743,7 +743,7 @@ def setNameBlock(name=''):
     if (name):
         nameBlock = name
     else:
-        nameBlock = nameSTART
+        nameBlock = nameSECT
     # si el boque al que se quiere acceder no existe lo crea
     if (nameBlock not in secciones[nameSECT]['tabblock'].keys()):
         appendBlock(name)
@@ -830,7 +830,11 @@ def appendBlock(name='', dirIniRel=0, len=0):
     global secciones
     name = nameBlock if not name else name
     dirIniRel = getIntBy_SicXe_HexOrInt(dirIniRel)
-    len = getIntBy_SicXe_HexOrInt(dirIniRel)
+    try:
+        len = getIntBy_SicXe_HexOrInt(
+            secciones[nameSECT]['tabblock'][name]['len'], True)
+    except:
+        len = getIntBy_SicXe_HexOrInt(len)
     secciones[nameSECT]['tabblock'][name] = {
         'len': SIC_HEX(len), 'dirIniRel': SIC_HEX(dirIniRel)}
     pass
