@@ -767,14 +767,14 @@ def setNameBlock(name=''):
     pass
 
 
-def setEND(name=''):
+def setEND():
     global nameBlock
     global nameSECT
     nameBlock = nameSTART
     nameSECT = nameSTART
 
 
-def getNameBlock(name=''):
+def getNameBlock():
     global nameBlock
     return nameBlock
 
@@ -917,7 +917,7 @@ def getCounterLoc():
         res = secciones[nameSECT]['tabblock'][nameBlock]['len']
         return res
     except:
-        return 0  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
+        return '0000'  # si el contador de programa no ha sido definido y se quiere acceder a el retor a 0
 
 
 # retorna el valor del contador de programa de la seccion y bloque actuales
