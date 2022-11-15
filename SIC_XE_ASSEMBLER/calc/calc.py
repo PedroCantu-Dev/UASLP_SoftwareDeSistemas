@@ -645,6 +645,12 @@ def validateExRelativity_A_R_I(expression):
     tokenes = getTokens(expression)
     Rpos = []
     Rneg = []
+    RPosInternal = []
+    RNegInternal = []
+
+    # RPosInternal.append([])
+    # RNegInternal.append([])
+
     parentesis = []
     operators = []
     lastToken = ''
@@ -737,7 +743,6 @@ def isRelative():
         pass
     except:
         pass
-
 
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
