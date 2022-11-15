@@ -39,41 +39,54 @@ class Sicxe_GUI:
         __thisRegisterFile, orient='horizontal')
 
     # for intermediate file
-    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6')
+    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7')
     __thisIntermediateFileTree = Treeview(
         __InterFileLabel, columns=columnsInter, show='headings')
     # define headings
 
-    __thisIntermediateFileTree.column('#1', anchor=CENTER, width=70)
-    __thisIntermediateFileTree.heading('#1', text='Line Index')
-    __thisIntermediateFileTree.column('#2', anchor=CENTER, width=60)
-    __thisIntermediateFileTree.heading('#2', text='PC')
-    __thisIntermediateFileTree.column('#3', anchor=CENTER, width=100)
+    # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
+
+    __thisIntermediateFileTree.column('#1', anchor=CENTER, width=50)
+    __thisIntermediateFileTree.heading('#1', text='Index')
+    __thisIntermediateFileTree.column('#2', anchor=CENTER, width=100)
+    __thisIntermediateFileTree.heading('#2', text='Bloque')
+    __thisIntermediateFileTree.column('#3', anchor=CENTER, width=75)
+    __thisIntermediateFileTree.heading('#3', text='PC')
+    __thisIntermediateFileTree.column('#4', anchor=CENTER, width=100)
+    __thisIntermediateFileTree.heading('#4', text='Label')
+    __thisIntermediateFileTree.column('#5', anchor=CENTER, width=100)
+    __thisIntermediateFileTree.heading('#5', text='Mnemonico')
+    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=360)
+    __thisIntermediateFileTree.heading('#6', text='Operando')
+    __thisIntermediateFileTree.column('#7', anchor=CENTER, width=360)
+    __thisIntermediateFileTree.heading('#7', text='Obj/Error')
+
     # __thisIntermediateFileTree.tag_config(background="black",
     #   foreground="red")
-    __thisIntermediateFileTree.heading('#3', text='Label')
-    __thisIntermediateFileTree.column('#4', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#4', text='Mnemonic')
-    __thisIntermediateFileTree.column('#5', anchor=CENTER, width=360)
-    __thisIntermediateFileTree.heading('#5', text='Operand')
-    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=360)
-    __thisIntermediateFileTree.heading('#6', text='Obj Code')
 
     __thisIntermediateFileScrollBarY = Scrollbar(__thisIntermediateFileTree)
     __thisIntermediateFileScrollBarX = Scrollbar(
         __thisIntermediateFileTree, orient='horizontal')
 
     # for symbol table
-    columnsTabSym = ('#1', '#2')
+    columnsTabSym = ('#1', '#2', '#3', '#4', '#5', '#6')
     __thisTabSymFileTree = Treeview(
         __TabSymLabel, columns=columnsTabSym, show='headings')
     # define headings
     # __thisTabSymFileTree.column('#1', anchor=CENTER, width=80)
     # __thisTabSymFileTree.heading('#1', text='Sym-Index')
-    __thisTabSymFileTree.column('#1', anchor=CENTER, width=50)
-    __thisTabSymFileTree.heading('#1', text='Symbol')
-    __thisTabSymFileTree.column('#2', anchor=CENTER, width=50)
-    __thisTabSymFileTree.heading('#2', text='Address')
+    __thisTabSymFileTree.column('#1', anchor=CENTER, width=35)
+    __thisTabSymFileTree.heading('#1', text='Seccion')
+    __thisTabSymFileTree.column('#2', anchor=CENTER, width=35)
+    __thisTabSymFileTree.heading('#2', text='Bloque')
+    __thisTabSymFileTree.column('#3', anchor=CENTER, width=40)
+    __thisTabSymFileTree.heading('#3', text='Symbol')
+    __thisTabSymFileTree.column('#4', anchor=CENTER, width=40)
+    __thisTabSymFileTree.heading('#4', text='Dir/Valor')
+    __thisTabSymFileTree.column('#5', anchor=CENTER, width=10)
+    __thisTabSymFileTree.heading('#5', text='Tipo')
+    __thisTabSymFileTree.column('#6', anchor=CENTER, width=25)
+    __thisTabSymFileTree.heading('#6', text='Externo')
 
     __thisTabSymFileScrollBarY = Scrollbar(__thisTabSymFileTree)
     __thisTabSymFileScrollBarX = Scrollbar(
@@ -429,7 +442,9 @@ class Sicxe_GUI:
             # call step one
             lines = lines.split("\n")
             passOneReturn = passOne(lines)
-            self.intermediateFile = passOneReturn[0]
+            self.intermediateFile = passOneReturn['interFile']
+            self.sections = passOneReturn['secciones']
+
             self.tableSym = passOneReturn[1]
             self.initial = passOneReturn[2]
             self.size = passOneReturn[3]

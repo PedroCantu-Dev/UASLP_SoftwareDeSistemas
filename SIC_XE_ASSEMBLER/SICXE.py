@@ -719,7 +719,7 @@ def passOne(lines):
     # actualiza todas las tablas de bloques para que queden en la direccion inicial que les corresponde
     calc.updateTabBlocks()
     resPassOne = calc.secciones
-    return resPassOne
+    return {'secciones': calc.secciones, 'interFile': interFile}
 
     # tam = PC - initialDirection
     # return [codOb, tabSym, initialDirection, tam, errorDicArray]
