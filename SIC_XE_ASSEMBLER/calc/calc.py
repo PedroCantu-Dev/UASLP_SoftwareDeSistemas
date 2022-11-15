@@ -767,6 +767,13 @@ def setNameBlock(name=''):
     pass
 
 
+def setEND(name=''):
+    global nameBlock
+    global nameSECT
+    nameBlock = nameSTART
+    nameSECT = nameSTART
+
+
 def getNameBlock(name=''):
     global nameBlock
     return nameBlock
@@ -867,18 +874,23 @@ def addSymbol(symbol, typ='A', dirVal=-1,  extBool=False, nameBloc=None):
     else:
         return 'simbolo duplicado'
 
-
-def updateTabBlockLen(numBlock, len=0, section=nameSECT):
-    secciones[section]['tabblock'][numBlock]['len'] = SIC_HEX(len)
-
 # actualiza la tabla de bloques con e tamaño de los bloques anteriores
 
 
 def updateTabBlocks():
-    pass
+    for indexSection, seccionName in enumerate(secciones):
+        blocks = secciones[seccionName]['tabblock']
+        nextInitial = 0
+        for indexBlock, blockName in enumerate(blocks):
+            block = blocks[blockName]
+            if (indexBlock == 0):
+                nextInitial = getIntBy_SicXe_HexOrInt(
+                    block['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(block['len'], True)
+            else:
+                block['dirIniRel'] = SIC_HEX(nextInitial)
+                nextInitial += getIntBy_SicXe_HexOrInt(block['len'], True)
 
-# añade una seccion de programa
-
+ # añade una seccion de programa
 # suma a CP el numero de bytes indicado
 
 
@@ -971,9 +983,9 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
 
-while True:
-    data = input("expression: ")
-    print(validateExRelativity_A_R_I(data))
+# while True:
+#     data = input("expression: ")
+#     print(validateExRelativity_A_R_I(data))
 
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))

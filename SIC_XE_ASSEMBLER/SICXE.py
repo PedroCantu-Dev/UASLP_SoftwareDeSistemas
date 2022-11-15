@@ -429,10 +429,12 @@ def passOne(lines):
     # banderas para informacion
     firstInstruction = ''
     alredyDirective = False
+    alredyEND = False
     errorFlag = False
     errorInsertion = "."
     commentary = ''
     actualCounterLoc = ''
+    blockName = ''
     # definicion del archivo intermedio:
     interFile = []
     for line in lines:  # for each line do
@@ -440,8 +442,8 @@ def passOne(lines):
         if (line and line != '\s' and line != '\n' and line != '\t'):
             errorInsertion = "."
             commentary = ''
-            actualCounterLoc = calc.getCounterLoc(
-            )
+            actualCounterLoc = calc.getCounterLoc()
+            blockName = calc.getNameBlock()
             # parse the line and sign values to variables
             label, mnemonic, operands, comment = parseLine(line)
             codop = ""
@@ -641,8 +643,6 @@ def passOne(lines):
                     elif (dirInstr[1] == 'BYTE'):
                         alredyDirective = True
                         if (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
-                            successInsertion = calc.addSymbol(
-                                label, 'R', calc.getCounterLoc())
                             # el simbolo ya existe en la tabla de simbolos
                             if (label):
                                 successInsertion = calc.addSymbol(
@@ -713,17 +713,18 @@ def passOne(lines):
                                 ), calc.getNameBlock(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESW"]
                         calc.secciones
                     elif (dirInstr[1] == 'END'):  # no suma nada
-                        alredyDirective = True
-                        if (lines.index(line) != len(lines)-1):
+                        if (alredyEND == True):
                             errorInsertion = [calc.getCounterLoc(
                             ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END debe ir solo al final del programa"]
-
                         else:
-                            pass
+                            alredyEND = True
+                            calc.setEND()
+                            actualCounterLoc = calc.getCounterLoc()
                     # quiere decir que no hubo errores de sintaxis
+
         if (errorInsertion != "."):
             interFile.append(errorInsertion)
-        elif (commentary != "?"):
+        elif (commentary != "?" and line != ''):
             interFile.append(
                 [actualCounterLoc, label, mnemonic, operands, '.'])
         else:
