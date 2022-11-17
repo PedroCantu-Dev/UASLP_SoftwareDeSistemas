@@ -273,6 +273,7 @@ tabBlockRow = {}
 tabSymRow = {}
 
 listaCSECTBlockCP = {}
+sizeOfProgram = 0
 
 
 def run(p):
@@ -499,6 +500,7 @@ def passOneOnInit():
     global seccion
     global tabBlock
     global tabSym
+    global sizeOfProgram
     tabBlockRow = {}
     tabSymRow = {}
     expError = False
@@ -511,6 +513,7 @@ def passOneOnInit():
     # instancia de
     tabBlock = {}
     tabSym = {}
+    sizeOfProgram = 0
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso dos
 
@@ -744,6 +747,7 @@ def isRelative():
     except:
         pass
 
+
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
     #########################################################
@@ -777,6 +781,11 @@ def setEND():
 def getNameBlock():
     global nameBlock
     return nameBlock
+
+
+def getNameSECT():
+    global nameSECT
+    return nameSECT
 
 # cambia la seccion de trabajo
 

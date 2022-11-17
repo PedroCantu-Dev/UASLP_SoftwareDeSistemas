@@ -39,7 +39,7 @@ class Sicxe_GUI:
         __thisRegisterFile, orient='horizontal')
 
     # Archivo intermedio:
-    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7')
+    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',  '#8')
     __thisIntermediateFileTree = Treeview(
         __InterFileLabel, columns=columnsInter, show='headings')
 
@@ -48,17 +48,19 @@ class Sicxe_GUI:
     __thisIntermediateFileTree.column('#1', anchor=CENTER, width=50)
     __thisIntermediateFileTree.heading('#1', text='Index')
     __thisIntermediateFileTree.column('#2', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#2', text='Bloque')
-    __thisIntermediateFileTree.column('#3', anchor=CENTER, width=75)
-    __thisIntermediateFileTree.heading('#3', text='PC')
-    __thisIntermediateFileTree.column('#4', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#4', text='Label')
+    __thisIntermediateFileTree.heading('#2', text='Sección')
+    __thisIntermediateFileTree.column('#3', anchor=CENTER, width=100)
+    __thisIntermediateFileTree.heading('#3', text='Bloque')
+    __thisIntermediateFileTree.column('#4', anchor=CENTER, width=75)
+    __thisIntermediateFileTree.heading('#4', text='PC')
     __thisIntermediateFileTree.column('#5', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#5', text='Mnemonico')
-    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=360)
-    __thisIntermediateFileTree.heading('#6', text='Operando')
+    __thisIntermediateFileTree.heading('#5', text='Label')
+    __thisIntermediateFileTree.column('#6', anchor=CENTER, width=100)
+    __thisIntermediateFileTree.heading('#6', text='Mnemonico')
     __thisIntermediateFileTree.column('#7', anchor=CENTER, width=360)
-    __thisIntermediateFileTree.heading('#7', text='Obj/Error')
+    __thisIntermediateFileTree.heading('#7', text='Operando')
+    __thisIntermediateFileTree.column('#8', anchor=CENTER, width=360)
+    __thisIntermediateFileTree.heading('#8', text='Obj/Error')
     # __thisIntermediateFileTree.tag_config(background="black",
     #   foreground="red")
     # definiendo los scroll bars:
@@ -71,17 +73,17 @@ class Sicxe_GUI:
     __thisTabSymFileTree = Treeview(
         __TabSymLabel, columns=columnsTabSym, show='headings')
     # define headings
-    __thisTabSymFileTree.column('#1', anchor=CENTER, width=400)
+    __thisTabSymFileTree.column('#1', anchor=CENTER, width=200)
     __thisTabSymFileTree.heading('#1', text='Seccion')
-    __thisTabSymFileTree.column('#2', anchor=CENTER, width=400)
+    __thisTabSymFileTree.column('#2', anchor=CENTER, width=200)
     __thisTabSymFileTree.heading('#2', text='Bloque')
-    __thisTabSymFileTree.column('#3', anchor=CENTER, width=500)
+    __thisTabSymFileTree.column('#3', anchor=CENTER, width=250)
     __thisTabSymFileTree.heading('#3', text='Symbol')
-    __thisTabSymFileTree.column('#4', anchor=CENTER, width=500)
+    __thisTabSymFileTree.column('#4', anchor=CENTER, width=250)
     __thisTabSymFileTree.heading('#4', text='Dir/Valor')
-    __thisTabSymFileTree.column('#5', anchor=CENTER, width=200)
+    __thisTabSymFileTree.column('#5', anchor=CENTER, width=100)
     __thisTabSymFileTree.heading('#5', text='Tipo')
-    __thisTabSymFileTree.column('#6', anchor=CENTER, width=350)
+    __thisTabSymFileTree.column('#6', anchor=CENTER, width=100)
     __thisTabSymFileTree.heading('#6', text='Externo')
 
     __thisTabSymFileScrollBarY = Scrollbar(__thisTabSymFileTree)
@@ -449,22 +451,27 @@ class Sicxe_GUI:
             # call step one
             lines = lines.split("\n")
             passOneReturn = passOne(lines)
+
+            # asignando los valores con lo que retorna el paso 1
             self.intermediateFile = passOneReturn['interFile']
+            self.errors = passOneReturn['errorsFile']
+            self.intermediateFileName = passOneReturn['nameSTART']
+            self.assembledFolderPrefix = self.__getAssembledFolderPrefix(
+                self.intermediateFileName)
+
             self.sections = passOneReturn['secciones']
 
-            self.tableSym = passOneReturn[1]
-            self.initial = passOneReturn[2]
-            self.size = passOneReturn[3]
-            errors = passOneReturn[4]
+            # self.tableSym = passOneReturn[1]
+            # self.initial = passOneReturn[2]
+            # self.size = passOneReturn[3]
+            # errors = passOneReturn[4]
             # print("file name(just name) :  " + Path(__file__).name)
             # print("Directory name :  " + os.path.dirname(__file__))
 
-            self.intermediateFileName = list(
-                self.intermediateFile.values())[0][1]
+            # self.intermediateFileName = list(
+            #     self.intermediateFile.values())[0][1]
             # assembledFolderPrefix = os.path.dirname(
             #     __file__)+"/assembled/" + intermediateFileName + "/"
-            self.assembledFolderPrefix = self.__getAssembledFolderPrefix(
-                self.intermediateFileName)
 
             # # for assembled folder creation
             # if not os.path.exists(assembledFolderPrefix):
@@ -474,48 +481,17 @@ class Sicxe_GUI:
             interFile = open(self.assembledFolderPrefix +
                              self.intermediateFileName+'.arc', "w+")
             index = 0
-            for key in self.intermediateFile:
-                interFile.writelines(str(key))
-                interFile.writelines(" ")
-                line = self.intermediateFile.get(key)
-                for any in line:
-                    interFile.writelines(any)
-                    interFile.writelines(" ")
-                self.__thisIntermediateFileTree.insert(
-                    '', END, values=(index, line[0], line[1], line[2], line[3], line[4]))
-                interFile.writelines("\n")
+            for line in self.intermediateFile:
+                if (line != '.'):
+                    for field in line:
+                        if (field != '.'):
+                            interFile.writelines(field)
+                            interFile.writelines(" ")
+                    self.__thisIntermediateFileTree.insert(
+                        '', END, values=(index, line[0], line[1], line[2], line[3], line[4], line[5], line[6]))
+                    interFile.writelines("\n")
                 index += 1
             interFile.close()
-
-            # symbol table
-            tabSymFile = open(self.assembledFolderPrefix +
-                              self.intermediateFileName+'.tab', "w+")
-            for key in self.tableSym:
-                tabSymFile.writelines(key)
-                tabSymFile.writelines(" ")
-                line = self.tableSym.get(key)
-                tabSymFile.writelines(line)
-                tabSymFile.writelines("\n")
-                self.__thisTabSymFileTree.insert('', END, values=(key, line))
-            tabSymFile.writelines("Tam del programa:" + str(self.size))
-            tabSymFile.close()
-
-            # error table
-            errorFile = open(self.assembledFolderPrefix +
-                             self.intermediateFileName+'.err', "w+")
-            for key in errors:
-                errorFile.writelines(str(key))
-                errorFile.writelines(" ")
-                line = errors.get(key)
-
-                for lin in line:
-                    errorFile.writelines(str(lin))
-                    errorFile.writelines(" ")
-                errorFile.writelines("\n")
-                msgError = line[5].split(',')
-                self.__thisErrorTableFileTree.insert(
-                    '', END, values=(str(key) + ' | ('+line[1]+')', msgError[0] + '-->   ' + line[2] + ' ' + line[3] + ' ' + line[4], msgError[1], msgError[2]))
-            errorFile.close()
 
     def makeHexString(self, vari):
         if (type(vari) is int):
