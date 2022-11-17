@@ -92,18 +92,20 @@ class Sicxe_GUI:
 
     # for error lines
     # index ,sentence , type, description
-    columnsErrorTable = ('#1', '#2', '#3', '#4')
+    columnsErrorTable = ('#1', '#2', '#3', '#4', '#5')
     __thisErrorTableFileTree = Treeview(
         __ErrorsLabel, columns=columnsErrorTable, show='headings')
     # define headings
     __thisErrorTableFileTree.column('#1', anchor=CENTER, width=80)
     __thisErrorTableFileTree.heading('#1', text='Line index')
     __thisErrorTableFileTree.column('#2', anchor=CENTER, width=200)
-    __thisErrorTableFileTree.heading('#2', text='sentence')
+    __thisErrorTableFileTree.heading('#2', text='CP')
     __thisErrorTableFileTree.column('#3', anchor=CENTER, width=200)
-    __thisErrorTableFileTree.heading('#3', text='type')
-    __thisErrorTableFileTree.column('#4', anchor=CENTER, width=450)
-    __thisErrorTableFileTree.heading('#4', text='description')
+    __thisErrorTableFileTree.heading('#3', text='sentence')
+    __thisErrorTableFileTree.column('#4', anchor=CENTER, width=200)
+    __thisErrorTableFileTree.heading('#4', text='type')
+    __thisErrorTableFileTree.column('#5', anchor=CENTER, width=450)
+    __thisErrorTableFileTree.heading('#5', text='description')
 
     __thisErrorTableFileScrollBarY = Scrollbar(__thisErrorTableFileTree)
     __thisErrorTableFileScrollBarX = Scrollbar(
@@ -480,18 +482,43 @@ class Sicxe_GUI:
             # Intermediate File, plot and save
             interFile = open(self.assembledFolderPrefix +
                              self.intermediateFileName+'.arc', "w+")
-            index = 0
+
             for line in self.intermediateFile:
                 if (line != '.'):
                     for field in line:
                         if (field != '.'):
-                            interFile.writelines(field)
+                            interFile.writelines(str(field))
                             interFile.writelines(" ")
                     self.__thisIntermediateFileTree.insert(
-                        '', END, values=(index, line[0], line[1], line[2], line[3], line[4], line[5], line[6]))
+                        '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
                     interFile.writelines("\n")
-                index += 1
+
             interFile.close()
+
+            # archivo de errores , plot y save
+            # error table
+            if (len(self.errors) > 0):
+                errorFile = open(self.assembledFolderPrefix +
+                                 self.intermediateFileName+'.err', "w+")
+                for errorLine in self.errors:
+                    errorFile.writelines(
+                        str(errorLine[0]) + "|" + errorLine[1]+"|" + errorLine[2]+"|" + errorLine[3]+"|")
+                    errorFile.writelines(" ")
+                    codeLine = errorLine[4] + " " + \
+                        errorLine[5] + " " + errorLine[6]
+                    errorFile.writelines(codeLine)
+                    errorFile.writelines(" ")
+                    errorFile.writelines("|")
+                    errorFile.writelines(errorLine[7])
+                    errorFile.writelines("\n")
+
+                    errDescription = errorLine[7].split(":")
+                    errType = errDescription[2]
+                    errDescription = errDescription[3]
+
+                    self.__thisErrorTableFileTree.insert('', END, values=(
+                        errorLine[0], errorLine[1]+"/"+errorLine[2]+"/CP:"+errorLine[3], codeLine, errType, errDescription))
+                errorFile.close()
 
     def makeHexString(self, vari):
         if (type(vari) is int):

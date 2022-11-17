@@ -189,8 +189,9 @@ def validMnemonic(mnemonic):
 
 
 def baseMnemonic(mnemonic):
-    if mnemonic[0] == "+":
-        return mnemonic[1:]
+    if (mnemonic):
+        if mnemonic[0] == "+":
+            return mnemonic[1:]
     return mnemonic
 
 
@@ -440,6 +441,7 @@ def passOne(lines):
     # definicion del archivo intermedio:
     interFile = []
     errorsFile = []
+    lineIndex = 0
     for line in lines:  # for each line do
         errorFlag = False
         if (line and line != '\s' and line != '\n' and line != '\t'):
@@ -456,9 +458,19 @@ def passOne(lines):
                 continue
             else:
                 # identificando la instruccion en el diccionario
+                # print(line)
                 dirInstr = SICXE_Dictionary.get(
                     baseMnemonic(mnemonic))  # identify the instruction
-                if (dirInstr[0] == 'I'):  # si es una instruccion
+                if (not dirInstr):
+                    lineSplited = line.split()
+                    label = ""
+                    for lineS in lineSplited:
+                        label += lineS+" "
+                    mnemonic = ''
+                    operands = ''
+                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
+                    ),  label, mnemonic, operands, ":ERROR:Mnemonic:"+"instruccion no existe"]
+                elif (dirInstr[0] == 'I'):  # si es una instruccion
                     # si aun no hay una primera instruccion definida( util para cuando END no tiene label al final)
                     if (not firstInstruction):
                         firstInstruction = calc.getCounterLoc()
@@ -474,16 +486,16 @@ def passOne(lines):
                                     label, 'R', calc.getCounterLoc())
                                 # el simbolo ya existe en la tabla de simbolos
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                     ),  label, mnemonic, operands, ":ERROR:Simbolo:"+successInsertion]
                             # suma la cantidad de bytes de la instruccion a el CP
                             calc.addToCounterLoc(instruLen(mnemonic))
                         else:
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ),  label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido,"+operandValidation]
                     # solo las instrucciones formato 3 pueden ser extendidas, por lo que genera un error
                     elif (typeFour(mnemonic)):
-                        errorInsertion = [sectName, blockName,
+                        errorInsertion = [lineIndex, sectName, blockName,
                                           calc.getCounterLoc(
                                           ), label, mnemonic, operands,
                                           ":ERROR:Mnemonic:la instruccion no puede ser extendida"]
@@ -499,24 +511,24 @@ def passOne(lines):
                                     successInsertion = calc.addSymbol(
                                         label, 'R', calc.getCounterLoc())
                                     if (successInsertion != True):
-                                        errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                        errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                         ),  label, mnemonic, operands, ":ERROR:Simbolo:successInsertion"]
                                 # suma la cantidad de bytes de la instruccion a el CP
                                 calc.addToCounterLoc(instruLen(mnemonic))
                             else:
-                                errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido, "+operandValidation]
                         elif (dirInstr[1] == 1):  # es formato 1
                             # si hay operandos para instrucciones formato 1, ocurre un error
                             if (operands):
-                                errorInsertion = [sectName, blockName,
+                                errorInsertion = [lineIndex, sectName, blockName,
                                                   calc.getCounterLoc(
                                                   ), label, mnemonic, operands, ":ERROR:Sintaxis:sobran operandos"]
                             else:
                                 # suma la cantidad de bytes de la instruccion a el CP
                                 calc.addToCounterLoc(instruLen(mnemonic))
                         else:
-                            errorInsertion = [sectName, blockName,
+                            errorInsertion = [lineIndex, sectName, blockName,
                                               calc.getCounterLoc(
                                               ), label, mnemonic, operands, ":ERROR:Unknowed:unreachable"]
                       # si no hubo error de sintaxis
@@ -524,14 +536,14 @@ def passOne(lines):
                     if (dirInstr[1] == 'START'):  # no suma nada
                         # si el nombre de programa ya ha sido definido
                         if (calc.getNameSTART() != ''):
-                            errorInsertion = [sectName, blockName,
+                            errorInsertion = [lineIndex, sectName, blockName,
                                               calc.getCounterLoc(
                                               ),  label, mnemonic, operands, ":ERROR:Sintaxis:Uso incorrecto de la directiva START, debe ir solo al inicio del programa"]
                         else:
                             if (not label):
-                                errorInsertion = [sectName, blockName,
+                                errorInsertion = [lineIndex, sectName, blockName,
                                                   calc.getCounterLoc(
-                                                  ),  label, mnemonic, operands, "!ERROR!,:Sintaxis:,falta nombre de programa"]
+                                                  ),  label, mnemonic, operands, ":ERROR:Sintaxis:Falta nombre de programa"]
                             elif (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
                                 # define el nombre del programa
                                 calc.setNameSTART(label)
@@ -545,7 +557,7 @@ def passOne(lines):
                                 sectName = calc.getNameSECT()
                                 actualCounterLoc = calc.getCounterLoc()
                             else:
-                                errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:operando invalido para la directiva START"]
                     # cambia la seccion de control que se está utilizando
                     elif (dirInstr[1] == 'CSECT'):
@@ -556,35 +568,35 @@ def passOne(lines):
                                     successInsertion = calc.appendSection(
                                         label)
                                     if (successInsertion != True):
-                                        errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                        errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                         ), label, mnemonic, operands, ":ERROR:Sección:" + successInsertion]
                                     else:
                                         actualCounterLoc = calc.getCounterLoc()
                                         blockName = calc.getNameBlock()
                                         sectName = calc.getNameSECT()
                                 else:
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                     ), label, mnemonic, operands, ":ERROR:Sintaxis:Nombre invalido para CSECT, se espera un sibolo"]
                             else:
-                                errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                 ), label, mnemonic, operands, ":ERROR:Sintaxis:La directiva CSECT no soporta operandos"]
                         else:
-                            errorInsertion = [calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Falta el nombre de la seccion de control"]
                     elif (dirInstr[1] == 'EXTDEF'):
                         if (calc.regexMatch(argumentTokens[dirInstr[3]], operands) != True):
-                            errorInsertion = [calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
                     elif (dirInstr[1] == 'EXTREF'):
                         if (calc.regexMatch(argumentTokens[dirInstr[3]], operands) == True):
                             calc.addEXTREF(operands)
                         else:
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para la directiva EXTDEF"]
                      # cambia el bloque en el que se está trabajando
                     elif (dirInstr[1] == 'USE'):
                         if (label):
-                            errorInsertion = [calc.getNameBlock(), calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName,  calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Sintaxis:la directiva USE no soporta etiquetas"]
                         else:
                             alredyDirective = True
@@ -602,7 +614,7 @@ def passOne(lines):
                                 successInsertion = calc.addSymbol(
                                     label, 'R', CLoc)
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                     ),  label, mnemonic, operands, "ERROR:Simbolo:"+successInsertion]
                             else:
                                 operandValidation = calc.evaluateExpPassOne(
@@ -611,19 +623,19 @@ def passOne(lines):
                                     successInsertion = calc.addSymbol(
                                         label, 'A', -1)
                                     if (successInsertion != True):
-                                        errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                        errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                         ), label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]+"ERROR:Simbolo:"+successInsertion]
                                     else:
-                                        errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                        errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                         ),  label, mnemonic, operands, ":ERROR:Sintaxis:"+operandValidation[1]]
                                 else:
                                     successInsertion = calc.addSymbol(
                                         label, operandValidation[1], operandValidation[2])
                                     if (successInsertion != True):
-                                        errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                        errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                         ),  label, mnemonic, operands, "ERROR:Simbolo:"+successInsertion]
                         else:
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ),  label, mnemonic, operands, ":ERROR:Sintaxis:Definicion de simbolo invalida, falta nombre de simbolo"]
                     # cambia el contador de programa el valor especificado
                     elif (dirInstr[1] == 'ORG'):
@@ -631,10 +643,10 @@ def passOne(lines):
                         # retorna una tupla con información
                         operandValidation = calc.evaluateExpPassOne(operands)
                         if (operandValidation[0] == False):
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ), label, mnemonic, operands, "ERROR:Sintaxis:"+operandValidation[1]]
                         elif (operandValidation[1] == 'R'):
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                             ), label, mnemonic, operands, ":ERROR:Operando:"+"el operando no puede ser relativo"]
                         else:
                             calc.setCounterLoc(operandValidation[2])
@@ -647,13 +659,13 @@ def passOne(lines):
                                     label, 'R', calc.getCounterLoc())
                                 # el simbolo ya existe en la tabla de simbolos
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(), calc.getNameBlock(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(), calc.getNameBlock(
                                     ), label, mnemonic, operands, ":ERROR:Simbolo:"+successInsertion]
                             calc.addToCounterLoc(
                                 directiveLen('BYTE', operands))
                         else:
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
-                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,Operando invalido para BYTE"]
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
+                            ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para BYTE"]
                     # cambia el valor de la base, empieza en -1 comp2
                     elif (dirInstr[1] == 'BASE'):
                         alredyDirective = True
@@ -666,11 +678,11 @@ def passOne(lines):
                                     label, 'R', calc.getCounterLoc())
                                 # el simbolo ya existe en la tabla de simbolos
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(), calc.getNameBlock(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(), calc.getNameBlock(
                                     ), label, mnemonic, operands, ":ERROR:Simbolo:"+successInsertion]
                             calc.addToCounterLoc(directiveLen('WORD'))
                         else:
-                            errorInsertion = [sectName, blockName,
+                            errorInsertion = [lineIndex, sectName, blockName,
                                               calc.getCounterLoc(
                                               ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido:"+operandValidation]
                     elif (dirInstr[1] == 'RESB'):  # reserva el numero de bytes especificado
@@ -681,14 +693,13 @@ def passOne(lines):
                                     label, 'R', calc.getCounterLoc())
                                 # el simbolo ya existe en la tabla de simbolos
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                     ), label, mnemonic, operands, ":ERROR:Simbolo:"+successInsertion]
                             calc.addToCounterLoc(
                                 directiveLen('RESB', operands))
                         else:
-                            errorInsertion = [
-                                calc.getCounterLoc(
-                                ), sectName, blockName, label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESB"]
+                            errorInsertion = [lineIndex,
+                                              sectName, blockName, calc.getCounterLoc(), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESB"]
                     elif (dirInstr[1] == 'RESW'):
                         alredyDirective = True
                         if (calc.regexMatch(argumentTokens[dirInstr[3]], operands)):
@@ -697,18 +708,17 @@ def passOne(lines):
                                     label, 'R', calc.getCounterLoc())
                                 # el simbolo ya existe en la tabla de simbolos
                                 if (successInsertion != True):
-                                    errorInsertion = [sectName, blockName, calc.getCounterLoc(
+                                    errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
                                     ), label, mnemonic, operands, ":ERROR:Simbolo:"+successInsertion]
                             calc.addToCounterLoc(
                                 directiveLen('RESW', operands))
                         else:
-                            errorInsertion = [
-                                calc.getCounterLoc(
-                                ), sectName, blockName, label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESW"]
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
+                            ), label, mnemonic, operands, ":ERROR:Sintaxis:Operando invalido para a directiva RESW"]
                     elif (dirInstr[1] == 'END'):  # no suma nada
                         if (alredyEND == True):
-                            errorInsertion = [sectName, blockName, calc.getCounterLoc(
-                            ), label, mnemonic, operands, "!ERROR!,:Sintaxis:,la directiva END debe ir solo al final del programa"]
+                            errorInsertion = [lineIndex, sectName, blockName, calc.getCounterLoc(
+                            ), label, mnemonic, operands, ":ERROR:Sintaxis:la directiva END debe ir solo al final del programa"]
                         else:
                             alredyEND = True
                             calc.setEND()
@@ -721,9 +731,10 @@ def passOne(lines):
             errorsFile.append(errorInsertion)
         elif (commentary != "?" and line != ''):
             interFile.append(
-                [sectName, blockName, actualCounterLoc, label, mnemonic, operands, '.'])
+                [lineIndex, sectName, blockName, actualCounterLoc, label, mnemonic, operands, '.'])
         else:
             interFile.append('.')
+        lineIndex += 1
     # actualiza todas las tablas de bloques para que queden en la direccion inicial que les corresponde
     calc.updateTabBlocks()
     return {'nameSTART': calc.getNameSTART(), 'secciones': calc.secciones, 'interFile': interFile, 'errorsFile': errorsFile}

@@ -1,0 +1,4 @@
+1|PRINCIPAL|PRINCIPAL|000000| DIA JS    |:ERROR:Mnemonic:instruccion no existe
+7|PRINCIPAL|PRINCIPAL|000007| LISTEEE EQU *kjjkh |:ERROR:Sintaxis:variable inexistente en el ambito
+30|MODULO|MODULO|00000B| DIA JS    |:ERROR:Mnemonic:instruccion no existe
+31|MODULO|MODULO|00000B| DIO CPP    |:ERROR:Mnemonic:instruccion no existe

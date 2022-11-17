@@ -501,6 +501,10 @@ def passOneOnInit():
     global tabBlock
     global tabSym
     global sizeOfProgram
+    global nameSECT
+    global nameBlock
+    global nameSTART
+    global locSTART
     tabBlockRow = {}
     tabSymRow = {}
     expError = False
@@ -514,6 +518,10 @@ def passOneOnInit():
     tabBlock = {}
     tabSym = {}
     sizeOfProgram = 0
+    nameSECT = ''  # nombre de la seccion actual
+    nameBlock = ''  # nombre del bloque actual
+    nameSTART = ''  # nombre de la seccion principal y del bloque por omision
+    locSTART = 0
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso dos
 
@@ -746,7 +754,6 @@ def isRelative():
         pass
     except:
         pass
-
 
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
