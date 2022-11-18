@@ -802,8 +802,8 @@ def getObjAddr(argument, tab):
 # determine if a given address is relative to the base, the address must be in hexadecimal
 
 
-def addressIsBaseRelative(hexAddress):
-    if int(hexAddress, 16) >= 0 and int(hexAddress, 16) <= 4096:
+def addressIsBaseRelative(address):
+    if address >= 0 and address <= 4096:
         return True
     else:
         return False
@@ -812,8 +812,8 @@ def addressIsBaseRelative(hexAddress):
 # determine if a given address is relative to program counter, the address must be in hexadecimal
 
 
-def addressIsPCRelative(hexAddress):
-    if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
+def addressIsPCRelative(address):
+    if address >= -2048 and address <= 2047:
         return True
     else:
         return False
@@ -888,18 +888,57 @@ def flagsValue(mnemonic, operand):
         resFlags += Ebit
     return resFlags
 
+# devuelve las el valor de las banderas y el valor de la expresion
 
-def addressingModes(mnemonic, argument, secciones):
-    nixbpe = flagsValue(argument)
-    if ('@' in argument):  # direccionamiento Indirecto
-        pass
-    elif ('#' in argument):  # direccionamiento
-        pass
-    else:  # direccionamiento simple
-        if (',X' in argument):  # indexado
-            pass
-        else:  # no indexado
-            pass
+
+def addressingModes(mnemonic, operands, line, nextLine):
+    nixbpe = flagsValue(operands)
+    passTwoExpValidation = calc.evaluateExpPassTwo(operands)
+    if target[0] == False:
+        # return (True, relativityValidation, value)
+        # return (False, relativityValidation)
+        # return (False, "Error expresion invalida")
+        # error en expresion paso 2
+        return {'valid': False, 'msg': passTwoExpValidation[1]}
+    else:
+        target = passTwoExpValidation[2]
+        typeExpression = passTwoExpValidation[1]
+        # if ('@' in operands or '#' in operands):  # direccionamiento Indirecto
+        if typeFour(mnemonic):
+            return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target}
+        elif typeExpression == 'A':
+            if (argumentIsA_c_Constant(target)):
+                return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target}
+            elif (argumentIsA_m_Constant(target)):
+                targetRes = target - \
+                    calc.getIntBy_SicXe_HexOrInt(
+                        nextLine[3])  # pasar el valor de cp de la siguiente linea
+                if addressIsPCRelative(targetRes):  # relativo a CP
+                    nixbpe + Pbit
+                    return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes}
+                else:
+                    # pasar nombre de seccion
+                    targetRes = target - calc.getBASE(line[3])
+                    nixbpe + Bbit
+                    if addressIsBaseRelative(targetRes):  # relativo a Base
+                        return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes}
+                    else:  # ERROR , no relativo a base ni a cp
+                        return {'valid': False, 'msg': "No relativo ni a CP ni a base"}
+            else:  # ERROR:operando fuera de rango
+                return {'valid': False, 'msg': "Operando fuera de rango"}
+        elif typeExpression == 'R':  # se toma como m
+            # pasar el valor de cp de la siguiente linea
+            targetRes = target - calc.getIntBy_SicXe_HexOrInt(nextLine[3])
+            if addressIsPCRelative(targetRes):  # relativo a CP
+                nixbpe + Pbit
+                return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes}
+            else:
+                targetRes = target - calc.getBASE(line[3])
+                nixbpe + Bbit
+                if addressIsBaseRelative(targetRes):  # relativo a Base
+                    return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes}
+                else:  # error , no relativo a base ni a cp
+                    return {'valid': False, 'msg': "No relativo ni a CP ni a Base"}
 
 
 def passTwo(archiInter, symTable):
@@ -926,17 +965,54 @@ def passTwo(archiInter, symTable):
                         # op(6)|n|i|x|b|p|e|dir(20)
                         pass
                     else:  # Formato 3
+                        # op(6)|n|i|x|b|p|e|desp(12)
                         pass
             elif (infoMnemonic[1] == 2):  # formato 2
-                pass
+                # op(8)|r1(4)|r2(4)
+                opAux = int(infoMnemonic[2], 16)
+                op = '{0:08b}'.format(opAux)
+                registersArray = line[3].split(",")
+
+                r1 = r2On = 0
+                if (infoMnemonic[3] == ['r']):
+                    r1 = SIXE_Registers.get(registersArray[0])
+                elif (infoMnemonic[3] == ['n']):
+                    r1 = int(registersArray[0])
+                elif (infoMnemonic[3] == ['r', 'r']):
+                    r1 = SIXE_Registers.get(registersArray[0])
+                    r2On = SIXE_Registers.get(registersArray[1])
+                elif (infoMnemonic[3] == ['r', 'n']):
+                    r1 = SIXE_Registers.get(registersArray[0])
+                    r2On = int(registersArray[1])-1
+                r1 = calc.bindigit(r1, 4)
+                r2On = calc.bindigit(r2On, 4)
+                finalBinString = op + r1 + r2On
+                finalHexStr = hex(int(finalBinString, 2))
+                finalHexStr = calc.cleanHex(
+                    finalHexStr, infoMnemonic[1]*2)
+                # codObj.append(finalHexStr)
+                # codObj[line[0]] = finalHexStr
+                codObj[line[0]] = finalHexStr
+                archiInter[7] = finalHexStr
             elif (infoMnemonic[1] == 1):  # formato 1
-                pass
+                # op(8)
+                insertionP2 = calc.cleanHex(
+                    infoMnemonic[2], infoMnemonic[1]*2)
+                # codObj.append(insertionP2)
+                # codObj[line[0]] = insertionP2
+                codObj[line[0]] = insertionP2
+                archiInter[7] = insertionP2
             elif (baseMnemonic(line[5]) == 'WORD'):
                 pass
             elif (baseMnemonic(line[5]) == 'BYTE'):
                 pass
             elif (baseMnemonic(line[5]) == 'BASE'):
                 pass
+            elif (baseMnemonic(line[5]) == 'CSECT'):
+                calc.setNameSECTPassTwo()
+                calc.setNameBlockPassTwo()
+            elif (baseMnemonic(line[5]) == 'USE'):
+                calc.setNameBlockPassTwo()
         finalHexStr = hex(int(finalBinString, 2))
         finalHexStr = calc.cleanHex(
             finalHexStr, infoMnemonic[1]*2)

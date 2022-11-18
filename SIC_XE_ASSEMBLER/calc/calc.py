@@ -357,7 +357,12 @@ def run(p):
                 elif (operationTypeOption == "passTwoOperation"):
                     # hacemos una instancia de la variable de interes:
                     variable = secciones[nameSECT]['tabsym'][p[1]]
-                    return getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
+                    if (variable['symExt'] == True):
+                        return 0
+                    else:
+                        # sumamos el valor del bloque en el que se declaro el simbolo
+                        return getIntBy_SicXe_HexOrInt(secciones[nameSECT]['tabblock'][variable['block']]['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
+
                 # exclusivamente para analisis sintactico,
                 # no nos importa el estado de las variables o la relatividad
                 # solo que la expresion sea correcta lexica y sintacticamente
@@ -687,8 +692,8 @@ def validateExRelativity_A_R_I(expression):
                 operators.pop()
         elif (tok.type == 'NAME'):
             # comprobar en la tabla si es Relativo o absoluto
-            # if (secciones[nameSECT]['tabsym'][tok.value]['type'] == 'R'):
-            if (tok.value == 'R'):
+            if (secciones[nameSECT]['tabsym'][tok.value]['type'] == 'R'):
+                # if (tok.value == 'R'):
                 if (singnsRulePositive(parentesis)):
                     if (len(operators) > 0):
                         operator = operators.pop()
@@ -755,6 +760,7 @@ def isRelative():
     except:
         pass
 
+
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
     #########################################################
@@ -807,6 +813,38 @@ def setNameSECT(name=''):
     else:
         nameSECT = nameSTART
     return True
+
+
+def setNameSECTPassTwo(name):
+    global nameSECT
+    if (name):
+        nameSECT = name
+    else:
+        nameSECT = nameSTART
+
+
+def setNameBlockPassTwo(name):
+    global nameBlock
+    if (name):
+        nameBlock = name
+    else:
+        nameBlock = nameSTART
+
+
+bases = {}
+
+
+def setBASES(secciones):
+    for seccion in secciones:
+        bases[seccion] = -1
+
+
+def getBASE(seccion):
+    return bases[seccion]
+
+
+def changeBase(seccion, value):
+    bases[seccion] = getIntBy_SicXe_HexOrInt(value)
 
 #####
 # Localidades de start
@@ -999,9 +1037,9 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
 
-# while True:
-#     data = input("expression: ")
-#     print(validateExRelativity_A_R_I(data))
+while True:
+    data = input("expression: ")
+    print(validateExRelativity_A_R_I(data))
 
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))
