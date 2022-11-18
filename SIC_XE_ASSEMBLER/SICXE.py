@@ -203,37 +203,6 @@ def typeSIC(mnemonic):
         return True
     return None
 
-# determina si una direccion es relativa a la base, esta tiene que ser hexadecimal |
-# determine if a given address is relative to the base, the address must be in hexadecimal
-
-
-def addressIsBaseRelative(hexAddress):
-    if int(hexAddress, 16) >= 0 and int(hexAddress, 16) <= 4096:
-        return True
-    else:
-        return False
-
-# determina si una direccion es relativa al contador de programa, esta tiene que ser hexadecimal |
-# determine if a given address is relative to program counter, the address must be in hexadecimal
-
-
-def addressIsPCRelative(hexAddress):
-    if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
-        return True
-    else:
-        return False
-
-# determina si el operando de la directiva byte es una cadena de caracteres
-
-
-def isCharByte(operands):
-    return operands[0] == 'C'
-
-
-# determina si el operando de la directiva byte representa un numero hexadecimal
-def isHexByte(operands):
-    return operands[0] == 'X'
-
 # determina si el numero de carateres hexadecimales es par o impar para completar los bytes
 
 
@@ -257,23 +226,6 @@ def byteOperandExtract(raw_string, start_marker="'", end_marker="'"):
 def haslabel(c):
     return c != ' ' and c != '\t' and c != '\n'
 
-# return True if the range of the costant is between 0 and 4095
-
-
-def argumentIsA_c_Constant(argument):
-    if (int(argument, 16) >= 0 and int(argument, 16) <= 4095):
-        return True
-    else:
-        return False
-
-# return True if the range of the costant is between grader than 4095
-
-
-def argumentIsA_m_Constant(argument):
-    if (int(argument, 16) > 4095):
-        return True
-    else:
-        return False
 
 # Retorna 1 si la linea omienza con un "?" |
 # return 1 if the line begin with point ?
@@ -383,34 +335,6 @@ def validateFormatTwo(instru, operands):
             return "el operando dado no es válido"
     else:
         return "los operandos no coinciden con los requeridos para la instrucción"
-
-
-# para determinar el valor de las bandera NIXBPE
-Nbit = 32
-Ibit = 16
-Xbit = 8
-Bbit = 4
-Pbit = 2
-Ebit = 1
-
-
-def flagsValue(mnemonic, operand):
-    resFlags = 0
-    # tipos de direccionamiento:
-    if (operand[0] == '@'):  # Indirecto
-        resFlags += Nbit
-    elif (operand[0] == '#'):  # inmediato
-        resFlags += Ibit
-    else:  # simple
-        resFlags += Nbit+Ibit
-    # si es indexado
-    if (operand.endswith(",X")):
-        resFlags += Xbit
-    # si es extendido:
-    if (typeFour(mnemonic)):
-        resFlags += Ebit
-    return resFlags
-
 
 ################################################
 ################################################
@@ -769,136 +693,159 @@ def getObjAddr(argument, tab):
     return [res, withVariable]
 
 
-def addressingModes(mnemonic, argument, tab, CP, B):
-    OD = getObjAddr(argument, tab)
-    auxValueAr = SIC_hex_value(OD[0], True)
-    if (isinstance(OD[1], list) and len(OD[1]) > 1):
-        return OD[1]
+# def addressingModes(mnemonic, argument, secciones):
+#     res =
+#         if (typeFour(mnemonic)):  # if mnemonic is extended
+#             # if(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
+#             if (calc.regexMatch('@' + argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch('@' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
+#             elif (calc.regexMatch('#' + argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch('#' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#                 # it means is needs to relocate
+#             # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('m,X'), argument)):
+#                 argu = argument.replace(",X", "")
+#                 if (calc.regexMatch(argumentTokens.get('num'), argu)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch(argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             else:
+#                 return ["!ERROR!", "Modo de direccionamiento no existe"]
+#         else:
+#             # if(re.match('^'+'#'+ argumentTokens.get('c')+'$',argument)):
+#             if (calc.regexMatch('#' + argumentTokens.get('c'), argument)):
+#                 if (calc.regexMatch('#' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_c_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
+#             elif (calc.regexMatch('#' + argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch('#' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#                 # can be base or cp relative
+#                 if (addressIsPCRelative(tempIPoIB[0][1])):
+#                     return tempIPoIB
+#                 else:
+#                     tempIPoIB = [flag_Obj_IB(OD[0], B), False]
+#                     if (addressIsBaseRelative(tempIPoIB[0][1])):
+#                         return tempIPoIB
+
+#                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
+#             # elif(re.match('^'+argumentTokens.get('c,X')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('c,X'), argument)):
+#                 argu = argument.replace(",X", "")
+#                 if (calc.regexMatch(argumentTokens.get('num'), argu)):
+#                     if not argumentIsA_c_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('m,X'), argument)):
+#                 # can be base or cp relative
+#                 argu = argument.replace(",X", "")
+#                 if (calc.regexMatch(argumentTokens.get('num'), argu)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#                 if (addressIsPCRelative(tempIPoIB[0][1])):
+#                     return tempIPoIB
+#                 else:
+#                     if (addressIsBaseRelative(tempIPoIB[0][1])):
+#                         return tempIPoIB
+#                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
+#             # elif(re.match('^'+'@'+ argumentTokens.get('c')+'$',argument)):
+#             elif (calc.regexMatch('@' + argumentTokens.get('c'), argument)):
+#                 if (calc.regexMatch('@' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_c_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
+#             elif (calc.regexMatch('@' + argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch('@' + argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#                 # can be base or cp relative
+#                 if (addressIsPCRelative(tempIPoIB[0][1])):
+#                     return tempIPoIB
+#                 else:
+#                     if (addressIsBaseRelative(tempIPoIB[0][1])):
+#                         return tempIPoIB
+#                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
+#             # elif(re.match('^'+argumentTokens.get('c')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('c'), argument)):
+#                 if (calc.regexMatch(argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_c_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#             # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
+#             elif (calc.regexMatch(argumentTokens.get('m'), argument)):
+#                 if (calc.regexMatch(argumentTokens.get('num'), argument)):
+#                     if not argumentIsA_m_Constant(auxValueAr):
+#                         return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+#                 # can be base or cp relative
+#                 if (addressIsPCRelative(tempIPoIB[0][1])):
+#                     return tempIPoIB
+#                 else:
+#                     if (addressIsBaseRelative(tempIPoIB[0][1])):
+#                         return tempIPoIB
+#                 return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
+#             else:
+#                 return ["!ERROR!", "Modo de direccionamiento no existe"]
+#         return ["!ERROR!", "Modo de direccionamiento no existe"]
+
+
+# determina si una direccion es relativa a la base, esta tiene que ser hexadecimal |
+# determine if a given address is relative to the base, the address must be in hexadecimal
+
+
+def addressIsBaseRelative(hexAddress):
+    if int(hexAddress, 16) >= 0 and int(hexAddress, 16) <= 4096:
+        return True
     else:
-        if (typeFour(mnemonic)):  # if mnemonic is extended
-            # if(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
-            if (regexMatch('@' + argumentTokens.get('m'), argument)):
-                if (regexMatch('@' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+        return False
 
-                return [flag_Obj_NE(OD[0]), OD[1]]
-            # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
-            elif (regexMatch('#' + argumentTokens.get('m'), argument)):
-                if (regexMatch('#' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
-                # it means is needs to relocate
-                return [flag_Obj_IE(OD[0]), OD[1]]
-            # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('m,X'), argument)):
-                argu = argument.replace(",X", "")
-                if (regexMatch(argumentTokens.get('num'), argu)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+# determina si una direccion es relativa al contador de programa, esta tiene que ser hexadecimal |
+# determine if a given address is relative to program counter, the address must be in hexadecimal
 
-                return [flag_Obj_NIXE(OD[0]), OD[1]]
-            # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('m'), argument)):
-                if (regexMatch(argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
-                return [flag_Obj_NIE(OD[0]), OD[1]]
-            else:
-                return ["!ERROR!", "Modo de direccionamiento no existe"]
-        else:
-            # if(re.match('^'+'#'+ argumentTokens.get('c')+'$',argument)):
-            if (regexMatch('#' + argumentTokens.get('c'), argument)):
-                if (regexMatch('#' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_c_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
-                return [flag_Obj_I(OD[0]), False]
-            # elif(re.match('^'+'#'+ argumentTokens.get('m')+'$',argument)):
-            elif (regexMatch('#' + argumentTokens.get('m'), argument)):
-                if (regexMatch('#' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
-                # can be base or cp relative
-                tempIPoIB = [flag_Obj_IP(OD[0], CP), False]
-                if (addressIsPCRelative(tempIPoIB[0][1])):
-                    return tempIPoIB
-                else:
-                    tempIPoIB = [flag_Obj_IB(OD[0], B), False]
-                    if (addressIsBaseRelative(tempIPoIB[0][1])):
-                        return tempIPoIB
 
-                return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
-            # elif(re.match('^'+argumentTokens.get('c,X')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('c,X'), argument)):
-                argu = argument.replace(",X", "")
-                if (regexMatch(argumentTokens.get('num'), argu)):
-                    if not argumentIsA_c_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+def addressIsPCRelative(hexAddress):
+    if int(hexAddress, 16) >= -2048 and int(hexAddress, 16) <= 2047:
+        return True
+    else:
+        return False
 
-                return [flag_Obj_NIX(OD[0]), OD[1]]
-            # elif(re.match('^'+argumentTokens.get('m,X')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('m,X'), argument)):
-                # can be base or cp relative
-                argu = argument.replace(",X", "")
-                if (regexMatch(argumentTokens.get('num'), argu)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+# determina si el operando de la directiva byte es una cadena de caracteres
 
-                tempIPoIB = [flag_Obj_NIXP(OD[0], CP), False]
-                if (addressIsPCRelative(tempIPoIB[0][1])):
-                    return tempIPoIB
-                else:
-                    tempIPoIB = [flag_Obj_NIXB(OD[0], B), False]
-                    if (addressIsBaseRelative(tempIPoIB[0][1])):
-                        return tempIPoIB
-                return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
-            # elif(re.match('^'+'@'+ argumentTokens.get('c')+'$',argument)):
-            elif (regexMatch('@' + argumentTokens.get('c'), argument)):
-                if (regexMatch('@' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_c_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
 
-                return [flag_Obj_N(OD[0]), False]
-            # elif(re.match('^'+'@'+ argumentTokens.get('m')+'$',argument)):
-            elif (regexMatch('@' + argumentTokens.get('m'), argument)):
-                if (regexMatch('@' + argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+def isCharByte(operands):
+    return operands[0] == 'C'
 
-                # can be base or cp relative
-                tempIPoIB = [flag_Obj_NP(OD[0], CP), False]
-                if (addressIsPCRelative(tempIPoIB[0][1])):
-                    return tempIPoIB
-                else:
-                    tempIPoIB = [flag_Obj_NB(OD[0], B), False]
-                    if (addressIsBaseRelative(tempIPoIB[0][1])):
-                        return tempIPoIB
-                return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
-            # elif(re.match('^'+argumentTokens.get('c')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('c'), argument)):
-                if (regexMatch(argumentTokens.get('num'), argument)):
-                    if not argumentIsA_c_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
 
-                return [flag_Obj_NI(OD[0]), False]
-            # elif(re.match('^'+argumentTokens.get('m')+'$',argument)):
-            elif (regexMatch(argumentTokens.get('m'), argument)):
-                if (regexMatch(argumentTokens.get('num'), argument)):
-                    if not argumentIsA_m_Constant(auxValueAr):
-                        return ["!ERROR!", "Modo de direccionamiento no existe, constante fuera de rango"]
+# determina si el operando de la directiva byte representa un numero hexadecimal
+def isHexByte(operands):
+    return operands[0] == 'X'
 
-                # can be base or cp relative
-                tempIPoIB = [flag_Obj_NIP(OD[0], CP), False]
-                if (addressIsPCRelative(tempIPoIB[0][1])):
-                    return tempIPoIB
-                else:
-                    tempIPoIB = [flag_Obj_NIB(OD[0], B), False]
-                    if (addressIsBaseRelative(tempIPoIB[0][1])):
-                        return tempIPoIB
-                return ["!ERROR!", "Instruccion No es relativa ni a (CP) ni a (B)"]
-            else:
-                return ["!ERROR!", "Modo de direccionamiento no existe"]
-        return ["!ERROR!", "Modo de direccionamiento no existe"]
+# return True if the range of the costant is between 0 and 4095
+
+
+def argumentIsA_c_Constant(argument):
+    if (int(argument, 16) >= 0 and int(argument, 16) <= 4095):
+        return True
+    else:
+        return False
+
+# return True if the range of the costant is between grader than 4095
+
+
+def argumentIsA_m_Constant(argument):
+    if (int(argument, 16) > 4095):
+        return True
+    else:
+        return False
 
 
 def byteCodObj(operand):
@@ -915,6 +862,46 @@ def byteCodObj(operand):
     return res
 
 
+# para determinar el valor de las bandera NIXBPE
+Nbit = 32
+Ibit = 16
+Xbit = 8
+Bbit = 4
+Pbit = 2
+Ebit = 1
+
+
+def flagsValue(mnemonic, operand):
+    resFlags = 0
+    # tipos de direccionamiento:
+    if (operand[0] == '@'):  # Indirecto
+        resFlags += Nbit
+    elif (operand[0] == '#'):  # inmediato
+        resFlags += Ibit
+    else:  # simple
+        resFlags += Nbit+Ibit
+    # si es indexado
+    if (operand.endswith(",X")):
+        resFlags += Xbit
+    # si es extendido:
+    if (typeFour(mnemonic)):
+        resFlags += Ebit
+    return resFlags
+
+
+def addressingModes(mnemonic, argument, secciones):
+    nixbpe = flagsValue(argument)
+    if ('@' in argument):  # direccionamiento Indirecto
+        pass
+    elif ('#' in argument):  # direccionamiento
+        pass
+    else:  # direccionamiento simple
+        if (',X' in argument):  # indexado
+            pass
+        else:  # no indexado
+            pass
+
+
 def passTwo(archiInter, symTable):
     codObj = {}  # this function return the codObj
     BASE = 0
@@ -923,147 +910,35 @@ def passTwo(archiInter, symTable):
         # if there is not error, it means it will make a object code
         if (line[7] == '.'):  # sino existe error se genera cdigo objeto .
             infoMnemonic = SICXE_Dictionary.get(baseMnemonic(line[5]))
+            flags = flagsValue()
+            if (infoMnemonic):
+                opAux = int(infoMnemonic[2], 16)
+                op = '{0:0b}'.format(opAux)
+                op = op[: len(op)-2]
             if (infoMnemonic[1] == 3):
-                if (baseMnemonic(line[2]) == 'RSUB'):
-                    opAux = int(infoMnemonic[2], 16)
-                    n = 9
-                    op = '{0:0b}'.format(opAux)
-                    op = op[: len(op)-2]
+                if (baseMnemonic(line[5]) == 'RSUB'):
                     decFlags = Nbit + Ibit
                     nixbpe = '{0:06b}'.format(decFlags)
                     desp = calc.bindigit(0, 12)
                     finalBinString = op + nixbpe + desp
-                    finalHexStr = hex(int(finalBinString, 2))
-                    finalHexStr = calc.cleanHex(
-                        finalHexStr, infoMnemonic[1]*2)
-                    # codObj.append(finalHexStr)
-                    # codObj[line[0]] = finalHexStr
-                    codObj[line[0]] = finalHexStr
-                    archiInter[7] = finalHexStr
-
-                elif (typeFour(line[2])):  # Format 4
-                    # op(6)|n|i|x|b|p|e|dir(20)
-                    addressingModeRes = addressingModes(
-                        line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
-                    opAux = int(infoMnemonic[2], 16)
-                    op = '{0:08b}'.format(opAux)
-                    op = op[:len(op)-2]
-                    if (addressingModeRes[0] == "!ERROR!"):
-                        decFlags = flagsForF3andF4_Decimal(line[2], line[3])
-                        decFlags += Bbit + Pbit
-                        nixbpe = '{0:06b}'.format(decFlags)
-                        dir = calc.bindigit(-1, 20)
-                        finalBinString = op + nixbpe + dir
-                        finalHexStr = hex(int(finalBinString, 2))
-                        finalHexStr = calc.cleanHex(
-                            finalHexStr, (infoMnemonic[1]+1)*2)
-                        finalHexStr += ": " + addressingModeRes[1]
-                    else:
-                        hexOfFlags = addressingModeRes[0][0]
-                        # dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
-                        dir = calc.bindigit(
-                            int(addressingModeRes[0][1], 16), 20)
-                        # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
-                        nixbpe = calc.bindigit(int(hexOfFlags, 16), 6)
-                        finalBinString = op + nixbpe + dir
-                        finalHexStr = hex(int(finalBinString, 2))
-                        finalHexStr = calc.cleanHex(
-                            finalHexStr, (infoMnemonic[1]+1)*2)
-                        if (addressingModeRes[1] == True):
-                            finalHexStr += '*'
-                    # codObj.append(finalHexStr)
-                    # codObj[line[0]] = finalHexStr
-                    codObj[line[0]] = finalHexStr
-                    archiInter[7] = finalHexStr
-                else:  # Format 3
-                    # op(6)|n|i|x|b|p|e|desp(12)
-                    addressingModeRes = addressingModes(
-                        line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
-                    opAux = infoMnemonic[2]
-                    op = '{0:08b}'.format(int(opAux, 16))
-                    op = op[:len(op)-2]
-                    if (addressingModeRes[0] == "!ERROR!"):
-                        decFlags = flagsForF3andF4_Decimal(line[2], line[3])
-                        decFlags += Bbit + Pbit
-                        nixbpe = '{0:06b}'.format(decFlags)
-                        dir = calc.bindigit(-1, 12)
-                        finalBinString = op + nixbpe + dir
-                        finalHexStr = hex(int(finalBinString, 2))
-                        finalHexStr = calc.cleanHex(
-                            finalHexStr, infoMnemonic[1]*2)
-                        finalHexStr += ": " + addressingModeRes[1]
-                    else:
-                        hexOfFlags = addressingModeRes[0][0]
-                        # desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
-                        desp = calc.bindigit(
-                            int(addressingModeRes[0][1], 16), 12)
-                        # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
-                        nixbpe = calc.bindigit(int(hexOfFlags, 16), 6)
-                        finalBinString = op + nixbpe + desp
-                        finalHexStr = hex(int(finalBinString, 2))
-                        finalHexStr = calc.cleanHex(
-                            finalHexStr, infoMnemonic[1]*2)
-                        if (addressingModeRes[1] == True):
-                            finalHexStr += '*'
-                    # codObj.append(finalHexStr)
-                    # codObj[line[0]] = finalHexStr
-                    codObj[line[0]] = finalHexStr
-                    archiInter[7] = finalHexStr
-            else:
-                if (infoMnemonic[1] == 2):  # Format 2
-                    # op(8)|r1(4)|r2(4)
-                    opAux = int(infoMnemonic[2], 16)
-                    op = '{0:08b}'.format(opAux)
-                    registersArray = line[3].split(",")
-
-                    r1 = r2On = 0
-                    if (infoMnemonic[3] == ['r']):
-                        r1 = SIXE_Registers.get(registersArray[0])
-                    elif (infoMnemonic[3] == ['n']):
-                        r1 = int(registersArray[0])
-                    elif (infoMnemonic[3] == ['r', 'r']):
-                        r1 = SIXE_Registers.get(registersArray[0])
-                        r2On = SIXE_Registers.get(registersArray[1])
-                    elif (infoMnemonic[3] == ['r', 'n']):
-                        r1 = SIXE_Registers.get(registersArray[0])
-                        r2On = int(registersArray[1])-1
-                    r1 = calc.bindigit(r1, 4)
-                    r2On = calc.bindigit(r2On, 4)
-                    finalBinString = op + r1 + r2On
-                    finalHexStr = hex(int(finalBinString, 2))
-                    finalHexStr = calc.cleanHex(
-                        finalHexStr, infoMnemonic[1]*2)
-                    # codObj.append(finalHexStr)
-                    # codObj[line[0]] = finalHexStr
-                    codObj[line[0]] = finalHexStr
-                    archiInter[7] = finalHexStr
-                elif (infoMnemonic[1] == 1):  # Format 1
-                    # op(8)
-                    insertionP2 = calc.cleanHex(
-                        infoMnemonic[2], infoMnemonic[1]*2)
-                    # codObj.append(insertionP2)
-                    # codObj[line[0]] = insertionP2
-                    codObj[line[0]] = insertionP2
-                    archiInter[7] = insertionP2
-                elif (infoMnemonic[1] == 'BASE'):
-                    rawBASE = getObjAddr(line[3], symTable)[0]
-                    BASE = '{0:06X}'.format(rawBASE)
-                    codObj[line[0]] = "----"
-                    archiInter[7] = "----"
-                elif (infoMnemonic[1] == 'BYTE'):
-                    # codObj.append(byteCodObj(line[3]))
-                    # codObj[line[0]] = byteCodObj(line[3])
-                    codObj[line[0]] = byteCodObj(line[3])
-                    archiInter[7] = byteCodObj(line[3])
-                elif (infoMnemonic[1] == 'WORD'):
-                    hexAux = SIC_hex_value(line[3], True)
-                    bAux = format(int(hexAux, 16), '0>24b')
-                    finalHexStr = '{0:06X}'.format(int(bAux, 2))
-                    # codObj.append(finalHexStr)
-                    # codObj[line[0]] = finalHexStr
-                    codObj[line[0]] = finalHexStr
-                    archiInter[7] = finalHexStr
                 else:
-                    codObj[line[0]] = "----"
-                    archiInter[7] = "----"
-    return codObj
+                    if (typeFour(line[5])):  # Format 4
+                        # op(6)|n|i|x|b|p|e|dir(20)
+                        pass
+                    else:  # Formato 3
+                        pass
+            elif (infoMnemonic[1] == 2):  # formato 2
+                pass
+            elif (infoMnemonic[1] == 1):  # formato 1
+                pass
+            elif (baseMnemonic(line[5]) == 'WORD'):
+                pass
+            elif (baseMnemonic(line[5]) == 'BYTE'):
+                pass
+            elif (baseMnemonic(line[5]) == 'BASE'):
+                pass
+        finalHexStr = hex(int(finalBinString, 2))
+        finalHexStr = calc.cleanHex(
+            finalHexStr, infoMnemonic[1]*2)
+        codObj[line[0]] = finalHexStr
+        line[7] = finalHexStr
