@@ -73,18 +73,18 @@ class Sicxe_GUI:
     __thisTabSymFileTree = Treeview(
         __TabSymLabel, columns=columnsTabSym, show='headings')
     # define headings
-    __thisTabSymFileTree.column('#1', anchor=CENTER, width=200)
-    __thisTabSymFileTree.heading('#1', text='Seccion')
-    __thisTabSymFileTree.column('#2', anchor=CENTER, width=200)
-    __thisTabSymFileTree.heading('#2', text='Bloque')
-    __thisTabSymFileTree.column('#3', anchor=CENTER, width=250)
-    __thisTabSymFileTree.heading('#3', text='Symbol')
-    __thisTabSymFileTree.column('#4', anchor=CENTER, width=250)
-    __thisTabSymFileTree.heading('#4', text='Dir/Valor')
+    __thisTabSymFileTree.column('#1', anchor=CENTER, width=150)
+    __thisTabSymFileTree.heading('#1', text='Symbol')
+    __thisTabSymFileTree.column('#2', anchor=CENTER, width=150)
+    __thisTabSymFileTree.heading('#2', text='dir/val')
+    __thisTabSymFileTree.column('#3', anchor=CENTER, width=50)
+    __thisTabSymFileTree.heading('#3', text='type')
+    __thisTabSymFileTree.column('#4', anchor=CENTER, width=150)
+    __thisTabSymFileTree.heading('#4', text='Seccion')
     __thisTabSymFileTree.column('#5', anchor=CENTER, width=100)
-    __thisTabSymFileTree.heading('#5', text='Tipo')
+    __thisTabSymFileTree.heading('#5', text='Bloque')
     __thisTabSymFileTree.column('#6', anchor=CENTER, width=100)
-    __thisTabSymFileTree.heading('#6', text='Externo')
+    __thisTabSymFileTree.heading('#6', text='symExt')
 
     __thisTabSymFileScrollBarY = Scrollbar(__thisTabSymFileTree)
     __thisTabSymFileScrollBarX = Scrollbar(
@@ -460,35 +460,18 @@ class Sicxe_GUI:
             self.intermediateFileName = passOneReturn['nameSTART']
             self.assembledFolderPrefix = self.__getAssembledFolderPrefix(
                 self.intermediateFileName)
-
             self.sections = passOneReturn['secciones']
-
-            # self.tableSym = passOneReturn[1]
-            # self.initial = passOneReturn[2]
-            # self.size = passOneReturn[3]
-            # errors = passOneReturn[4]
-            # print("file name(just name) :  " + Path(__file__).name)
-            # print("Directory name :  " + os.path.dirname(__file__))
-
-            # self.intermediateFileName = list(
-            #     self.intermediateFile.values())[0][1]
-            # assembledFolderPrefix = os.path.dirname(
-            #     __file__)+"/assembled/" + intermediateFileName + "/"
-
-            # # for assembled folder creation
-            # if not os.path.exists(assembledFolderPrefix):
-            #     os.makedirs(assembledFolderPrefix)
 
             # Intermediate File, plot and save
             interFile = open(self.assembledFolderPrefix +
-                             self.intermediateFileName+'.arc', "w+")
+                             self.intermediateFileName+'_pass1'+'.arc', "w+")
 
             for line in self.intermediateFile:
                 if (line != '.'):
                     for field in line:
                         if (field != '.'):
                             interFile.writelines(str(field))
-                            interFile.writelines(" ")
+                            interFile.writelines("|")
                     self.__thisIntermediateFileTree.insert(
                         '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
                     interFile.writelines("\n")
@@ -520,6 +503,45 @@ class Sicxe_GUI:
                         errorLine[0], errorLine[1]+"/"+errorLine[2]+"/CP:"+errorLine[3], codeLine, errType, errDescription))
                 errorFile.close()
 
+            # para los archivos que se generan en cada seccion:
+            for indexSection, seccionName in enumerate(self.sections):
+                # haciendo los archivos de la tabla de bloques:
+                blockFile = open(self.assembledFolderPrefix +
+                                 self.intermediateFileName+"_"+seccionName+'.blq', "w+")
+                tabBlocks = self.sections[seccionName]['tabblock']
+                for indexBlock, blockName in enumerate(tabBlocks):
+                    blockRow = tabBlocks[blockName]
+
+                    blockFile.writelines(blockName)
+                    blockFile.writelines("|")
+                    blockFile.writelines(blockRow['dirIniRel'])
+                    blockFile.writelines("|")
+                    blockFile.writelines(blockRow['len'])
+                    blockFile.writelines("\n")
+
+                blockFile.close()
+
+                # haciendo los archivos de la tabla de sibolos:
+                tabFile = open(self.assembledFolderPrefix +
+                               self.intermediateFileName+"_"+seccionName+'.tab', "w+")
+                tabSym = self.sections[seccionName]['tabsym']
+                for indexSym, symName in enumerate(tabSym):
+                    symRow = tabSym[symName]
+
+                    tabFile.writelines(symName)
+                    tabFile.writelines("|")
+                    tabFile.writelines(symRow['dirVal'])
+                    tabFile.writelines("|")
+                    tabFile.writelines(symRow['type'])
+                    tabFile.writelines("|")
+                    tabFile.writelines(symRow['block'])
+                    tabFile.writelines("|")
+                    tabFile.writelines(str(symRow['symExt']))
+                    tabFile.writelines("\n")
+                    self.__thisTabSymFileTree.insert('', END, values=(symName,
+                                                                      symRow['dirVal'], symRow['type'], seccionName, symRow['block'], str(symRow['symExt'])))
+                tabFile.close()
+
     def makeHexString(self, vari):
         if (type(vari) is int):
             return self.makeHexString(hex(vari))
@@ -530,10 +552,11 @@ class Sicxe_GUI:
             return '0'
 
     def __pass2(self):
-        if (not self.intermediateFile or not self.tableSym):
+
+        if (not self.intermediateFile or not self.sections):
             self.__pass1()
         self.cleanWhenPass2()
-        passTwoReturn = passTwo(self.intermediateFile, self.tableSym)
+        passTwoReturn = passTwo(self.intermediateFile, self.sections)
 
         # Intermediate File, plot and save
         interFile = open(self.assembledFolderPrefix +
