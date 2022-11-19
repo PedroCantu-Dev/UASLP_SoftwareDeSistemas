@@ -359,6 +359,7 @@ def run(p):
                     variable = secciones[nameSECT]['tabsym'][p[1]]
                     if (variable['symExt'] == True):
                         return 0
+
                     else:
                         # sumamos el valor del bloque en el que se declaro el simbolo
                         return getIntBy_SicXe_HexOrInt(secciones[nameSECT]['tabblock'][variable['block']]['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
@@ -493,6 +494,7 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
 
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
+numberOfExtRef = 0
 
 
 def passOneOnInit():
@@ -510,6 +512,7 @@ def passOneOnInit():
     global nameBlock
     global nameSTART
     global locSTART
+    global numberOfExtRef
     tabBlockRow = {}
     tabSymRow = {}
     expError = False
@@ -527,6 +530,7 @@ def passOneOnInit():
     nameBlock = ''  # nombre del bloque actual
     nameSTART = ''  # nombre de la seccion principal y del bloque por omision
     locSTART = 0
+    numberOfExtRef = 0
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso dos
 
@@ -584,6 +588,8 @@ def validateExpSyntax(expression):
 def evaluateExpSICXE(expression):
     global expError
     global expErrorDescription
+    global operationTypeOption
+    global numberOfExtRef
     expError = False
     expErrorDescription = ""
     try:
@@ -591,6 +597,9 @@ def evaluateExpSICXE(expression):
         if (expError == True):
             return (False, expErrorDescription)
         else:
+            if (operationTypeOption == "passTwoOperation"):
+                if (numberOfExtRef > 0):
+                    return (True, 'E', value, numberOfExtRef)
             # validacion de relatividad
             relativityValidation = validateExRelativity_A_R_I(expression)
             # si el tamaño de la validacion de relatividad es 1
@@ -632,7 +641,9 @@ def evaluateExpPassOne(expression):
 
 def evaluateExpPassTwo(expression):
     global operationTypeOption
+    global numberOfExtRef
     operationTypeOption = "passTwoOperation"
+    numberOfExtRef = 0
     return evaluateExpSICXE(expression)
 
 # efectua la regla de los signos [(+)*(+) = (+)], [(-)*(-) = (+) ] y [(-)*(+) = (-) ]  para un signo o un array de signos
@@ -759,7 +770,6 @@ def isRelative():
         pass
     except:
         pass
-
 
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
@@ -1037,9 +1047,9 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
 
-while True:
-    data = input("expression: ")
-    print(validateExRelativity_A_R_I(data))
+# while True:
+#     data = input("expression: ")
+#     print(validateExRelativity_A_R_I(data))
 
     # retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))
