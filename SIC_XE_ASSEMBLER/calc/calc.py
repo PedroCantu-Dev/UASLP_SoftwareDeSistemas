@@ -275,10 +275,13 @@ tabSymRow = {}
 listaCSECTBlockCP = {}
 sizeOfProgram = 0
 
+# extTermsInOperation = []
+
 
 def run(p):
     global expError
     global expErrorDescription
+    global extTermsInOperation
     if type(p) == tuple:
         if p[0] == '+':
             return run(p[1]) + run(p[2])
@@ -358,8 +361,8 @@ def run(p):
                     # hacemos una instancia de la variable de interes:
                     variable = secciones[nameSECT]['tabsym'][p[1]]
                     if (variable['symExt'] == True):
+                        extTermsInOperation.append(p[1])
                         return 0
-
                     else:
                         # sumamos el valor del bloque en el que se declaro el simbolo
                         return getIntBy_SicXe_HexOrInt(secciones[nameSECT]['tabblock'][variable['block']]['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
@@ -378,6 +381,7 @@ def run(p):
     else:
         # print(p)
         return p
+
 
 #########################################################################
 # Funciones utiles, y a parte necesarias en la calculadora
@@ -494,7 +498,8 @@ def SIC_HEX(operand=0, digits=6, charfill='0', hexi=False):
 
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso uno -->cambiar por passOneOnInit()
-numberOfExtRef = 0
+# numberOfExtRef = 0
+extTermsInOperation = []
 
 
 def passOneOnInit():
@@ -512,7 +517,8 @@ def passOneOnInit():
     global nameBlock
     global nameSTART
     global locSTART
-    global numberOfExtRef
+    # global numberOfExtRef
+    global extTermsInOperation
     tabBlockRow = {}
     tabSymRow = {}
     expError = False
@@ -530,7 +536,8 @@ def passOneOnInit():
     nameBlock = ''  # nombre del bloque actual
     nameSTART = ''  # nombre de la seccion principal y del bloque por omision
     locSTART = 0
-    numberOfExtRef = 0
+    # numberOfExtRef = 0
+    extTermsInOperation = []
 
 # las variables que tienen que ser inicializadas cada vez que se realize el paso dos
 
@@ -589,7 +596,8 @@ def evaluateExpSICXE(expression):
     global expError
     global expErrorDescription
     global operationTypeOption
-    global numberOfExtRef
+    # global numberOfExtRef
+    global extTermsInOperation
     expError = False
     expErrorDescription = ""
     try:
@@ -598,10 +606,19 @@ def evaluateExpSICXE(expression):
             return (False, expErrorDescription)
         else:
             if (operationTypeOption == "passTwoOperation"):
-                if (numberOfExtRef > 0):
-                    return (True, 'E', value, numberOfExtRef)
-            # validacion de relatividad
-            relativityValidation = validateExRelativity_A_R_I(expression)
+                if (len(extTermsInOperation) > 0):
+                    # validacion de relatividad
+                    relativityValidation = validateExRelativity_A_R_I(
+                        expression, False)
+                    return (True, 'E', value, extTermsInOperation, relativityValidation)
+                else:
+                    # validacion de relatividad
+                    relativityValidation = validateExRelativity_A_R_I(
+                        expression)
+            else:
+                # validacion de relatividad
+                relativityValidation = validateExRelativity_A_R_I(expression)
+
             # si el tamaño de la validacion de relatividad es 1
             # significa que la expresion es correcta por relatividad
             # si no, el error por relatividad estara asignado a la variable
@@ -641,9 +658,11 @@ def evaluateExpPassOne(expression):
 
 def evaluateExpPassTwo(expression):
     global operationTypeOption
-    global numberOfExtRef
+    # global numberOfExtRef
+    global extTermsInOperation
     operationTypeOption = "passTwoOperation"
-    numberOfExtRef = 0
+    # numberOfExtRef = 0
+    extTermsInOperation = []
     return evaluateExpSICXE(expression)
 
 # efectua la regla de los signos [(+)*(+) = (+)], [(-)*(-) = (+) ] y [(-)*(+) = (-) ]  para un signo o un array de signos
@@ -668,7 +687,7 @@ def singnsRulePositive(signOrSigns):
 # todo mediante el recorrido de la expresion y la ayuda de stacks de operacion
 
 
-def validateExRelativity_A_R_I(expression):
+def validateExRelativity_A_R_I(expression, ApplyRules=True):
     tokenes = getTokens(expression)
     Rpos = []
     Rneg = []
@@ -747,15 +766,18 @@ def validateExRelativity_A_R_I(expression):
                 if (len(operators) > 0):
                     operators.pop()
         lastToken = tok
-    if (len(Rpos) == 0 and len(Rneg) == 0):
-        # significa que es un termino absoluto
-        return 'A'
-    elif (len(Rpos) == 1 and len(Rneg) == 0):
-        # significa que es un termino relativo
-        return 'R'
+    if (ApplyRules == True):
+        if (len(Rpos) == 0 and len(Rneg) == 0):
+            # significa que es un termino absoluto
+            return 'A'
+        elif (len(Rpos) == 1 and len(Rneg) == 0):
+            # significa que es un termino relativo
+            return 'R'
+        else:
+            # significa que es un error
+            return 'la expresion es invalida por relatividad'
     else:
-        # significa que es un error
-        return 'Error: la expresion es invalida por relatividad'
+        return {'relativePositive': Rpos, 'relativeNegative': Rneg}
 
 
 def interParensPop(RPosInter, Index):
