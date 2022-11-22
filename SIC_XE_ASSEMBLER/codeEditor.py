@@ -562,22 +562,17 @@ class Sicxe_GUI:
         interFile = open(self.assembledFolderPrefix +
                          self.intermediateFileName+'_pass2'+'.arc', "w+")
 
-        index = 0
-        for key in self.intermediateFile:
-            codObjeto = ""
-            interFile.writelines(str(key))
-            interFile.writelines(" ")
-            line = self.intermediateFile.get(key)
-            for content in line:
-                interFile.writelines(content)
-                interFile.writelines(" ")
-            if (key in passTwoReturn):
-                codObjeto = passTwoReturn.get(key)
-                interFile.writelines(codObjeto)
-            self.__thisIntermediateFileTree.insert('', END, values=(
-                key, line[0], line[1], line[2], line[3], line[4]))
-            interFile.writelines("\n")
-        index += 1
+        # Intermediate File, plot and save
+
+        for line in self.intermediateFile:
+            if (line != '.'):
+                for field in line:
+                    if (field != '.'):
+                        interFile.writelines(str(field))
+                        interFile.writelines("|")
+                interFile.writelines("\n")
+                self.__thisIntermediateFileTree.insert(
+                    '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
         interFile.close()
 # self.__thisTextArea.event_generate("<<Cut>>")
         # self.__thisTextArea.event_generate("<<Paste>>")

@@ -1021,7 +1021,7 @@ def passTwo(archiInter, symTable):
                         # codObj.append(finalHexStr)
                         # codObj[line[0]] = finalHexStr
                         codObj[line[0]] = finalHexStr
-                        archiInter[7] = finalHexStr
+                        line[7] = finalHexStr
                     elif (infoMnemonic[1] == 1):  # formato 1
                         # op(8)
                         insertionP2 = calc.SIC_HEX(
@@ -1029,7 +1029,7 @@ def passTwo(archiInter, symTable):
                         # codObj.append(insertionP2)
                         # codObj[line[0]] = insertionP2
                         codObj[line[0]] = insertionP2
-                        archiInter[7] = insertionP2
+                        line[7] = insertionP2
                 elif (baseMnem == 'WORD'):
                     passTwoExpValidation = calc.evaluateExpPassTwo(line[6])
                     if (passTwoExpValidation[0] == True):
@@ -1045,7 +1045,9 @@ def passTwo(archiInter, symTable):
                     codObj[line[0]] = finalHexStr
                     line[7] = finalHexStr
                 elif (baseMnem == 'BYTE'):
-                    pass
+                    codObject = byteCodObj(line[6])
+                    codObj[line[0]] = codObject
+                    line[7] = codObject
                 elif (baseMnem == 'BASE'):
                     pass
                 elif (baseMnem == 'CSECT'):
@@ -1053,111 +1055,7 @@ def passTwo(archiInter, symTable):
                     calc.setNameBlockPassTwo(line[2])
                 elif (baseMnem == 'USE'):
                     calc.setNameBlockPassTwo(line[2])
-    pass
-
-# addressingModeRes = addressingModes(
-    #             line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
-    #         opAux = int(infoMnemonic[2], 16)
-    #         op = '{0:08b}'.format(opAux)
-    #         op = op[:len(op)-2]
-    #         if (addressingModeRes[0] == "!ERROR!"):
-    #             decFlags = flagsForF3andF4_Decimal(
-    #                 line[2], line[3])
-    #             decFlags += Bbit + Pbit
-    #             nixbpe = '{0:06b}'.format(decFlags)
-    #             dir = calc.bindigit(-1, 20)
-    #             finalBinString = op + nixbpe + dir
-    #             finalHexStr = hex(int(finalBinString, 2))
-    #             finalHexStr = calc.cleanHex(
-    #                 finalHexStr, (infoMnemonic[1]+1)*2)
-    #             finalHexStr += ": " + addressingModeRes[1]
-    #         else:
-    #             hexOfFlags = addressingModeRes[0][0]
-    #             # dir = '{0:020b}'.format(int(addressingModeRes[0][1],16))
-    #             dir = calc.bindigit(
-    #                 int(addressingModeRes[0][1], 16), 20)
-    #             # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
-    #             nixbpe = calc.bindigit(int(hexOfFlags, 16), 6)
-    #             finalBinString = op + nixbpe + dir
-    #             finalHexStr = hex(int(finalBinString, 2))
-    #             finalHexStr = calc.cleanHex(
-    #                 finalHexStr, (infoMnemonic[1]+1)*2)
-    #             if (addressingModeRes[1] == True):
-    #                 finalHexStr += '*'
-    #         # codObj.append(finalHexStr)
-    #         # codObj[line[0]] = finalHexStr
-    #         codObj[line[0]] = finalHexStr
-    #         archiInter[7] = finalHexStr
-    #     else:  # Format 3
-    #         # op(6)|n|i|x|b|p|e|desp(12)
-    #         addressingModeRes = addressingModes(
-    #             line[2], line[3], symTable, archiInter.get(indexArchi+1)[0], BASE)
-    #         opAux = infoMnemonic[2]
-    #         op = '{0:08b}'.format(int(opAux, 16))
-    #         op = op[:len(op)-2]
-    #         if (addressingModeRes[0] == "!ERROR!"):
-    #             decFlags = flagsForF3andF4_Decimal(line[2], line[3])
-    #             decFlags += Bbit + Pbit
-    #             nixbpe = '{0:06b}'.format(decFlags)
-    #             dir = calc.bindigit(-1, 12)
-    #             finalBinString = op + nixbpe + dir
-    #             finalHexStr = hex(int(finalBinString, 2))
-    #             finalHexStr = calc.cleanHex(
-    #                 finalHexStr, infoMnemonic[1]*2)
-    #             finalHexStr += ": " + addressingModeRes[1]
-    #         else:
-    #             hexOfFlags = addressingModeRes[0][0]
-    #             # desp = '{0:012b}'.format(int(addressingModeRes[0][1],16))
-    #             desp = calc.bindigit(
-    #                 int(addressingModeRes[0][1], 16), 12)
-    #             # nixbpe = '{0:06b}'.format(int(hexOfFlags,16))
-    #             nixbpe = calc.bindigit(int(hexOfFlags, 16), 6)
-    #             finalBinString = op + nixbpe + desp
-    #             finalHexStr = hex(int(finalBinString, 2))
-    #             finalHexStr = calc.cleanHex(
-    #                 finalHexStr, infoMnemonic[1]*2)
-    #             if (addressingModeRes[1] == True):
-    #                 finalHexStr += '*'
-    #                     # codObj.append(finalHexStr)
-    #                     # codObj[line[0]] = finalHexStr
-    #                     codObj[line[0]] = finalHexStr
-    #                     archiInter[7] = finalHexStr
-    #             else:
-    #                 if (infoMnemonic[1] == 2):  # Format 2
-    #                     # op(8)|r1(4)|r2(4)
-    #                     opAux = int(infoMnemonic[2], 16)
-    #                     op = '{0:08b}'.format(opAux)
-    #                     registersArray = line[3].split(",")
-
-    #                     r1 = r2On = 0
-    #                     if (infoMnemonic[3] == ['r']):
-    #                         r1 = SIXE_Registers.get(registersArray[0])
-    #                     elif (infoMnemonic[3] == ['n']):
-    #                         r1 = int(registersArray[0])
-    #                     elif (infoMnemonic[3] == ['r', 'r']):
-    #                         r1 = SIXE_Registers.get(registersArray[0])
-    #                         r2On = SIXE_Registers.get(registersArray[1])
-    #                     elif (infoMnemonic[3] == ['r', 'n']):
-    #                         r1 = SIXE_Registers.get(registersArray[0])
-    #                         r2On = int(registersArray[1])-1
-    #                     r1 = calc.bindigit(r1, 4)
-    #                     r2On = calc.bindigit(r2On, 4)
-    #                     finalBinString = op + r1 + r2On
-    #                     finalHexStr = hex(int(finalBinString, 2))
-    #                     finalHexStr = calc.cleanHex(
-    #                         finalHexStr, infoMnemonic[1]*2)
-    #                     # codObj.append(finalHexStr)
-    #                     # codObj[line[0]] = finalHexStr
-    #                     codObj[line[0]] = finalHexStr
-    #                     archiInter[7] = finalHexStr
-    #                 elif (infoMnemonic[1] == 1):  # Format 1
-    #                     # op(8)
-    #                     insertionP2 = calc.cleanHex(
-    #                         infoMnemonic[2], infoMnemonic[1]*2)
-    #                     # codObj.append(insertionP2)
-    #                     # codObj[line[0]] = insertionP2
-    #                     codObj[line[0]] = insertionP2
-    #                     archiInter[7] = insertionP2
+    return {'codObj': codObj}
 
     # def passTwo(archiInter, symTable):
     #     codObj = {}  # this function return the codObj
