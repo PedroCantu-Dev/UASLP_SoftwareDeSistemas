@@ -13,36 +13,38 @@ class Sicxe_GUI:
 
     def __thisSourceFileKeyPressed(event):
         __savedFileFlag = False
-
     __root = Tk()
 
     __savedFileFlag = True
+    __file = None
 
+    ###############
+    # Menu de opciones:
+    ##############
+    # for menu bar at the top of the window
+    __thisMenuBar = Menu(__root)
+    __thisFileMenu = Menu(__thisMenuBar, tearoff=0)
+    __thisAssemblerMenu = Menu(__thisMenuBar, tearoff=0)
+    __thisSimulationMenu = Menu(__thisMenuBar, tearoff=0)
+    __thisHelpMenu = Menu(__thisMenuBar, tearoff=0)
+
+    ######################
+    # Archivo fuente SICXE:
+    ####################
     __sourceFileLabel = LabelFrame(__root, text="Source File")
     __thisSourceFile = Text(__sourceFileLabel, undo=True, wrap=NONE)
     __thisSourceFileScrollBar = Scrollbar(__thisSourceFile)
     __thisSourceFileScrollBarX = Scrollbar(
         __thisSourceFile, orient='horizontal')
-
-    __file = None
     __thisSourceFile.bind('<KeyRelease>', __thisSourceFileKeyPressed)
 
+    ######################
+    # Archivo intermedio
+    ####################
     __InterFileLabel = LabelFrame(__root, text="Intermediate File")
-    __TabSymLabel = LabelFrame(__root, text="Symbol Table")
-    __ErrorsLabel = LabelFrame(__root, text="Errors File")
-    __registerFileLabel = LabelFrame(__root, text="Registers")
-
-    # El campo de los registros:
-    __thisRegisterFile = Text(__registerFileLabel, wrap=NONE, state=DISABLED)
-    __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
-    __thisRegisterFileScrollBarX = Scrollbar(
-        __thisRegisterFile, orient='horizontal')
-
-    # Archivo intermedio:
     columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',  '#8')
     __thisIntermediateFileTree = Treeview(
         __InterFileLabel, columns=columnsInter, show='headings')
-
     # define headings
     # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
     __thisIntermediateFileTree.column('#1', anchor=CENTER, width=50)
@@ -68,7 +70,56 @@ class Sicxe_GUI:
     __thisIntermediateFileScrollBarX = Scrollbar(
         __thisIntermediateFileTree, orient='horizontal')
 
-    # Tabla de simbolos
+    ######################
+    # Tabla de memoria:
+    ####################
+    __thisMemoryTabLabel = LabelFrame(__root, text="Blocks table")
+    # la tabla de bloques
+    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',
+                    '#8', '#9', '#10', '#11', '#12', '#13', '#14', '#15')
+    __thisMemoryTabTree = Treeview(
+        __thisMemoryTabLabel, columns=columnsInter, show='headings')
+    # define headings
+    # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
+    __thisMemoryTabTree.column('#1', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#1', text='0')
+    __thisMemoryTabTree.column('#2', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#2', text='1')
+    __thisMemoryTabTree.column('#3', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#3', text='2')
+    __thisMemoryTabTree.column('#4', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#4', text='3')
+    __thisMemoryTabTree.column('#5', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#5', text='4')
+    __thisMemoryTabTree.column('#6', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#6', text='5')
+    __thisMemoryTabTree.column('#7', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#7', text='6')
+    __thisMemoryTabTree.column('#8', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#8', text='8')
+    __thisMemoryTabTree.column('#9', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#9', text='9')
+    __thisMemoryTabTree.column('#10', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#10', text='A')
+    __thisMemoryTabTree.column('#11', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#11', text='B')
+    __thisMemoryTabTree.column('#12', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#12', text='C')
+    __thisMemoryTabTree.column('#13', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#13', text='D')
+    __thisMemoryTabTree.column('#14', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#14', text='E')
+    __thisMemoryTabTree.column('#15', anchor=CENTER, width=20)
+    __thisMemoryTabTree.heading('#15', text='F')
+    # definiendo los scroll bars:
+    __thisMemoryTabScrollBarY = Scrollbar(__thisMemoryTabTree)
+    __thisMemoryTabScrollBarX = Scrollbar(
+        __thisMemoryTabTree, orient='horizontal')
+
+    ######################
+    # Tabla de symbolos
+    ####################
+    __TabSymLabel = LabelFrame(__root, text="Symbol Table")
     columnsTabSym = ('#1', '#2', '#3', '#4', '#5', '#6')
     __thisTabSymFileTree = Treeview(
         __TabSymLabel, columns=columnsTabSym, show='headings')
@@ -90,8 +141,11 @@ class Sicxe_GUI:
     __thisTabSymFileScrollBarX = Scrollbar(
         __thisTabSymFileTree, orient='horizontal')
 
-    # for error lines
+    ######################
+    # Errors File
+    ####################
     # index ,sentence , type, description
+    __ErrorsLabel = LabelFrame(__root, text="Errors File")
     columnsErrorTable = ('#1', '#2', '#3', '#4', '#5')
     __thisErrorTableFileTree = Treeview(
         __ErrorsLabel, columns=columnsErrorTable, show='headings')
@@ -111,28 +165,14 @@ class Sicxe_GUI:
     __thisErrorTableFileScrollBarX = Scrollbar(
         __thisErrorTableFileTree, orient='horizontal')
 
-    # forRegisters
-    # columnsRegisters = ('#1', '#2', '#3', '#4', '#5')
-    # __thisRegistersTree = Treeview(
-    #     __RegistersLabel, columns=columnsRegisters, show='headings')
-
-    # define headings
-    # __thisRegistersTree.heading('#1', text='Type')
-    # __thisRegistersTree.heading('#2', text='Name')
-    # __thisRegistersTree.heading('#3', text='Direction')
-    # __thisRegistersTree.heading('#4', text='Size')
-    # __thisRegistersTree.heading('#5', text='Content')
-
-    # __thisRegistersScrollBarY = Scrollbar(__thisRegistersTree)
-    # __thisRegistersScrollBarX = Scrollbar(
-    #     __thisRegistersTree, orient='horizontal')
-
-    # for menu bar at the top of the window
-    __thisMenuBar = Menu(__root)
-    __thisFileMenu = Menu(__thisMenuBar, tearoff=0)
-    __thisAssemblerMenu = Menu(__thisMenuBar, tearoff=0)
-    __thisSimulationMenu = Menu(__thisMenuBar, tearoff=0)
-    __thisHelpMenu = Menu(__thisMenuBar, tearoff=0)
+    ######################
+    # El campo de los registros:
+    ####################
+    __registerFileLabel = LabelFrame(__root, text="Registers")
+    __thisRegisterFile = Text(__registerFileLabel, wrap=NONE, state=DISABLED)
+    __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
+    __thisRegisterFileScrollBarX = Scrollbar(
+        __thisRegisterFile, orient='horizontal')
 
     def __init__(self, **kwargs):
         # Set icon
@@ -155,71 +195,15 @@ class Sicxe_GUI:
         # For top and bottom
         self.__root.geometry('1080x720')
 
-        # Add controls (widget)
+        ###############
+        # Menu de opciones:
+        ##############
+
+        ######################
+        # Archivo fuente SICXE:
+        ####################
         self.__sourceFileLabel.place(relx=0, rely=0, relheight=1, relwidth=1/3)
-        self.__InterFileLabel.place(
-            relx=1/3, rely=0, relheight=1, relwidth=1/3)
-        self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/3, relwidth=1/3)
-        self.__ErrorsLabel.place(
-            relx=2/3, rely=1/3, relheight=1/3, relwidth=1/3)
-        self.__registerFileLabel.place(
-            relx=2/3, rely=2/3, relheight=1/3, relwidth=1/3)
-
         self.__thisSourceFile.place(relx=0, rely=0, relheight=1, relwidth=1)
-        self.__thisIntermediateFileTree.place(
-            relx=0, rely=0, relheight=1, relwidth=1)
-        self.__thisTabSymFileTree.place(
-            relx=0, rely=0, relheight=1, relwidth=1)
-        self.__thisErrorTableFileTree.place(
-            relx=0, rely=0, relheight=1, relwidth=1)
-        self.__thisRegisterFile.place(relx=0, rely=0, relheight=1, relwidth=1)
-
-        # scroll para los registros:
-        self.__thisRegisterFileScrollBar.pack(side=RIGHT, fill=Y)
-        self.__thisRegisterFileScrollBar.config(
-            command=self.__thisRegisterFile.yview)
-        self.__thisRegisterFile.config(
-            yscrollcommand=self.__thisRegisterFileScrollBar.set)
-
-        # scroll para el archivo intermedio:
-        self.__thisIntermediateFileScrollBarX.pack(side=BOTTOM, fill='x')
-        self.__thisIntermediateFileScrollBarX.config(
-            command=self.__thisIntermediateFileTree.xview)
-        self.__thisIntermediateFileTree.config(
-            xscrollcommand=self.__thisIntermediateFileScrollBarX.set)
-
-        self.__thisIntermediateFileScrollBarY.pack(side=RIGHT, fill=Y)
-        self.__thisIntermediateFileScrollBarY.config(
-            command=self.__thisIntermediateFileTree.yview)
-        self.__thisIntermediateFileTree.config(
-            yscrollcommand=self.__thisIntermediateFileScrollBarY.set)
-
-        # scroll para la tabla de simbolos
-        self.__thisTabSymFileScrollBarX.pack(side=BOTTOM, fill='x')
-        self.__thisTabSymFileScrollBarX.config(
-            command=self.__thisTabSymFileTree.xview)
-        self.__thisTabSymFileTree.config(
-            xscrollcommand=self.__thisTabSymFileScrollBarX.set)
-
-        self.__thisTabSymFileScrollBarY.pack(side=RIGHT, fill=Y)
-        self.__thisTabSymFileScrollBarY.config(
-            command=self.__thisTabSymFileTree.yview)
-        self.__thisTabSymFileTree.config(
-            yscrollcommand=self.__thisTabSymFileScrollBarY.set)
-
-        # scroll para la tabla de errores:
-        self.__thisErrorTableFileScrollBarX.pack(side=BOTTOM, fill='x')
-        self.__thisErrorTableFileScrollBarX.config(
-            command=self.__thisErrorTableFileTree.xview)
-        self.__thisErrorTableFileTree.config(
-            xscrollcommand=self.__thisErrorTableFileScrollBarX.set)
-
-        self.__thisErrorTableFileScrollBarY.pack(side=RIGHT, fill=Y)
-        self.__thisErrorTableFileScrollBarY.config(
-            command=self.__thisErrorTableFileTree.yview)
-        self.__thisErrorTableFileTree.config(
-            yscrollcommand=self.__thisErrorTableFileScrollBarY.set)
-
         # scroll para el archivo fuente
         self.__thisSourceFileScrollBarX.pack(side=BOTTOM, fill='x')
         self.__thisSourceFileScrollBarX.config(
@@ -233,6 +217,80 @@ class Sicxe_GUI:
         self.__thisSourceFile.config(
             yscrollcommand=self.__thisSourceFileScrollBar.set)
 
+        ######################
+        # Archivo intermedio
+        ####################
+        self.__InterFileLabel.place(
+            relx=1/3, rely=0, relheight=1/2, relwidth=1/3)
+        self.__thisIntermediateFileTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para el archivo intermedio:
+        self.__thisIntermediateFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisIntermediateFileScrollBarX.config(
+            command=self.__thisIntermediateFileTree.xview)
+        self.__thisIntermediateFileTree.config(
+            xscrollcommand=self.__thisIntermediateFileScrollBarX.set)
+
+        self.__thisIntermediateFileScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisIntermediateFileScrollBarY.config(
+            command=self.__thisIntermediateFileTree.yview)
+        self.__thisIntermediateFileTree.config(
+            yscrollcommand=self.__thisIntermediateFileScrollBarY.set)
+
+        ######################
+        # Tabla de memoria:
+        ####################
+        self.__thisMemoryTabLabel.place(
+            relx=1/3, rely=1/2, relheight=1/2, relwidth=1/3)
+        self.__thisBlocksTabTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+
+        ######################
+        # Tabla de symbolos
+        ####################
+        self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/3, relwidth=1/3)
+        self.__thisTabSymFileTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para la tabla de simbolos
+        self.__thisTabSymFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisTabSymFileScrollBarX.config(
+            command=self.__thisTabSymFileTree.xview)
+        self.__thisTabSymFileTree.config(
+            xscrollcommand=self.__thisTabSymFileScrollBarX.set)
+
+        self.__thisTabSymFileScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisTabSymFileScrollBarY.config(
+            command=self.__thisTabSymFileTree.yview)
+        self.__thisTabSymFileTree.config(
+            yscrollcommand=self.__thisTabSymFileScrollBarY.set)
+
+        ######################
+        # Errors File
+        ####################
+        self.__ErrorsLabel.place(
+            relx=2/3, rely=1/3, relheight=1/3, relwidth=1/3)
+        self.__thisErrorTableFileTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para la tabla de errores:
+        self.__thisErrorTableFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisErrorTableFileScrollBarX.config(
+            command=self.__thisErrorTableFileTree.xview)
+        self.__thisErrorTableFileTree.config(
+            xscrollcommand=self.__thisErrorTableFileScrollBarX.set)
+
+        self.__thisErrorTableFileScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisErrorTableFileScrollBarY.config(
+            command=self.__thisErrorTableFileTree.yview)
+        self.__thisErrorTableFileTree.config(
+            yscrollcommand=self.__thisErrorTableFileScrollBarY.set)
+
+        ######################
+        # El campo de los registros:
+        ####################
+        self.__registerFileLabel.place(
+            relx=2/3, rely=2/3, relheight=1/3, relwidth=1/3)
+        self.__thisRegisterFile.place(relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para los registros:
         # Scrollbar will adjust automatically according to the content
         self.__thisRegisterFileScrollBarX.pack(side=BOTTOM, fill='x')
         self.__thisRegisterFileScrollBarX.config(
@@ -245,18 +303,6 @@ class Sicxe_GUI:
             command=self.__thisRegisterFile.yview)
         self.__thisRegisterFile.config(
             yscrollcommand=self.__thisRegisterFileScrollBar.set)
-
-        ####
-        # self.__thisRegistersScrollBarX.pack(side=BOTTOM, fill='x')
-        # self.__thisRegistersScrollBarX.config(
-        #     command=self.__thisRegistersTree.xview)
-        # self.__thisRegistersTree.config(
-        #     xscrollcommand=self.__thisRegistersScrollBarX.set)
-        # self.__thisRegistersScrollBarY.pack(side=RIGHT, fill=Y)
-        # self.__thisRegistersScrollBarY.config(
-        #     command=self.__thisRegistersTree.yview)
-        # self.__thisRegistersTree.config(
-        #     yscrollcommand=self.__thisRegistersScrollBarY.set)
 
         # To open new file
         self.__thisFileMenu.add_command(label="New",
@@ -552,18 +598,16 @@ class Sicxe_GUI:
             return '0'
 
     def __pass2(self):
-
         if (not self.intermediateFile or not self.sections):
             self.__pass1()
         self.cleanWhenPass2()
-        passTwoReturn = passTwo(self.intermediateFile, self.sections)
+        self.passTwoReturn = passTwo(self.intermediateFile, self.sections)
 
         # Intermediate File, plot and save
         interFile = open(self.assembledFolderPrefix +
                          self.intermediateFileName+'_pass2'+'.arc', "w+")
 
         # Intermediate File, plot and save
-
         for line in self.intermediateFile:
             if (line != '.'):
                 for field in line:
@@ -574,12 +618,13 @@ class Sicxe_GUI:
                 self.__thisIntermediateFileTree.insert(
                     '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
         interFile.close()
+
+        self.makeRegisters()
 # self.__thisTextArea.event_generate("<<Cut>>")
         # self.__thisTextArea.event_generate("<<Paste>>")
 
     def __assemble(self):
         self.__pass2()
-        self.makeRegisters()
 
     def deleteStringAfterChar(self, ch, strValue):
         # The Regex pattern to match al characters on and after '-'

@@ -894,54 +894,76 @@ def flagsValue(mnemonic, operand):
 def addressingModes(mnemonic, operands, line, nextLine):
     nixbpe = flagsValue(mnemonic, operands)
     passTwoExpValidation = calc.evaluateExpPassTwo(operands)
+    externalFlag = False
     if passTwoExpValidation[0] == False:
         # return (True, relativityValidation, value)
         # return (False, relativityValidation)
         # return (False, "Error expresion invalida")
         # error en expresion paso 2
         nixbpe += Pbit + Bbit
-        return {'valid': False, 'nixbpe': nixbpe, 'msg': passTwoExpValidation[1], 'passTwoExpValidation': passTwoExpValidation}
+        res = {'valid': False, 'nixbpe': nixbpe,
+               'msg': passTwoExpValidation[1], 'passTwoExpValidation': passTwoExpValidation}
     else:
         target = passTwoExpValidation[2]
         typeExpression = passTwoExpValidation[1]
         # if ('@' in operands or '#' in operands):  # direccionamiento Indirecto
-        if typeFour(mnemonic):
-            return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target, 'passTwoExpValidation': passTwoExpValidation}
-        elif typeExpression == 'A':
+        if typeExpression == 'E':
+            # pasTwoValidation returns: (True, 'E', value, extTermsInOperation, relativityValidation)
+            # relativityValidations returns(when applyRules flag in False): {'relativePositive': Rpos, 'relativeNegative': Rneg}
+            return {'valid': 'E', 'nixbpe': nixbpe, 'dirOrDesp': target, 'passTwoExpValidation': passTwoExpValidation}
+        elif typeFour(mnemonic):  # si es extendido: TA = dir
+            res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target,
+                   'passTwoExpValidation': passTwoExpValidation}
+        elif typeExpression == 'A':  # si es una constante c: TA = desp
             if (argumentIsA_c_Constant(target)):
-                return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target, 'passTwoExpValidation': passTwoExpValidation}
+                res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target,
+                       'passTwoExpValidation': passTwoExpValidation}
             elif (argumentIsA_m_Constant(target)):
                 targetRes = target - \
                     (calc.getIntBy_SicXe_HexOrInt(
                         line[3]) + 3)  # pasar el valor de cp de la siguiente linea
-                if addressIsPCRelative(targetRes):  # relativo a CP
+                # relaitvo a CP
+                # si es una constante m: TA = CP +desp
+                if addressIsPCRelative(targetRes):
                     nixbpe += Pbit
-                    return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes, 'passTwoExpValidation': passTwoExpValidation}
+                    res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes,
+                           'passTwoExpValidation': passTwoExpValidation}
                 else:
                     # pasar nombre de seccion
                     targetRes = target - calc.getBASE(line[1])
-                    nixbpe += Bbit
-                    if addressIsBaseRelative(targetRes):  # relativo a Base
-                        return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes, 'passTwoExpValidation': passTwoExpValidation}
+                    # relativo a la Base
+                    # si es una constante m: TA = B +desp
+                    if addressIsBaseRelative(targetRes):
+                        nixbpe += Bbit
+                        res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes,
+                               'passTwoExpValidation': passTwoExpValidation}
                     else:  # ERROR , no relativo a base ni a cp
-                        return {'valid': False, 'nixbpe': nixbpe, 'msg': "No relativo ni a CP ni a base", 'passTwoExpValidation': passTwoExpValidation}
+                        nixbpe += Bbit + Pbit
+                        res = {'valid': False, 'nixbpe': nixbpe, 'msg': "No relativo ni a CP ni a base",
+                               'passTwoExpValidation': passTwoExpValidation}
             else:  # ERROR:operando fuera de rango
-                return {'valid': False, 'nixbpe': nixbpe, 'msg': "Operando fuera de rango", 'passTwoExpValidation': passTwoExpValidation}
+                res = {'valid': False, 'nixbpe': nixbpe, 'msg': "Operando fuera de rango",
+                       'passTwoExpValidation': passTwoExpValidation}
         elif typeExpression == 'R':  # se toma como m
             # pasar el valor de cp de la siguiente linea
             targetRes = target - (calc.getIntBy_SicXe_HexOrInt(line[3]) + 3)
             if addressIsPCRelative(targetRes):  # relativo a CP
                 nixbpe += Pbit
-                return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes, 'passTwoExpValidation': passTwoExpValidation}
+                res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes,
+                       'passTwoExpValidation': passTwoExpValidation}
             else:
                 targetRes = target - calc.getBASE(line[1])
-                nixbpe += Bbit
                 if addressIsBaseRelative(targetRes):  # relativo a Base
-                    return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes, 'passTwoExpValidation': passTwoExpValidation}
+                    nixbpe += Bbit
+                    res = {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': targetRes,
+                           'passTwoExpValidation': passTwoExpValidation}
                 else:  # error , no relativo a base ni a cp
-                    return {'valid': False, 'nixbpe': nixbpe, 'msg': "No relativo ni a CP ni a Base"}
-        elif typeExpression == 'E':
-            return {'valid': True, 'nixbpe': nixbpe, 'dirOrDesp': target, 'passTwoExpValidation': passTwoExpValidation}
+                    nixbpe += Bbit + Pbit
+                    res = {'valid': False, 'nixbpe': nixbpe,
+                           'msg': "No relativo ni a CP ni a Base"}
+
+        if (externalFlag):
+            res['ex'] = 'j'
 
 
 def passTwo(archiInter, symTable):

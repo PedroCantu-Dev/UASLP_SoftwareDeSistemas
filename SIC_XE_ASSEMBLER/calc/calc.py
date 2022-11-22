@@ -361,7 +361,8 @@ def run(p):
                     # hacemos una instancia de la variable de interes:
                     variable = secciones[nameSECT]['tabsym'][p[1]]
                     if (variable['symExt'] == True):
-                        extTermsInOperation.append(p[1])
+                        extTermsInOperation.append(
+                            nameSECT + "|" + nameBlock + "|" + p[1])
                         return 0
                     else:
                         if (variable['type'] == 'A'):
@@ -621,7 +622,6 @@ def evaluateExpSICXE(expression):
             else:
                 # validacion de relatividad
                 relativityValidation = validateExRelativity_A_R_I(expression)
-
             # si el tamaño de la validacion de relatividad es 1
             # significa que la expresion es correcta por relatividad
             # si no, el error por relatividad estara asignado a la variable
