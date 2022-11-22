@@ -73,7 +73,7 @@ class Sicxe_GUI:
     ######################
     # Tabla de memoria:
     ####################
-    __thisMemoryTabLabel = LabelFrame(__root, text="Blocks table")
+    __thisMemoryTabLabel = LabelFrame(__root, text="Memory")
     # la tabla de bloques
     columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',
                     '#8', '#9', '#10', '#11', '#12', '#13', '#14', '#15')
@@ -81,35 +81,35 @@ class Sicxe_GUI:
         __thisMemoryTabLabel, columns=columnsInter, show='headings')
     # define headings
     # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
-    __thisMemoryTabTree.column('#1', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#1', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#1', text='0')
-    __thisMemoryTabTree.column('#2', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#2', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#2', text='1')
-    __thisMemoryTabTree.column('#3', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#3', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#3', text='2')
-    __thisMemoryTabTree.column('#4', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#4', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#4', text='3')
-    __thisMemoryTabTree.column('#5', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#5', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#5', text='4')
-    __thisMemoryTabTree.column('#6', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#6', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#6', text='5')
-    __thisMemoryTabTree.column('#7', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#7', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#7', text='6')
-    __thisMemoryTabTree.column('#8', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#8', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#8', text='8')
-    __thisMemoryTabTree.column('#9', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#9', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#9', text='9')
-    __thisMemoryTabTree.column('#10', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#10', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#10', text='A')
-    __thisMemoryTabTree.column('#11', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#11', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#11', text='B')
-    __thisMemoryTabTree.column('#12', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#12', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#12', text='C')
-    __thisMemoryTabTree.column('#13', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#13', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#13', text='D')
-    __thisMemoryTabTree.column('#14', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#14', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#14', text='E')
-    __thisMemoryTabTree.column('#15', anchor=CENTER, width=20)
+    __thisMemoryTabTree.column('#15', anchor=CENTER, width=65)
     __thisMemoryTabTree.heading('#15', text='F')
     # definiendo los scroll bars:
     __thisMemoryTabScrollBarY = Scrollbar(__thisMemoryTabTree)
@@ -140,6 +140,27 @@ class Sicxe_GUI:
     __thisTabSymFileScrollBarY = Scrollbar(__thisTabSymFileTree)
     __thisTabSymFileScrollBarX = Scrollbar(
         __thisTabSymFileTree, orient='horizontal')
+
+    ######################
+    # Tabla de bloques
+    ####################
+    __TabBlocksLabel = LabelFrame(__root, text="Blocks Table")
+    columnsTabBlocks = ('#1', '#2', '#3', '#4')
+    __thisTabBlocksFileTree = Treeview(
+        __TabBlocksLabel, columns=columnsTabBlocks, show='headings')
+    # define headings
+    __thisTabBlocksFileTree.column('#1', anchor=CENTER, width=150)
+    __thisTabBlocksFileTree.heading('#1', text='Section')
+    __thisTabBlocksFileTree.column('#2', anchor=CENTER, width=150)
+    __thisTabBlocksFileTree.heading('#2', text='Block Name')
+    __thisTabBlocksFileTree.column('#3', anchor=CENTER, width=100)
+    __thisTabBlocksFileTree.heading('#3', text='Dir Init')
+    __thisTabBlocksFileTree.column('#4', anchor=CENTER, width=150)
+    __thisTabBlocksFileTree.heading('#4', text='Size')
+
+    __thisTabBlocksFileScrollBarY = Scrollbar(__thisTabBlocksFileTree)
+    __thisTabBlocksFileScrollBarX = Scrollbar(
+        __thisTabBlocksFileTree, orient='horizontal')
 
     ######################
     # Errors File
@@ -242,13 +263,25 @@ class Sicxe_GUI:
         ####################
         self.__thisMemoryTabLabel.place(
             relx=1/3, rely=1/2, relheight=1/2, relwidth=1/3)
-        self.__thisBlocksTabTree.place(
+        self.__thisMemoryTabTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para la tabla de simbolos
+        self.__thisMemoryTabScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisMemoryTabScrollBarX.config(
+            command=self.__thisMemoryTabTree.xview)
+        self.__thisMemoryTabTree.config(
+            xscrollcommand=self.__thisMemoryTabScrollBarX.set)
+
+        self.__thisMemoryTabScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisMemoryTabScrollBarY.config(
+            command=self.__thisMemoryTabTree.yview)
+        self.__thisMemoryTabTree.config(
+            yscrollcommand=self.__thisMemoryTabScrollBarY.set)
 
         ######################
         # Tabla de symbolos
         ####################
-        self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/3, relwidth=1/3)
+        self.__TabSymLabel.place(relx=2/3, rely=0, relheight=1/4, relwidth=1/3)
         self.__thisTabSymFileTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para la tabla de simbolos
@@ -265,10 +298,30 @@ class Sicxe_GUI:
             yscrollcommand=self.__thisTabSymFileScrollBarY.set)
 
         ######################
+        # Tabla de bloques
+        ####################
+        self.__TabBlocksLabel.place(
+            relx=2/3, rely=1/4, relheight=1/4, relwidth=1/3)
+        self.__thisTabBlocksFileTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para la tabla de errores:
+        self.__thisTabBlocksFileScrollBarX.pack(side=BOTTOM, fill='x')
+        self.__thisTabBlocksFileScrollBarX.config(
+            command=self.__thisTabBlocksFileTree.xview)
+        self.__thisTabBlocksFileTree.config(
+            xscrollcommand=self.__thisTabBlocksFileScrollBarX.set)
+
+        self.__thisTabBlocksFileScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisTabBlocksFileScrollBarY.config(
+            command=self.__thisTabBlocksFileTree.yview)
+        self.__thisTabBlocksFileTree.config(
+            yscrollcommand=self.__thisTabBlocksFileScrollBarY.set)
+
+        ######################
         # Errors File
         ####################
         self.__ErrorsLabel.place(
-            relx=2/3, rely=1/3, relheight=1/3, relwidth=1/3)
+            relx=2/3, rely=2/4, relheight=1/4, relwidth=1/3)
         self.__thisErrorTableFileTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para la tabla de errores:
@@ -288,7 +341,7 @@ class Sicxe_GUI:
         # El campo de los registros:
         ####################
         self.__registerFileLabel.place(
-            relx=2/3, rely=2/3, relheight=1/3, relwidth=1/3)
+            relx=2/3, rely=3/4, relheight=1/4, relwidth=1/3)
         self.__thisRegisterFile.place(relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para los registros:
         # Scrollbar will adjust automatically according to the content
