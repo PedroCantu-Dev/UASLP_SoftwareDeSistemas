@@ -364,8 +364,11 @@ def run(p):
                         extTermsInOperation.append(p[1])
                         return 0
                     else:
-                        # sumamos el valor del bloque en el que se declaro el simbolo
-                        return getIntBy_SicXe_HexOrInt(secciones[nameSECT]['tabblock'][variable['block']]['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
+                        if (variable['type'] == 'A'):
+                            return getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
+                        else:
+                            # sumamos el valor del bloque en el que se declaro el simbolo
+                            return getIntBy_SicXe_HexOrInt(secciones[nameSECT]['tabblock'][variable['block']]['dirIniRel'], True) + getIntBy_SicXe_HexOrInt(variable['dirVal'], True)
 
                 # exclusivamente para analisis sintactico,
                 # no nos importa el estado de las variables o la relatividad
@@ -792,6 +795,7 @@ def isRelative():
         pass
     except:
         pass
+
 
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
