@@ -617,7 +617,8 @@ class Sicxe_GUI:
                     blockFile.writelines("|")
                     blockFile.writelines(blockRow['len'])
                     blockFile.writelines("\n")
-
+                    self.__thisTabBlocksFileTree.insert('', END, values=(seccionName,
+                                                                         blockName, blockRow['dirIniRel'], blockRow['len']))
                 blockFile.close()
 
                 # haciendo los archivos de la tabla de sibolos:
@@ -672,7 +673,7 @@ class Sicxe_GUI:
                     '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
         interFile.close()
 
-        self.makeRegisters()
+        # self.makeRegisters()
 # self.__thisTextArea.event_generate("<<Cut>>")
         # self.__thisTextArea.event_generate("<<Paste>>")
 

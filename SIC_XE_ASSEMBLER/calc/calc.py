@@ -720,7 +720,7 @@ def validateExRelativity_A_R_I(expression, ApplyRules=True):
                 if (len(Rpos) != len(Rneg)):
                     return "ERROR: operador invalido para termino relativo"
         elif (tok.type == 'INT' or tok.type == 'INTH'):
-            tok.type == 'A'
+            tok.type = 'A'
             if (len(operators) > 0):
                 operators.pop()
         elif (tok.type == 'NAME'):
@@ -766,6 +766,11 @@ def validateExRelativity_A_R_I(expression, ApplyRules=True):
                             Rpos.append(tok.value)
             else:
                 tok.type = 'A'
+                if (not ApplyRules):
+                    if (not singnsRulePositive(parentesis)):
+                        for term in extTermsInOperation:
+                            if (tok.value in term):
+                                term += "-"
                 if (len(operators) > 0):
                     operators.pop()
         lastToken = tok
