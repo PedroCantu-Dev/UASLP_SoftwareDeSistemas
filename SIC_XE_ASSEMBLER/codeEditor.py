@@ -75,42 +75,44 @@ class Sicxe_GUI:
     ####################
     __thisMemoryTabLabel = LabelFrame(__root, text="Memory")
     # la tabla de bloques
-    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',
+    columnsInter = ('#0', '#1', '#2', '#3', '#4', '#5', '#6', '#7',
                     '#8', '#9', '#10', '#11', '#12', '#13', '#14', '#15')
     __thisMemoryTabTree = Treeview(
         __thisMemoryTabLabel, columns=columnsInter, show='headings')
     # define headings
     # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
-    __thisMemoryTabTree.column('#1', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#1', text='0')
+    __thisMemoryTabTree.column('#1', anchor=CENTER, width=150)
+    __thisMemoryTabTree.heading('#1', text='Dir')
     __thisMemoryTabTree.column('#2', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#2', text='1')
+    __thisMemoryTabTree.heading('#2', text='0')
     __thisMemoryTabTree.column('#3', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#3', text='2')
+    __thisMemoryTabTree.heading('#3', text='1')
     __thisMemoryTabTree.column('#4', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#4', text='3')
+    __thisMemoryTabTree.heading('#4', text='2')
     __thisMemoryTabTree.column('#5', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#5', text='4')
+    __thisMemoryTabTree.heading('#5', text='3')
     __thisMemoryTabTree.column('#6', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#6', text='5')
+    __thisMemoryTabTree.heading('#6', text='4')
     __thisMemoryTabTree.column('#7', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#7', text='6')
+    __thisMemoryTabTree.heading('#7', text='5')
     __thisMemoryTabTree.column('#8', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#8', text='8')
+    __thisMemoryTabTree.heading('#8', text='6')
     __thisMemoryTabTree.column('#9', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#9', text='9')
+    __thisMemoryTabTree.heading('#9', text='8')
     __thisMemoryTabTree.column('#10', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#10', text='A')
+    __thisMemoryTabTree.heading('#10', text='9')
     __thisMemoryTabTree.column('#11', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#11', text='B')
+    __thisMemoryTabTree.heading('#11', text='A')
     __thisMemoryTabTree.column('#12', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#12', text='C')
+    __thisMemoryTabTree.heading('#12', text='B')
     __thisMemoryTabTree.column('#13', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#13', text='D')
+    __thisMemoryTabTree.heading('#13', text='C')
     __thisMemoryTabTree.column('#14', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#14', text='E')
-    __thisMemoryTabTree.column('#15', anchor=CENTER, width=65)
-    __thisMemoryTabTree.heading('#15', text='F')
+    __thisMemoryTabTree.heading('#14', text='D')
+    __thisMemoryTabTree.column('#15', anchor=CENTER, width=50)
+    __thisMemoryTabTree.heading('#15', text='E')
+    __thisMemoryTabTree.column('#16', anchor=CENTER, width=65)
+    __thisMemoryTabTree.heading('#16', text='F')
     # definiendo los scroll bars:
     __thisMemoryTabScrollBarY = Scrollbar(__thisMemoryTabTree)
     __thisMemoryTabScrollBarX = Scrollbar(
@@ -530,6 +532,16 @@ class Sicxe_GUI:
         self.destroy()
         self.__init__()
 
+    def getCleanMemory():
+        memory = {}
+        dirCounter = 0
+        for i in range((2**20)/15):
+            memoryRow = []
+            for j in range(16):
+                memoryRow.append('FF')
+            memory[calc.SIC_HEX(dirCounter)] = memoryRow
+            dirCounter + 16
+
     def __getAssembledFolderPrefix(self, fileName):
         assembledFolderPrefix = os.path.dirname(
             __file__)+"/assembled/" + fileName + "/"
@@ -656,6 +668,7 @@ class Sicxe_GUI:
             self.__pass1()
         self.cleanWhenPass2()
         self.passTwoReturn = passTwo(self.intermediateFile, self.sections)
+        # self.makeRegisters()
 
         # Intermediate File, plot and save
         interFile = open(self.assembledFolderPrefix +
@@ -689,113 +702,120 @@ class Sicxe_GUI:
     # funcion para generar los archivos de texto
 
     def makeRegisters(self):
-        registros = open(self.assembledFolderPrefix +
-                         self.intermediateFileName+'.obj', "w+")
-        nombre = self.intermediateFileName
-        primeraInstruccion = ""
+        # para los archivos que se generan en cada seccion:
+        for indexSection, seccionName in enumerate(self.sections):
+            # creando el archivo de los registros
+            registros = open(self.assembledFolderPrefix +
+                             self.intermediateFileName+"_"+seccionName+'.obj', "w+")
+            nombre = self.intermediateFileName
+            primeraInstruccion = ""
 
-        # registro H
-        objFileLines = "H" + fillOrCutL(nombre) + fillOrCutR(self.makeHexString(
-            self.initial)) + fillOrCutR(self.makeHexString(self.size))
+            # registro H
+            tabBlocks = self.sections[seccionName]['tabblock']
+            initialDir = list(tabBlocks.values())[0]['dirIniRel']
+            length = calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(
+                list(tabBlocks.values())[-1]['dirIniRel']) + calc.getIntBy_SicXe_HexOrInt(list(tabBlocks.values())[-1]['len']))
 
-        objFileLines += "\n"
-        registrosM = []
+            objFileLines = "H" + calc.fillOrCutL(seccionName) + calc.fillOrCutR(
+                initialDir) + calc.fillOrCutR(length)
 
-        primeraDireccionRegistroAux = ""
-        registroTAux = ""
+            objFileLines += "\n"
+            registrosM = []
 
-        lastCodObj = ""
-        lastDireccion = ""
-        # registro T
-        for item in self.intermediateFile:
-            line = self.intermediateFile[item][4]
-            instru = self.intermediateFile[item][2]
-            fullLine = self.intermediateFile[item]
+            primeraDireccionRegistroAux = ""
+            registroTAux = ""
 
-            if (len(registroTAux) >= 60):
-                # cortan el archivo de texto
-                if (len(registroTAux) > 60):
-                    primeraDireccionRegistroAux = lastDireccion
-                    if (len(registroTAux) % 2 == 0):
-                        objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(
-                            hex(int(len(registroTAux)/2)), 2) + " " + registroTAux[:-len(lastCodObj)]
-                        registroTAux = registroTAux[-len(lastCodObj):]
-                    else:
-                        objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int((len(registroTAux)+1)/2)), 2) + \
-                            " " + registroTAux[:-len(lastCodObj)]
-                        registroTAux = registroTAux[-len(lastCodObj):]
-                    lastDireccion = ""
-                else:
-                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + fillOrCutR(hex(len(registroTAux)), 2) + \
-                        " " + registroTAux
+            lastCodObj = ""
+            lastDireccion = ""
+            # registro T
+            # for fullLine in self.intermediateFile:
+            #     line = fullLine[7]
+            #     instru = fullLine[5]
 
-                registroTAux = ""
-                primeraDireccionRegistroAux = ""
-                lastCodObj = ""
-                objFileLines += "\n"  # cortando el archivo de texto
-            elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG' or instru == 'USE'):
-                # cortan el archivo de texto
-                if (registroTAux):
-                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
-                        " " + registroTAux
-                registroTAux = ""
-                lastCodObj = ""
-                primeraDireccionRegistroAux = ""
-                objFileLines += "\n"  # cortando el archivo de texto
-            elif (instru == 'END'):
-                if (registroTAux):
-                    objFileLines += "T " + cleanHexForCodObj(primeraDireccionRegistroAux, 6) + " "+cleanHexForCodObj(hex(int(len(registroTAux)/2)), 2) + \
-                        " " + registroTAux
-                if (fullLine[3]):  # buscará en la tabla de simbolos
-                    primeraInstruccion = "YEah"
-            elif (line == "----"):
-                continue
+            #     if (len(registroTAux) >= 60):
+            #         # cortan el archivo de texto
+            #         if (len(registroTAux) > 60):
+            #             primeraDireccionRegistroAux = lastDireccion
+            #             if (len(registroTAux) % 2 == 0):
+            #                 objFileLines += "T " + calc.SIC_HEX(primeraDireccionRegistroAux, 6) + " "+calc.SIC_HEX(
+            #                     hex(int(len(registroTAux)/2)), 2) + " " + registroTAux[:-len(lastCodObj)]
+            #                 registroTAux = registroTAux[-len(lastCodObj):]
+            #             else:
+            #                 objFileLines += "T " + calc.SIC_HEX(primeraDireccionRegistroAux, 6) + " "+calc.SIC_HEX(hex(int((len(registroTAux)+1)/2)), 2) + \
+            #                     " " + registroTAux[:-len(lastCodObj)]
+            #                 registroTAux = registroTAux[-len(lastCodObj):]
+            #             lastDireccion = ""
+            #         else:
+            #             objFileLines += "T " + calc.SIC_HEX(primeraDireccionRegistroAux, 6) + calc.fillOrCutR(hex(len(registroTAux)), 2) + \
+            #                 " " + registroTAux
 
-            else:
-                lastDireccion = fullLine[0]
-                # objFileLines += "T"
-                # si aun no se sabe la primera instruccion se guarda en la variable
-                if (not primeraInstruccion):
-                    # si en efecto se trata de una instruccion se asigna el valor
-                    if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
-                        primeraInstruccion = fillOrCutR(fullLine[0])
-                if (not primeraDireccionRegistroAux):
-                    primeraDireccionRegistroAux = fullLine[0]
-                if ('*' in line):
-                    lastCodObj = self.deleteStringAfterChar(
-                        ':', str(line).replace('*', ''))
-                    # se genera un registro m
-                    if (instru == 'WORD'):  # si el relocalizable es por un WORD
-                        pass
-                    elif (baseMnemonic(instru) in SICXE_Dictionary.keys()):
-                        # la relocalizacion se hará un byte despues
-                        registroM = "\nM"
-                        registroM += fillOrCutR(
-                            cleanHexForCodObj(hex(int(fullLine[0], 16)+1)))
-                        registroM += "05"
-                        if (True):  # aqui  cambiará segun se avance en la arquitectura
-                            registroM += "+"
-                        else:
-                            pass  # los casos para saber cuando es con signo -
-                        registroM += nombre+"\n"
-                        registrosM.append(registroM)
-                    elif (True):
-                        # los casos que faltan por ver como relocalizables.
-                        pass
-                else:
-                    lastCodObj = self.deleteStringAfterChar(':', str(line))
-                registroTAux += lastCodObj
-        for itemss in registrosM:
-            objFileLines += itemss
-        # registro E
-        objFileLines += "E"
-        objFileLines += cleanHexForCodObj(primeraInstruccion)
+            #         registroTAux = ""
+            #         primeraDireccionRegistroAux = ""
+            #         lastCodObj = ""
+            #         objFileLines += "\n"  # cortando el archivo de texto
+            #     elif (instru == 'RESW' or instru == 'RESB' or instru == 'ORG' or instru == 'USE'):
+            #         # cortan el archivo de texto
+            #         if (registroTAux):
+            #             objFileLines += "T " + calc.SIC_HEX(primeraDireccionRegistroAux, 6) + " "+calc.SIC_HEX(hex(int(len(registroTAux)/2)), 2) + \
+            #                 " " + registroTAux
+            #         registroTAux = ""
+            #         lastCodObj = ""
+            #         primeraDireccionRegistroAux = ""
+            #         objFileLines += "\n"  # cortando el archivo de texto
+            #     elif (instru == 'END'):
+            #         if (registroTAux):
+            #             objFileLines += "T " + calc.SIC_HEX(primeraDireccionRegistroAux, 6) + " "+calc.SIC_HEX(hex(int(len(registroTAux)/2)), 2) + \
+            #                 " " + registroTAux
+            #         if (fullLine[3]):  # buscará en la tabla de simbolos
+            #             primeraInstruccion = "YEah"
+            #     elif (line == "----"):
+            #         continue
 
-        self.__thisRegisterFile.config(state=NORMAL)
-        self.__thisRegisterFile.insert(1.0, objFileLines)
-        self.__thisRegisterFile.config(state=DISABLED)
-        registros.writelines(objFileLines)
-        registros.close()
+            #     else:
+            #         lastDireccion = fullLine[3]
+            #         # objFileLines += "T"
+            #         # si aun no se sabe la primera instruccion se guarda en la variable
+            #         if (not primeraInstruccion):
+            #             # si en efecto se trata de una instruccion se asigna el valor
+            #             if (SICXE_Dictionary[baseMnemonic(instru)][0] == 'I'):
+            #                 primeraInstruccion = calc.fillOrCutR(fullLine[0])
+            #         if (not primeraDireccionRegistroAux):
+            #             primeraDireccionRegistroAux = fullLine[0]
+            #         if ('*' in line):
+            #             lastCodObj = self.deleteStringAfterChar(
+            #                 ':', str(line).replace('*', ''))
+            #             # se genera un registro m
+            #             if (instru == 'WORD'):  # si el relocalizable es por un WORD
+            #                 pass
+            #             elif (baseMnemonic(instru) in SICXE_Dictionary.keys()):
+            #                 # la relocalizacion se hará un byte despues
+            #                 registroM = "\nM"
+            #                 registroM += calc.fillOrCutR(
+            #                     calc.SIC_HEX(hex(int(fullLine[0], 16)+1)))
+            #                 registroM += "05"
+            #                 if (True):  # aqui  cambiará segun se avance en la arquitectura
+            #                     registroM += "+"
+            #                 else:
+            #                     pass  # los casos para saber cuando es con signo -
+            #                 registroM += nombre+"\n"
+            #                 registrosM.append(registroM)
+            #             elif (True):
+            #                 # los casos que faltan por ver como relocalizables.
+            #                 pass
+            #         else:
+            #             lastCodObj = self.deleteStringAfterChar(':', str(line))
+            #         registroTAux += lastCodObj
+            # for itemss in registrosM:
+            #     objFileLines += itemss
+            # # registro E
+            # objFileLines += "E"
+            # objFileLines += calc.SIC_HEX(primeraInstruccion)
+
+            # self.__thisRegisterFile.config(state=NORMAL)
+            # self.__thisRegisterFile.insert(1.0, objFileLines)
+            # self.__thisRegisterFile.config(state=DISABLED)
+            # registros.writelines(objFileLines)
+            # registros.close()
 
     def run(self):
         # Run main application

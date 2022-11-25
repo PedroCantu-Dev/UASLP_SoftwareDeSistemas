@@ -801,7 +801,6 @@ def isRelative():
     except:
         pass
 
-
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
     #########################################################
@@ -1021,9 +1020,10 @@ def getCounterLoc():
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
 
-    #############################
-    # zona de pruebas
-    #############################
+
+#############################
+# zona de pruebas
+#############################
 # while True:
 #     try:
 #         s = input('calc>>')
@@ -1033,56 +1033,56 @@ def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
 #     sss = s * 2
 #     print(sss)
 
-    # # Give the lexer some input
-    # while True:
-    #     tok = lexer.token()
-    #     if not tok:
-    #         break
-    #     print(tok)
-    #     try:
-    #         s = input('>> ')
+# # Give the lexer some input
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
+#     try:
+#         s = input('>> ')
 
-    # except EOFError:
-    # break
-    # parser.parse(s)
+# except EOFError:
+# break
+# parser.parse(s)
 
-    # while True:
-    #     sect = input(seccion)
-    #     if (sect):
-    #         nameSECT = sect
+# while True:
+#     sect = input(seccion)
+#     if (sect):
+#         nameSECT = sect
 
-    # para validar las expresiones sintacticamente:
-    # lexer = lex.lex()
-    # while True:
-    #     data = input("expression: ")
-    #     # data2 = validateExpSyntax(data)
-    #     data2 = regexMatch('[0-9a-fA-F]+(H|h)', data)
-    #     if (data2 == True):
-    #         print("CORRECT :D\n")
-    #     else:
-    #         print("D: INCORRECT")
-    #         print("expression invalida sintacticamente: " + expErrorDescription+"\n")
+# para validar las expresiones sintacticamente:
+# lexer = lex.lex()
+# while True:
+#     data = input("expression: ")
+#     # data2 = validateExpSyntax(data)
+#     data2 = regexMatch('[0-9a-fA-F]+(H|h)', data)
+#     if (data2 == True):
+#         print("CORRECT :D\n")
+#     else:
+#         print("D: INCORRECT")
+#         print("expression invalida sintacticamente: " + expErrorDescription+"\n")
 
-    # para obtener los tokens:
-    # getTokens(data)
+# para obtener los tokens:
+# getTokens(data)
 
-    ################################################
-  # lexer.input(data)
+################################################
+# lexer.input(data)
 
-    # while True:
-    #     tok = lexer.token()
-    #     if not tok:
-    #         break
-    #     print(tok)
-    #################################
-    # print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
+# while True:
+#     tok = lexer.token()
+#     if not tok:
+#         break
+#     print(tok)
+#################################
+# print(validateExRelativity_A_R_I('4*(SALTO-ETIQ)+TAM+HAFH'))
 
 
 # while True:
 #     data = input("expression: ")
 #     print(validateExRelativity_A_R_I(data))
 
-    # retorna un numero como hexadecimal en formato de la arquitectura SICXE
+# retorna un numero como hexadecimal en formato de la arquitectura SICXE
 # print(SIC_HEX(15))
 # print(SIC_HEX(-1))
 # print(getIntByHexOInt('FFFF'))
