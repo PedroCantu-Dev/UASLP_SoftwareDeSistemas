@@ -801,6 +801,7 @@ def isRelative():
     except:
         pass
 
+
     ##########################################################
     # funciones del Counter Location(Contador de programa: CP)
     #########################################################
@@ -1020,6 +1021,12 @@ def getCounterLoc():
 def getThisCounterLoc(sectionN=nameSECT, blockN=nameBlock):
     return secciones[sectionN]['tabblock'][blockN]['len']
 
+
+def concatenateListContent(list, charBetween=''):
+    resString = ''
+    for element in list:
+        resString += element+charBetween
+    return resString
 
 #############################
 # zona de pruebas

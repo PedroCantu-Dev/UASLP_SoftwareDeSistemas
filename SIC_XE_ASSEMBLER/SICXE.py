@@ -841,7 +841,7 @@ def addressingModes(mnemonic, operands, line, nextLine):
 def passTwo(archiInter, secciones):
     codObj = {}  # this function return the codObj
     codesObj = {}
-    registersAll = []
+    registersDefAndRef = []
     registersT = []
     registersM = []
     regDef = ['D']
@@ -924,6 +924,21 @@ def passTwo(archiInter, secciones):
                                 finalHexStrForCodobj = finalHexStr
                         codObj[line[0]] = finalHexStrForCodobj
                         line[7] = finalHexStr
+
+                        tToAppend = finalHexStr.split('*')[0]
+                        if len(regT[-1]) <= 1:
+                            regT[-1] += line[3]+"??"
+                            regT[-1] += tToAppend
+                        elif (len(regT[-1]) + len(tToAppend) > 70):
+                            subRegT = regT[-1][regT[-1].index('??')+2:]
+                            lengthCodObj = int(len(subRegT)/2)
+                            lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                            regT[-1] = regT[-1].replace('??', lengthCodObj)
+                            regT.append['T']
+                            regT[-1] += line[3]
+                            regT[-1] += tToAppend
+                        else:
+                            regT[-1] += tToAppend
                     elif (infoMnemonic[1] == 2):  # formato 2
                         # op(8)|r1(4)|r2(4)
                         opAux = int(infoMnemonic[2], 16)
@@ -952,6 +967,20 @@ def passTwo(archiInter, secciones):
                         # codObj[line[0]] = finalHexStr
                         codObj[line[0]] = finalHexStr
                         line[7] = finalHexStr
+                        tToAppend = finalHexStr.split('*')[0]
+                        if len(regT[-1]) <= 1:
+                            regT[-1] += line[3]+"??"
+                            regT[-1] += tToAppend
+                        elif (len(regT[-1]) + len(tToAppend) > 70):
+                            subRegT = regT[-1][regT[-1].index('??')+2:]
+                            lengthCodObj = int(len(subRegT)/2)
+                            lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                            regT[-1] = regT[-1].replace('??', lengthCodObj)
+                            regT.append['T']
+                            regT[-1] += line[3]
+                            regT[-1] += tToAppend
+                        else:
+                            regT[-1] += tToAppend
                     elif (infoMnemonic[1] == 1):  # formato 1
                         # op(8)
                         insertionP2 = calc.SIC_HEX(
@@ -960,6 +989,20 @@ def passTwo(archiInter, secciones):
                         # codObj[line[0]] = insertionP2
                         codObj[line[0]] = insertionP2
                         line[7] = insertionP2
+                        tToAppend = finalHexStr.split('*')[0]
+                        if len(regT[-1]) <= 1:
+                            regT[-1] += line[3]+"??"
+                            regT[-1] += tToAppend
+                        elif (len(regT[-1]) + len(tToAppend) > 70):
+                            subRegT = regT[-1][regT[-1].index('??')+2:]
+                            lengthCodObj = int(len(subRegT)/2)
+                            lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                            regT[-1] = regT[-1].replace('??', lengthCodObj)
+                            regT.append['T']
+                            regT[-1] += line[3]
+                            regT[-1] += tToAppend
+                        else:
+                            regT[-1] += tToAppend
                 elif (baseMnem == 'WORD'):
                     passTwoExpValidation = calc.evaluateExpPassTwo(line[6])
                     if (passTwoExpValidation[0] == True):
@@ -993,10 +1036,39 @@ def passTwo(archiInter, secciones):
                                 finalHexStrForCodobj += "*R|"+relNegTerm
                     codObj[line[0]] = finalHexStrForCodobj
                     line[7] = finalHexStr
+                    tToAppend = finalHexStr.split('*')[0]
+                    if len(regT[-1]) <= 1:
+                        regT[-1] += line[3]+"??"
+                        regT[-1] += tToAppend
+                    elif (len(regT[-1]) + len(tToAppend) > 70):
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                        regT.append['T']
+                        regT[-1] += line[3]
+                        regT[-1] += tToAppend
+                    else:
+                        regT[-1] += tToAppend
+
                 elif (baseMnem == 'BYTE'):
                     codObject = byteCodObj(line[6])
                     codObj[line[0]] = codObject
                     line[7] = codObject
+                    tToAppend = codObject.split('*')[0]
+                    if len(regT[-1]) <= 1:
+                        regT[-1] += line[3]+"??"
+                        regT[-1] += tToAppend
+                    elif (len(regT[-1]) + len(tToAppend) > 70):
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                        regT.append['T']
+                        regT[-1] += line[3]
+                        regT[-1] += tToAppend
+                    else:
+                        regT[-1] += tToAppend
                 elif (baseMnem == 'BASE'):
                     pass
                 elif (baseMnem == 'CSECT'):
@@ -1006,12 +1078,22 @@ def passTwo(archiInter, secciones):
                         regRef.pop()
                     if len(regT[-1]) <= 1:
                         regT.pop()
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                    else:
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
                     if len(regM[-1]) <= 1:
                         regM.pop()
                     if len(regE[-1]) <= 1:
                         regE.pop()
-                    codesObj[calc.getNameSECT] = {
-                        'regDef': regDef, 'regRef': regRef, 'regT': regT, 'regM': regM, 'regE': regE}
+                    regFilePseudoFinal = calc.concatenateListContent(
+                        registersDefAndRef, '\n')+calc.concatenateListContent(regT, '\n')+calc.concatenateListContent(regM, '\n')
+                    codesObj[calc.getNameSECT()] = {regFilePseudoFinal}
                     calc.setNameSECTPassTwo(line[1])
                     calc.setNameBlockPassTwo(line[2])
                     regDef = ['D']
@@ -1019,13 +1101,11 @@ def passTwo(archiInter, secciones):
                     regT = ['T']
                     regM = ['M']
                     regE = ['E']
-                    registersAll = []
-                elif (baseMnem == 'USE'):
-                    calc.setNameBlockPassTwo(line[2])
+                    registersDefAndRef = []
                 elif (baseMnem == 'EXTDEF'):
                     for extDef in line[6].split(','):
                         if len(regDef[-1])+12 > 73:
-                            registersAll.append(regDef[-1])
+                            registersDefAndRef.append(regDef[-1])
                             regDef.append('D')
                         else:
                             nomBlock = secciones[calc.getNameSECT(
@@ -1036,17 +1116,48 @@ def passTwo(archiInter, secciones):
                                 secciones[calc.getNameSECT()]['tabblock'][nomBlock]['dirIniRel'], True)
                             regDef[-1] += calc.fillOrCutL(
                                 extDef, 6, ' ') + calc.SIC_HEX(dirVal + dirBlock)
-                    registersAll.append(regDef[-1])
+                    registersDefAndRef.append(regDef[-1])
                     regDef.append('D')
                 elif baseMnem == 'EXTREF':
                     for extRef in line[6].split(','):
                         if len(regRef[-1])+6 > 73:
-                            registersAll.append(regRef[-1])
+                            registersDefAndRef.append(regRef[-1])
                             regRef.append('R')
                         else:
                             regRef[-1] += calc.fillOrCutL(extRef, 6, ' ')
-                    registersAll.append(regRef[-1])
+                    registersDefAndRef.append(regRef[-1])
                     regRef.append('R')
                 elif (baseMnem == 'RESW' or baseMnem == 'RESB' or baseMnem == 'ORG' or baseMnem == 'USE'):
-                    pass
+                    if (len(regT[-1]) > 1):
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                        regT.append('T')
+                    if (baseMnem == 'USE'):
+                        calc.setNameBlockPassTwo(line[2])
+                if (baseMnem == 'END'):
+                    if len(regDef[-1]) <= 1:
+                        regDef.pop()
+                    if len(regRef[-1]) <= 1:
+                        regRef.pop()
+                    if len(regT[-1]) <= 1:
+                        regT.pop()
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                    else:
+                        subRegT = regT[-1][regT[-1].index('??')+2:]
+                        lengthCodObj = int(len(subRegT)/2)
+                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
+                        regT[-1] = regT[-1].replace('??', lengthCodObj)
+                    if len(regM[-1]) <= 1:
+                        regM.pop()
+                    if len(regE[-1]) <= 1:
+                        regE.pop()
+                    regFilePseudoFinal = calc.concatenateListContent(
+                        registersDefAndRef, '\n')+calc.concatenateListContent(regT, '\n')+calc.concatenateListContent(regM, '\n')
+                    codesObj[calc.getNameSECT()] = {regFilePseudoFinal}
+
     return {'codObj': codObj}
