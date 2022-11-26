@@ -838,8 +838,18 @@ def addressingModes(mnemonic, operands, line, nextLine):
     return res
 
 
-def passTwo(archiInter, symTable):
+def passTwo(archiInter, secciones):
     codObj = {}  # this function return the codObj
+    codesObj = {}
+    registersAll = []
+    registersT = []
+    registersM = []
+    regDef = ['D']
+    regRef = ['R']
+    regT = ['T']
+    regM = ['M']
+    regE = ['E']
+
     BASE = 0
     # for line in archiInter:  # forEach line in the intermediateFile
     for line in enumerate(archiInter):  # forEach line in the intermediateFile
@@ -990,8 +1000,53 @@ def passTwo(archiInter, symTable):
                 elif (baseMnem == 'BASE'):
                     pass
                 elif (baseMnem == 'CSECT'):
+                    if len(regDef[-1]) <= 1:
+                        regDef.pop()
+                    if len(regRef[-1]) <= 1:
+                        regRef.pop()
+                    if len(regT[-1]) <= 1:
+                        regT.pop()
+                    if len(regM[-1]) <= 1:
+                        regM.pop()
+                    if len(regE[-1]) <= 1:
+                        regE.pop()
+                    codesObj[calc.getNameSECT] = {
+                        'regDef': regDef, 'regRef': regRef, 'regT': regT, 'regM': regM, 'regE': regE}
                     calc.setNameSECTPassTwo(line[1])
                     calc.setNameBlockPassTwo(line[2])
+                    regDef = ['D']
+                    regRef = ['R']
+                    regT = ['T']
+                    regM = ['M']
+                    regE = ['E']
+                    registersAll = []
                 elif (baseMnem == 'USE'):
                     calc.setNameBlockPassTwo(line[2])
+                elif (baseMnem == 'EXTDEF'):
+                    for extDef in line[6].split(','):
+                        if len(regDef[-1])+12 > 73:
+                            registersAll.append(regDef[-1])
+                            regDef.append('D')
+                        else:
+                            nomBlock = secciones[calc.getNameSECT(
+                            )]['tabsym'][extDef]['block']
+                            dirVal = calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabsym'][extDef]['dirVal'], True)
+                            dirBlock = calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][nomBlock]['dirIniRel'], True)
+                            regDef[-1] += calc.fillOrCutL(
+                                extDef, 6, ' ') + calc.SIC_HEX(dirVal + dirBlock)
+                    registersAll.append(regDef[-1])
+                    regDef.append('D')
+                elif baseMnem == 'EXTREF':
+                    for extRef in line[6].split(','):
+                        if len(regRef[-1])+6 > 73:
+                            registersAll.append(regRef[-1])
+                            regRef.append('R')
+                        else:
+                            regRef[-1] += calc.fillOrCutL(extRef, 6, ' ')
+                    registersAll.append(regRef[-1])
+                    regRef.append('R')
+                elif (baseMnem == 'RESW' or baseMnem == 'RESB' or baseMnem == 'ORG' or baseMnem == 'USE'):
+                    pass
     return {'codObj': codObj}

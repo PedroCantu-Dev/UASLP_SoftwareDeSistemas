@@ -527,6 +527,7 @@ class Sicxe_GUI:
     def cleanWhenPass2(self):
         for i in self.__thisIntermediateFileTree.get_children():
             self.__thisIntermediateFileTree.delete(i)
+        calc.setEND()
 
     def refresh(self):
         self.destroy()
