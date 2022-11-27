@@ -84,10 +84,12 @@ def getAllocationRow(dir, dirRel=0):
 
 
 def readAllocation(dir, dirRel=0, medBytes=2):
+    oddBool = False
     if (medBytes % 2 == 0):
         bytes = medBytes/2
     else:
         bytes = (medBytes+1)/2
+        oddBool = True
 
     dir = calc.getIntBy_SicXe_HexOrInt(
         dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)
@@ -108,7 +110,10 @@ def readAllocation(dir, dirRel=0, medBytes=2):
             i += 1
             allocationColumn += 1
         break
-    return content
+    if (oddBool):
+        return content[1:]
+    else:
+        return content
 
 
 def splitEachTwo(line, step=2):
@@ -135,11 +140,11 @@ def splitEachTwoR(line, step=2):
 # Zona de pruebas
 ###################
 
-cleanMemory()
-# # writeAllocation('000037', '0FFAAA')
-writeAllocation('FFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', '000037',)
-writeAllocationR(
-    'BDDBBAAAADDEEBC', '3C')
+# cleanMemory()
+# # # writeAllocation('000037', '0FFAAA')
+# writeAllocation('FFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', '000037',)
+# writeAllocationR(
+#     'BDDBBAAAADDEEBC', '3C')
 # writeAllocation(
 #     '42', 'aabb123456789ABCDEF123456789101112131415FEDCBA')
-pass
+# pass

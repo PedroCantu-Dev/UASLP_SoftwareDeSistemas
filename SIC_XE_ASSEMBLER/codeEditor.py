@@ -815,7 +815,8 @@ class Sicxe_GUI:
                         allocationValue = calc.fillOrCutR(
                             allocationValue, numMedBytes)
                         if (sign == '+'):
-                            newAllocationValue
+                            newAllocationValue = calc.getIntBy_SicXe_HexOrInt(
+                                allocationValue) + dirFromTabse
                         else:
                             pass
 
@@ -846,12 +847,13 @@ class Sicxe_GUI:
             'empty',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',))
 
     def getDirFromTabse(self, label):
-        tabseKeys = self.tabse.keys()
+        tabseKeys = list(self.tabse.keys())
         if (label in tabseKeys):
             return self.tabse[label]['dir']
         else:
             for tabseKey in tabseKeys:
-                if label in self.tabse[tabseKey]['sym'].keys():
+                symbolsOfSection = list(self.tabse[tabseKey]['sym'].keys())
+                if label in symbolsOfSection:
                     return self.tabse[tabseKey]['sym'][label]['dir']
         return False
 
