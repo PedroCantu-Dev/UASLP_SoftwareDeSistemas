@@ -849,6 +849,7 @@ def passTwo(archiInter, secciones):
     regT = ['T']
     regM = ['M']
     regE = ['E']
+    primeraInstruccion = ''
 
     BASE = 0
     # for line in archiInter:  # forEach line in the intermediateFile
@@ -864,6 +865,8 @@ def passTwo(archiInter, secciones):
             infoMnemonic = SICXE_Dictionary.get(baseMnem)
             if (infoMnemonic):
                 if (infoMnemonic[0] == 'I'):
+                    if (not primeraInstruccion):
+                        primeraInstruccion = line[3]
                     opAux = int(infoMnemonic[2], 16)
                     op = calc.bindigit(opAux, 8)
                     op = op[: len(op)-2]
@@ -1133,7 +1136,8 @@ def passTwo(archiInter, secciones):
                         regE.pop()
                     regFilePseudoFinal = calc.concatenateListContent(
                         registersDefAndRef, '\n')+calc.concatenateListContent(regT, '\n')+calc.concatenateListContent(regM, '\n')
-                    codesObj[calc.getNameSECT()] = {regFilePseudoFinal}
+                    codesObj[calc.getNameSECT()] = {
+                        'registers': regFilePseudoFinal}
                     calc.setNameSECTPassTwo(line[1])
                     calc.setNameBlockPassTwo(line[2])
                     regDef = ['D']
@@ -1192,12 +1196,28 @@ def passTwo(archiInter, secciones):
                         lengthCodObj = int(len(subRegT)/2)
                         lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                         regT[-1] = regT[-1].replace('??', lengthCodObj)
+
                     if len(regM[-1]) <= 1:
                         regM.pop()
                     if len(regE[-1]) <= 1:
                         regE.pop()
                     regFilePseudoFinal = calc.concatenateListContent(
                         registersDefAndRef, '\n')+calc.concatenateListContent(regT, '\n')+calc.concatenateListContent(regM, '\n')
-                    codesObj[calc.getNameSECT()] = {regFilePseudoFinal}
+                    codesObj[calc.getNameSECT()] = {
+                        'registers': regFilePseudoFinal}
+                    for elementCodesObj in codesObj:
+                        codesObj[elementCodesObj]['registers'] += 'E'
 
-    return {'codObj': codObj}
+                    if line[6]:
+                        try:
+                            dirE = secciones[calc.getNameSTART(
+                            )]['tabsym'][line[6]]['dirVal']
+                            codesObj[calc.getNameSTART()]['registers'] += dirE
+                        except:
+                            list(codesObj[calc.getNameSTART()])[
+                                0] += primeraInstruccion
+                    else:
+                        list(codesObj[calc.getNameSTART()])[
+                            0] += primeraInstruccion
+
+    return {'codObj': codObj, 'registers': codesObj}

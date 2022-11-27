@@ -669,7 +669,6 @@ class Sicxe_GUI:
             self.__pass1()
         self.cleanWhenPass2()
         self.passTwoReturn = passTwo(self.intermediateFile, self.sections)
-        # self.makeRegisters()
 
         # Intermediate File, plot and save
         interFile = open(self.assembledFolderPrefix +
@@ -686,6 +685,32 @@ class Sicxe_GUI:
                 self.__thisIntermediateFileTree.insert(
                     '', END, values=(line[0], line[1], line[2], line[3], line[4], line[5], line[6], line[7]))
         interFile.close()
+
+        registers = self.passTwoReturn['registers']
+
+        objFileLines = ''
+        for indexSection, seccionName in enumerate(self.sections):
+            # creando el archivo de los registros
+            registerFile = open(self.assembledFolderPrefix +
+                                self.intermediateFileName+"_"+seccionName+'.obj', "w+")
+
+            # registro H
+            tabBlocks = self.sections[seccionName]['tabblock']
+            initialDir = list(tabBlocks.values())[0]['dirIniRel']
+            length = calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(
+                list(tabBlocks.values())[-1]['dirIniRel']) + calc.getIntBy_SicXe_HexOrInt(list(tabBlocks.values())[-1]['len']))
+
+            HRegLine = "H" + calc.fillOrCutL(seccionName) + calc.fillOrCutR(
+                initialDir) + calc.fillOrCutR(length)+'\n'
+
+            regInsertion = HRegLine+registers[seccionName]['registers']
+            registerFile.writelines(regInsertion)
+            registerFile.close()
+            objFileLines += regInsertion+'\n\n'
+
+        self.__thisRegisterFile.config(state=NORMAL)
+        self.__thisRegisterFile.insert(1.0, objFileLines)
+        self.__thisRegisterFile.config(state=DISABLED)
 
         # self.makeRegisters()
 # self.__thisTextArea.event_generate("<<Cut>>")
