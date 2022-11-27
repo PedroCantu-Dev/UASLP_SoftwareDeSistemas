@@ -697,8 +697,11 @@ class Sicxe_GUI:
             # registro H
             tabBlocks = self.sections[seccionName]['tabblock']
             initialDir = list(tabBlocks.values())[0]['dirIniRel']
-            length = calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(
-                list(tabBlocks.values())[-1]['dirIniRel']) + calc.getIntBy_SicXe_HexOrInt(list(tabBlocks.values())[-1]['len']))
+            dirIniFinal = calc.getIntBy_SicXe_HexOrInt(
+                list(tabBlocks.values())[-1]['dirIniRel'], True)
+            tamFinal = calc.getIntBy_SicXe_HexOrInt(
+                list(tabBlocks.values())[-1]['len'], True)
+            length = calc.SIC_HEX(dirIniFinal + tamFinal)
 
             HRegLine = "H" + calc.fillOrCutL(seccionName) + calc.fillOrCutR(
                 initialDir) + calc.fillOrCutR(length)+'\n'
