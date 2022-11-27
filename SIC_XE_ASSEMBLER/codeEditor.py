@@ -728,8 +728,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        dirprog = 0
-        dirsc = dirprog
+        self.dirprog = 12309
+        dirsc = self.dirprog
 
         self.tabse = {}
         errorFlag = False
@@ -761,20 +761,24 @@ class Sicxe_GUI:
                                 name = reg[index:index+6]
                                 index += 6
                                 dir = reg[index:index+6]
-                                if (name in self.tabse[entry]['sym'].keys()):
-                                    errorFlag = True
-                                    break
+                                index += 6
+                                if (index and name):
+                                    if (name in self.tabse[entry]['sym'].keys()):
+                                        errorFlag = True
+                                        break
+                                    else:
+                                        self.tabse[entry]['sym'][name] = {}
+                                        dire = calc.SIC_HEX(
+                                            dirsc + calc.getIntBy_SicXe_HexOrInt(dir, True))
+                                        self.tabse[entry]['sym'][name]['dir'] = dire
                                 else:
-                                    self.tabse[entry]['sym'][name] = {}
-                                    self.tabse[entry]['sym'][name]['dir'] = calc.SIC_HEX(
-                                        dirsc + dir)
+                                    break
                             except:
                                 break
                 dirsc += dirsc + lonsc
-        pass
+        return not errorFlag
 
     def assemblePassTwo():
-        pass
 
     def updateAllocationView(self, allocation):
         index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
