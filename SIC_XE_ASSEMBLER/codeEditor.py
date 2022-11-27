@@ -801,14 +801,24 @@ class Sicxe_GUI:
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
                     self.updateAllocationView(dir, rowCounter, dirsc)
                 if (reg[0] == 'M'):
-                    dir = reg[1:7]
-                    numBytes = reg[7:9]
-                    numBytes = calc.getIntBy_SicXe_HexOrInt(numBytes)
-                    dirFromTabse = self.getDirFromTabse()
+                    dirFromTabse = reg[10:]
+                    dirFromTabse = self.getDirFromTabse(dirFromTabse)
                     if (dirFromTabse != False):
+                        dirFromTabse = calc.getIntBy_SicXe_HexOrInt(
+                            dirFromTabse)
+                        sign = reg[9:10]
                         dir = reg[1:7]
-                        dirsc
-                        mem.readAllocation(dir, dirsc,)
+                        numMedBytes = reg[7:9]
+                        numMedBytes = calc.getIntBy_SicXe_HexOrInt(numMedBytes)
+                        allocationValue = mem.readAllocation(
+                            dir, dirsc, numMedBytes)
+                        allocationValue = calc.fillOrCutR(
+                            allocationValue, numMedBytes)
+                        if (sign == '+'):
+                            newAllocationValue
+                        else:
+                            pass
+
                     else:
                         errorFlag = True
                         break

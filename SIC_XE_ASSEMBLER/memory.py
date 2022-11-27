@@ -50,12 +50,12 @@ def writeAllocation(content, dir, dirRel=0):
 def writeAllocationR(content, dir, dirRel=0):
     dir = calc.getIntBy_SicXe_HexOrInt(
         dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)
-    contentAux = calc.SIC_HEX(content)
+    contentAux = calc.SIC_HEX(content, len(content))
     dirAux = dir + int(len(contentAux)/2)
 
     allocationColumn = dirAux % 16
     allocation = dirAux - allocationColumn
-    contentAux2 = splitEachTwo(contentAux)
+    contentAux2 = splitEachTwoR(contentAux)
     rowCounter = 1
     while (True):
         row = memory[calc.SIC_HEX(allocation)]
@@ -113,13 +113,31 @@ def splitEachTwo(line, step=2):
     return [calc.SIC_HEX(line[i:i+step], 2) for i in range(0, len(line), step)]
 
 
+def splitEachTwoR(line, step=2):
+    count = len(line)
+    res = []
+    step = step*-1
+    lastInLine = line[count-1:]
+    for i in range(count, -1, step):
+        if (i+step <= step):
+            break
+        if (i+step > -1):
+            res.append(calc.SIC_HEX(line[i+step:i], 2))
+        else:
+            res.append(calc.SIC_HEX(line[0:1], 2))
+    return res
+    # return [try: calc.SIC_HEX(line[i:i+step], 2) except:pass for i in range(len(line)-1, -2, step)]
+
+
 #######################
 # Zona de pruebas
 ###################
 
-# cleanMemory()
+cleanMemory()
 # # writeAllocation('000037', '0FFAAA')
-# # writeAllocation('000037', 'FFAAAA')
+writeAllocation('FFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', '000037',)
+writeAllocationR(
+    'BAAAADDEEBC', '00032')
 # writeAllocation(
 #     '42', 'aabb123456789ABCDEF123456789101112131415FEDCBA')
-# pass
+pass
