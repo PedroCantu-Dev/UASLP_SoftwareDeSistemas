@@ -462,7 +462,8 @@ def fillOrCutR(strFOC, numFinal=6, charFill='0'):
     if (len(strFOC) < numFinal):
         return strFOC.rjust(numFinal, charFill)
     else:
-        return strFOC[0:numFinal]
+        # return strFOC[0:numFinal]
+        return strFOC[len(strFOC)-numFinal:]
 
 
 def cleanHex(hexa, numFinal=6, charfill='0'):

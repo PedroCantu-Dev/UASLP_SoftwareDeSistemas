@@ -1,5 +1,6 @@
 import calc.calc as calc
 
+
 memory = {}
 
 
@@ -46,12 +47,66 @@ def writeAllocation(content, dir, dirRel=0):
     return rowCounter
 
 
+def writeAllocationR(content, dir, dirRel=0):
+    dir = calc.getIntBy_SicXe_HexOrInt(
+        dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)
+    contentAux = calc.SIC_HEX(content)
+    dirAux = dir + int(len(contentAux)/2)
+
+    allocationColumn = dirAux % 16
+    allocation = dirAux - allocationColumn
+    contentAux2 = splitEachTwo(contentAux)
+    rowCounter = 1
+    while (True):
+        row = memory[calc.SIC_HEX(allocation)]
+        for i in range(len(contentAux2)-1, -1, -1):
+            if (allocationColumn < 0):
+                allocation -= 16
+                allocationColumn = 15
+                row = memory[calc.SIC_HEX(allocation)]
+                row[allocationColumn] = content[i]
+                rowCounter += 1
+            else:
+                row[allocationColumn] = content[i]
+            allocationColumn -= 1
+        break
+    return rowCounter
+
+
 def getAllocationRow(dir, dirRel=0):
     dir = calc.getIntBy_SicXe_HexOrInt(
         dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)
     allocationColumn = dir % 16
     allocation = dir - allocationColumn
     return memory[calc.SIC_HEX(allocation)]
+
+
+def readAllocation(dir, dirRel=0, medBytes=2):
+    if (medBytes % 2 == 0):
+        bytes = medBytes/2
+    else:
+        bytes = (medBytes+1)/2
+
+    dir = calc.getIntBy_SicXe_HexOrInt(
+        dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)
+    allocationColumn = dir % 16
+    allocation = dir - allocationColumn
+    content = ''
+
+    while (True):
+        row = memory[calc.SIC_HEX(allocation)]
+        for i in range(bytes):
+            if (allocationColumn > 15):
+                allocation += 16
+                allocationColumn = 0
+                row = memory[calc.SIC_HEX(allocation)]
+                content += row[allocationColumn]
+            else:
+                content += row[allocationColumn]
+            i += 1
+            allocationColumn += 1
+        break
+    return content
 
 
 def splitEachTwo(line, step=2):

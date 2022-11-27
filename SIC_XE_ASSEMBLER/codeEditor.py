@@ -728,8 +728,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        # self.dirprog = 12309
-        self.dirprog = 16
+        self.dirprog = 12309
+        # self.dirprog = 16
         dirsc = self.dirprog
 
         self.tabse = {}
@@ -741,17 +741,21 @@ class Sicxe_GUI:
             if (entry in self.tabse.keys()):
                 errorFlag = True
             else:
-                tabBlocks = self.sections[entry]['tabblock']
-                dirIniFinal = calc.getIntBy_SicXe_HexOrInt(
-                    list(tabBlocks.values())[-1]['dirIniRel'], True)
-                tamFinal = calc.getIntBy_SicXe_HexOrInt(
-                    list(tabBlocks.values())[-1]['len'], True)
-                lonsc = dirIniFinal + tamFinal
+                sectionRegSplited = self.passTwoReturn['registers'][entry]['registers'].split(
+                    '\n')
+                hreg = sectionRegSplited[0]
+                lonsc = hreg[len(hreg)-6:]
+                lonsc = calc.getIntBy_SicXe_HexOrInt(lonsc, True)
+                # tabBlocks = self.sections[entry]['tabblock']
+                # dirIniFinal = calc.getIntBy_SicXe_HexOrInt(
+                #     list(tabBlocks.values())[-1]['dirIniRel'], True)
+                # tamFinal = calc.getIntBy_SicXe_HexOrInt(
+                #     list(tabBlocks.values())[-1]['len'], True)
+                # lonsc = dirIniFinal + tamFinal
 
                 self.tabse[entry] = {'dir': calc.SIC_HEX(dirsc),
                                      'len': calc.SIC_HEX(lonsc), 'sym': {}}
-                sectionRegSplited = self.passTwoReturn['registers'][entry]['registers'].split('\n'
-                                                                                              )
+
                 for reg in sectionRegSplited:
                     if (reg[0] == 'E'):
                         break
@@ -797,7 +801,17 @@ class Sicxe_GUI:
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
                     self.updateAllocationView(dir, rowCounter, dirsc)
                 if (reg[0] == 'M'):
-                    pass
+                    dir = reg[1:7]
+                    numBytes = reg[7:9]
+                    numBytes = calc.getIntBy_SicXe_HexOrInt(numBytes)
+                    dirFromTabse = self.getDirFromTabse()
+                    if (dirFromTabse != False):
+                        dir = reg[1:7]
+                        dirsc
+                        mem.readAllocation(dir, dirsc,)
+                    else:
+                        errorFlag = True
+                        break
 
         return not errorFlag
 
@@ -820,6 +834,16 @@ class Sicxe_GUI:
                 allocation,  allocationRow[0], allocationRow[1], allocationRow[2], allocationRow[3], allocationRow[4], allocationRow[5], allocationRow[6], allocationRow[7], allocationRow[8], allocationRow[9], allocationRow[10], allocationRow[11], allocationRow[12], allocationRow[13], allocationRow[14], allocationRow[15]))
         self.__thisMemoryTabTree.insert('', END, values=(
             'empty',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',))
+
+    def getDirFromTabse(self, label):
+        tabseKeys = self.tabse.keys()
+        if (label in tabseKeys):
+            return self.tabse[label]['dir']
+        else:
+            for tabseKey in tabseKeys:
+                if label in self.tabse[tabseKey]['sym'].keys():
+                    return self.tabse[tabseKey]['sym'][label]['dir']
+        return False
 
     def deleteStringAfterChar(self, ch, strValue):
         # The Regex pattern to match al characters on and after '-'
