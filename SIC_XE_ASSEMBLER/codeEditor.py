@@ -51,17 +51,17 @@ class Sicxe_GUI:
     __thisIntermediateFileTree.column('#1', anchor=CENTER, width=50)
     __thisIntermediateFileTree.heading('#1', text='Index')
     __thisIntermediateFileTree.column('#2', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#2', text='Sección')
+    __thisIntermediateFileTree.heading('#2', text='Section')
     __thisIntermediateFileTree.column('#3', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#3', text='Bloque')
+    __thisIntermediateFileTree.heading('#3', text='Block')
     __thisIntermediateFileTree.column('#4', anchor=CENTER, width=75)
-    __thisIntermediateFileTree.heading('#4', text='PC')
+    __thisIntermediateFileTree.heading('#4', text='Loc')
     __thisIntermediateFileTree.column('#5', anchor=CENTER, width=100)
     __thisIntermediateFileTree.heading('#5', text='Label')
     __thisIntermediateFileTree.column('#6', anchor=CENTER, width=100)
-    __thisIntermediateFileTree.heading('#6', text='Mnemonico')
+    __thisIntermediateFileTree.heading('#6', text='Mnemonic')
     __thisIntermediateFileTree.column('#7', anchor=CENTER, width=360)
-    __thisIntermediateFileTree.heading('#7', text='Operando')
+    __thisIntermediateFileTree.heading('#7', text='Operand')
     __thisIntermediateFileTree.column('#8', anchor=CENTER, width=360)
     __thisIntermediateFileTree.heading('#8', text='Obj/Error')
     # __thisIntermediateFileTree.tag_config(background="black",
@@ -70,6 +70,30 @@ class Sicxe_GUI:
     __thisIntermediateFileScrollBarY = Scrollbar(__thisIntermediateFileTree)
     __thisIntermediateFileScrollBarX = Scrollbar(
         __thisIntermediateFileTree, orient='horizontal')
+
+    ######################
+    # Tabse
+    ####################
+    __TabseLabel = LabelFrame(__root, text="Tabse")
+    columnsInter = ('#1', '#2', '#3', '#4')
+    __thisTabseTree = Treeview(
+        __TabseLabel, columns=columnsInter, show='headings')
+    # define headings
+    # [blockName, actualCounterLoc, label, mnemonic, operands, '.'])
+    __thisTabseTree.column('#1', anchor=CENTER, width=150)
+    __thisTabseTree.heading('#1', text='Section')
+    __thisTabseTree.column('#2', anchor=CENTER, width=150)
+    __thisTabseTree.heading('#2', text='Symbol')
+    __thisTabseTree.column('#3', anchor=CENTER, width=150)
+    __thisTabseTree.heading('#3', text='Dir')
+    __thisTabseTree.column('#4', anchor=CENTER, width=150)
+    __thisTabseTree.heading('#4', text='Len')
+    # __thisTabseTree.tag_config(background="black",
+    #   foreground="red")
+    # definiendo los scroll bars:
+    __thisTabseTreeScrollBarY = Scrollbar(__thisTabseTree)
+    ___thisTabseTreeScrollBarX = Scrollbar(
+        __thisTabseTree, orient='horizontal')
 
     ######################
     # Tabla de memoria:
@@ -245,7 +269,7 @@ class Sicxe_GUI:
         # Archivo intermedio
         ####################
         self.__InterFileLabel.place(
-            relx=1/3, rely=0, relheight=1/2, relwidth=1/3)
+            relx=1/3, rely=0, relheight=1/3, relwidth=1/3)
         self.__thisIntermediateFileTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para el archivo intermedio:
@@ -262,10 +286,30 @@ class Sicxe_GUI:
             yscrollcommand=self.__thisIntermediateFileScrollBarY.set)
 
         ######################
+        # Tabse
+        ####################
+        self.__TabseLabel.place(
+            relx=1/3, rely=1/3, relheight=1/3, relwidth=1/3)
+        self.__thisTabseTree.place(
+            relx=0, rely=0, relheight=1, relwidth=1)
+        # scroll para el archivo intermedio:
+        self.___thisTabseTreeScrollBarX.pack(side=BOTTOM, fill='x')
+        self.___thisTabseTreeScrollBarX.config(
+            command=self.__thisTabseTree.xview)
+        self.__thisTabseTree.config(
+            xscrollcommand=self.___thisTabseTreeScrollBarX.set)
+
+        self.__thisTabseTreeScrollBarY.pack(side=RIGHT, fill=Y)
+        self.__thisTabseTreeScrollBarY.config(
+            command=self.__thisTabseTree.yview)
+        self.__thisTabseTree.config(
+            yscrollcommand=self.__thisTabseTreeScrollBarY.set)
+
+        ######################
         # Tabla de memoria:
         ####################
         self.__thisMemoryTabLabel.place(
-            relx=1/3, rely=1/2, relheight=1/2, relwidth=1/3)
+            relx=1/3, rely=2/3, relheight=1/3, relwidth=1/3)
         self.__thisMemoryTabTree.place(
             relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para la tabla de simbolos
