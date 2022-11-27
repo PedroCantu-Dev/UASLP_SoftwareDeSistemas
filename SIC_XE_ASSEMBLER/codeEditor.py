@@ -778,7 +778,24 @@ class Sicxe_GUI:
                 dirsc += dirsc + lonsc
         return not errorFlag
 
-    def assemblePassTwo():
+    def assemblePassTwo(self):
+        dirsc = self.dirprog
+        direj = self.dirprog
+        errorFlag = False
+        for entry in self.passTwoReturn['registers']:
+            if (errorFlag):
+                break
+            sectionRegSplited = self.passTwoReturn['registers'][entry]['registers'].split(
+                '\n')
+            for reg in sectionRegSplited:
+                if (reg[0] == 'E'):
+                    break
+                if (reg[0] == 'T'):
+                    pass
+                if (reg[0] == 'M'):
+                    pass
+
+        return not errorFlag
 
     def updateAllocationView(self, allocation):
         index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
