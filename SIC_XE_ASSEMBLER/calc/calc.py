@@ -880,8 +880,21 @@ def setBASES(secciones):
         bases[seccion] = -1
 
 
+def setBASE(seccion, value=-1):
+    value = evaluateExpPassTwo(value)
+    if (value[0]):
+        bases[seccion] = value[2]
+        return True
+    else:
+        bases[seccion] = -1
+        return value
+
+
 def getBASE(seccion):
-    return bases[seccion]
+    try:
+        return bases[seccion]
+    except:
+        return -1
 
 
 def changeBase(seccion, value):

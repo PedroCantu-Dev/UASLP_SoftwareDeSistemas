@@ -7,7 +7,7 @@ def cleanMemory():
     global memory
     memory = {}
     dirCounter = 0
-    for i in range(int((2**20)/15)):
+    for i in range(int((2**20)/16)):
         memoryRow = []
         for j in range(16):
             memoryRow.append('FF')
@@ -24,6 +24,10 @@ def readAllocation(dir, bytes=3):
 
 def writeAllocation(dir, operand):
     pass
+
+
+def getAllocationRow(allocation):
+    return memory[allocation]
 
 
 cleanMemory()

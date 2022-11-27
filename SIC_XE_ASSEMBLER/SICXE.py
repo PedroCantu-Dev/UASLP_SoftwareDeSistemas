@@ -1113,7 +1113,9 @@ def passTwo(archiInter, secciones):
                     else:
                         regT[-1] += tToAppend
                 elif (baseMnem == 'BASE'):
-                    pass
+                    resSetBase = calc.setBASE(calc.getNameSECT(), line[6],)
+                    if (not resSetBase):
+                        pass  # es un error
                 elif (baseMnem == 'CSECT'):
                     if len(regDef[-1]) <= 1:
                         regDef.pop()

@@ -5,6 +5,7 @@ from tkinter import messagebox
 from tkinter.messagebox import *
 from tkinter.filedialog import *
 from tkinter.ttk import Treeview
+import memory as mem
 import webbrowser
 from SICXE import *
 
@@ -528,6 +529,7 @@ class Sicxe_GUI:
         for i in self.__thisIntermediateFileTree.get_children():
             self.__thisIntermediateFileTree.delete(i)
         calc.setEND()
+        calc.setBASES(self.sections)
 
     def refresh(self):
         self.destroy()
@@ -721,6 +723,73 @@ class Sicxe_GUI:
 
     def __assemble(self):
         self.__pass2()
+        self.cleanMemory()
+        self.assemblePassOne()
+        self.assemblePassTwo()
+
+    def assemblePassOne(self):
+        dirprog = 0
+        dirsc = dirprog
+
+        self.tabse = {}
+        errorFlag = False
+
+        for entry in self.passTwoReturn['registers']:
+            if (errorFlag):
+                break
+            if (entry in self.tabse.keys()):
+                errorFlag = True
+            else:
+                tabBlocks = self.sections[entry]['tabblock']
+                dirIniFinal = calc.getIntBy_SicXe_HexOrInt(
+                    list(tabBlocks.values())[-1]['dirIniRel'], True)
+                tamFinal = calc.getIntBy_SicXe_HexOrInt(
+                    list(tabBlocks.values())[-1]['len'], True)
+                lonsc = dirIniFinal + tamFinal
+
+                self.tabse[entry] = {'dir': calc.SIC_HEX(dirsc),
+                                     'len': calc.SIC_HEX(lonsc), 'sym': {}}
+                sectionRegSplited = self.passTwoReturn['registers'][entry]['registers'].split('\n'
+                                                                                              )
+                for reg in sectionRegSplited:
+                    if (reg[0] == 'E'):
+                        break
+                    if (reg[0] == 'D'):
+                        index = 1
+                        while (True):
+                            try:
+                                name = reg[index:index+6]
+                                index += 6
+                                dir = reg[index:index+6]
+                                if (name in self.tabse[entry]['sym'].keys()):
+                                    errorFlag = True
+                                    break
+                                else:
+                                    self.tabse[entry]['sym'][name] = {}
+                                    self.tabse[entry]['sym'][name]['dir'] = calc.SIC_HEX(
+                                        dirsc + dir)
+                            except:
+                                break
+                dirsc += dirsc + lonsc
+        pass
+
+    def assemblePassTwo():
+        pass
+
+    def updateAllocationView(self, allocation):
+        index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
+        memRow = mem.getAllocationRow(allocation)
+        self.__thisMemoryTabTree.insert('', index, values=(
+            allocation, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+
+    def cleanMemory(self):
+        mem.cleanMemory()
+        for allocation in mem.memory:
+            allocationRow = mem.memory[allocation]
+            self.__thisMemoryTabTree.insert('', END, values=(
+                allocation,  allocationRow[0], allocationRow[1], allocationRow[2], allocationRow[3], allocationRow[4], allocationRow[5], allocationRow[6], allocationRow[7], allocationRow[8], allocationRow[9], allocationRow[10], allocationRow[11], allocationRow[12], allocationRow[13], allocationRow[14], allocationRow[15]))
+        self.__thisMemoryTabTree.insert('', END, values=(
+            'empty',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',))
 
     def deleteStringAfterChar(self, ch, strValue):
         # The Regex pattern to match al characters on and after '-'
