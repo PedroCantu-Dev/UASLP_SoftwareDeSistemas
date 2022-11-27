@@ -100,8 +100,8 @@ class Sicxe_GUI:
     ####################
     __thisMemoryTabLabel = LabelFrame(__root, text="Memory")
     # la tabla de bloques
-    columnsInter = ('#0', '#1', '#2', '#3', '#4', '#5', '#6', '#7',
-                    '#8', '#9', '#10', '#11', '#12', '#13', '#14', '#15')
+    columnsInter = ('#1', '#2', '#3', '#4', '#5', '#6', '#7',
+                    '#8', '#9', '#10', '#11', '#12', '#13', '#14', '#15', '#16', '#17')
     __thisMemoryTabTree = Treeview(
         __thisMemoryTabLabel, columns=columnsInter, show='headings')
     # define headings
@@ -123,21 +123,23 @@ class Sicxe_GUI:
     __thisMemoryTabTree.column('#8', anchor=CENTER, width=50)
     __thisMemoryTabTree.heading('#8', text='6')
     __thisMemoryTabTree.column('#9', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#9', text='8')
+    __thisMemoryTabTree.heading('#9', text='7')
     __thisMemoryTabTree.column('#10', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#10', text='9')
+    __thisMemoryTabTree.heading('#10', text='8')
     __thisMemoryTabTree.column('#11', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#11', text='A')
+    __thisMemoryTabTree.heading('#11', text='9')
     __thisMemoryTabTree.column('#12', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#12', text='B')
+    __thisMemoryTabTree.heading('#12', text='A')
     __thisMemoryTabTree.column('#13', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#13', text='C')
+    __thisMemoryTabTree.heading('#13', text='B')
     __thisMemoryTabTree.column('#14', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#14', text='D')
+    __thisMemoryTabTree.heading('#14', text='C')
     __thisMemoryTabTree.column('#15', anchor=CENTER, width=50)
-    __thisMemoryTabTree.heading('#15', text='E')
-    __thisMemoryTabTree.column('#16', anchor=CENTER, width=65)
-    __thisMemoryTabTree.heading('#16', text='F')
+    __thisMemoryTabTree.heading('#15', text='D')
+    __thisMemoryTabTree.column('#16', anchor=CENTER, width=50)
+    __thisMemoryTabTree.heading('#16', text='E')
+    __thisMemoryTabTree.column('#17', anchor=CENTER, width=65)
+    __thisMemoryTabTree.heading('#17', text='F')
     # definiendo los scroll bars:
     __thisMemoryTabScrollBarY = Scrollbar(__thisMemoryTabTree)
     __thisMemoryTabScrollBarX = Scrollbar(
@@ -753,6 +755,7 @@ class Sicxe_GUI:
                 initialDir) + calc.fillOrCutR(length)+'\n'
 
             regInsertion = HRegLine+registers[seccionName]['registers']
+            registers[seccionName]['registers'] = regInsertion
             registerFile.writelines(regInsertion)
             registerFile.close()
             objFileLines += regInsertion+'\n\n'
@@ -773,7 +776,9 @@ class Sicxe_GUI:
 
     def assemblePassOne(self):
         self.dirprog = 12309
-        # self.dirprog = 16
+        #self.dirprog = 16
+        # self.dirprog = 64
+        #self.dirprog = 21
         dirsc = self.dirprog
 
         self.tabse = {}
@@ -800,6 +805,9 @@ class Sicxe_GUI:
                 self.tabse[entry] = {'dir': calc.SIC_HEX(dirsc),
                                      'len': calc.SIC_HEX(lonsc), 'sym': {}}
 
+                self.__thisTabseTree.insert('', END, values=(
+                    entry, '', calc.SIC_HEX(dirsc), calc.SIC_HEX(lonsc)))
+
                 for reg in sectionRegSplited:
                     if (reg[0] == 'E'):
                         break
@@ -820,6 +828,9 @@ class Sicxe_GUI:
                                         dire = calc.SIC_HEX(
                                             dirsc + calc.getIntBy_SicXe_HexOrInt(dir, True))
                                         self.tabse[entry]['sym'][name]['dir'] = dire
+                                        self.__thisTabseTree.insert(
+                                            '', END, values=('', name, dire, ''))
+
                                 else:
                                     break
                             except:
@@ -841,7 +852,7 @@ class Sicxe_GUI:
                     break
                 if (reg[0] == 'T'):
                     dir = reg[1:7]
-                    content = reg[10:]
+                    content = reg[9:]
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
                     self.updateAllocationView(dir, rowCounter, dirsc)
                 if (reg[0] == 'M'):
@@ -872,14 +883,34 @@ class Sicxe_GUI:
 
     def updateAllocationView(self, allocation, rowCounter, dirsc):
         i = 0
-        allocation = calc.getIntBy_SicXe_HexOrInt(allocation, True)
+        allocation = calc.getIntBy_SicXe_HexOrInt(
+            allocation, True)
         while (i < rowCounter):
-            index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
+            index = int((calc.getIntBy_SicXe_HexOrInt(
+                allocation, True)+dirsc)/16)+1
             memRow = mem.getAllocationRow(allocation, dirsc)
-            self.__thisMemoryTabTree.insert('', index, values=(
-                calc.SIC_HEX(allocation), memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+            valuesOfRow = self.getRowValuesFromTreeView(
+                self.__thisMemoryTabTree, index)
+            indexOfRow = self.getRowIndexFromTreeView(
+                self.__thisMemoryTabTree, index)
+            self.__thisMemoryTabTree.item(indexOfRow, text="", values=(
+                valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
             allocation += 16
             i += 1
+
+    def getRowIndexFromTreeView(self, tree, index):
+        for child in tree.get_children():
+            childIndex = child.replace('I', '')
+            if (index == calc.getIntBy_SicXe_HexOrInt(childIndex, True)):
+                return child
+        return 'I'
+
+    def getRowValuesFromTreeView(self, tree, index=0):
+        try:
+            index = self.getRowIndexFromTreeView(tree, index)
+            return tree.item(index, 'values')
+        except:
+            return False
 
     def cleanMemory(self):
         mem.cleanMemory()

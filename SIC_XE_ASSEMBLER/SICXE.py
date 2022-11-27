@@ -816,6 +816,7 @@ def addressingModes(mnemonic, operands, line, nextLine):
                         res = {'valid': False, 'nixbpe': nixbpe, 'msg': "No relativo ni a CP ni a base",
                                'passTwoExpValidation': passTwoExpValidation}
             else:  # ERROR:operando fuera de rango
+                nixbpe += Bbit + Pbit
                 res = {'valid': False, 'nixbpe': nixbpe, 'msg': "Operando fuera de rango",
                        'passTwoExpValidation': passTwoExpValidation}
         elif typeExpression == 'R':  # se toma como m
