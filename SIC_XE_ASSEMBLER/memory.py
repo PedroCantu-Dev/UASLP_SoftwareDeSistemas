@@ -58,16 +58,18 @@ def writeAllocationR(content, dir, dirRel=0):
     contentAux2 = splitEachTwoR(contentAux)
     rowCounter = 1
     while (True):
-        row = memory[calc.SIC_HEX(allocation)]
+        memAlloc = calc.SIC_HEX(allocation)
+        row = memory[memAlloc]
         for i in range(len(contentAux2)-1, -1, -1):
             if (allocationColumn < 0):
                 allocation -= 16
                 allocationColumn = 15
-                row = memory[calc.SIC_HEX(allocation)]
-                row[allocationColumn] = content[i]
+                memAlloc = calc.SIC_HEX(allocation)
+                row = memory[memAlloc]
+                row[allocationColumn] = contentAux2[i]
                 rowCounter += 1
             else:
-                row[allocationColumn] = content[i]
+                row[allocationColumn] = contentAux2[i]
             allocationColumn -= 1
         break
     return rowCounter
@@ -110,7 +112,7 @@ def readAllocation(dir, dirRel=0, medBytes=2):
 
 
 def splitEachTwo(line, step=2):
-    return [calc.SIC_HEX(line[i:i+step], 2) for i in range(0, len(line), step)]
+    return [calc.SIC_HEX(line[i:i+step], step) for i in range(0, len(line), step)]
 
 
 def splitEachTwoR(line, step=2):
@@ -125,7 +127,7 @@ def splitEachTwoR(line, step=2):
             res.append(calc.SIC_HEX(line[i+step:i], 2))
         else:
             res.append(calc.SIC_HEX(line[0:1], 2))
-    return res
+    return res[::-1]
     # return [try: calc.SIC_HEX(line[i:i+step], 2) except:pass for i in range(len(line)-1, -2, step)]
 
 
@@ -137,7 +139,7 @@ cleanMemory()
 # # writeAllocation('000037', '0FFAAA')
 writeAllocation('FFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', '000037',)
 writeAllocationR(
-    'BAAAADDEEBC', '00032')
+    'BDDBBAAAADDEEBC', '3C')
 # writeAllocation(
 #     '42', 'aabb123456789ABCDEF123456789101112131415FEDCBA')
 pass
