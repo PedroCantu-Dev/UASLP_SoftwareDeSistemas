@@ -909,25 +909,38 @@ def passTwo(archiInter, secciones):
                                 extern = externComplete.split('|')[2]
                                 finalHexStr += '*SE'
                                 finalHexStrForCodobj += "*SE|"+externComplete
+                                if ('-' in externComplete):
+                                    regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                        secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)+1) + '05-'+calc.fillOrCutL(extern, 6, ' ')
+                                else:
+                                    regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                        secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)+1) + '05+'+calc.fillOrCutL(extern, 6, ' ')
+                                regM.append('M')
                             if (len(passTwoExpValidation[4]['relativePositive']) > len(passTwoExpValidation[4]['relativeNegative'])):
                                 for relPosTerm in passTwoExpValidation[4]['relativePositive']:
                                     finalHexStr += '*R'
                                     finalHexStrForCodobj += "*R|"+relPosTerm
+                                    regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                        secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)+1) + '05+'+calc.fillOrCutL(calc.getNameSECT(), 6, ' ')
+                                    regM.append('M')
                             elif (len(passTwoExpValidation[4]['relativeNegative']) > len(passTwoExpValidation[4]['relativePositive'])):
                                 for relNegTerm in passTwoExpValidation[4]['relativeNegative']:
                                     finalHexStr += '*R'
                                     finalHexStrForCodobj += "*R|"+relNegTerm
-
+                                    regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                        secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)+1) + '05-'+calc.fillOrCutL(calc.getNameSECT(), 6, ' ')
                         elif (addrMode['valid'] == 'R'):
                             if (typeFour(mnemonic)):
                                 finalHexStr += '*R'
                                 finalHexStrForCodobj = finalHexStr
+
                         codObj[line[0]] = finalHexStrForCodobj
                         line[7] = finalHexStr
 
                         tToAppend = finalHexStr.split('*')[0]
                         if len(regT[-1]) <= 1:
-                            regT[-1] += line[3]+"??"
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
                         elif (len(regT[-1]) + len(tToAppend) > 70):
                             subRegT = regT[-1][regT[-1].index('??')+2:]
@@ -935,7 +948,9 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
                             regT.append['T']
-                            regT[-1] += line[3]
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
+                            regT[-1] += tToAppend
                             regT[-1] += tToAppend
                         else:
                             regT[-1] += tToAppend
@@ -969,7 +984,8 @@ def passTwo(archiInter, secciones):
                         line[7] = finalHexStr
                         tToAppend = finalHexStr.split('*')[0]
                         if len(regT[-1]) <= 1:
-                            regT[-1] += line[3]+"??"
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
                         elif (len(regT[-1]) + len(tToAppend) > 70):
                             subRegT = regT[-1][regT[-1].index('??')+2:]
@@ -977,7 +993,8 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
                             regT.append['T']
-                            regT[-1] += line[3]
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
                         else:
                             regT[-1] += tToAppend
@@ -991,7 +1008,8 @@ def passTwo(archiInter, secciones):
                         line[7] = insertionP2
                         tToAppend = finalHexStr.split('*')[0]
                         if len(regT[-1]) <= 1:
-                            regT[-1] += line[3]+"??"
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
                         elif (len(regT[-1]) + len(tToAppend) > 70):
                             subRegT = regT[-1][regT[-1].index('??')+2:]
@@ -999,7 +1017,8 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
                             regT.append['T']
-                            regT[-1] += line[3]
+                            regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
                         else:
                             regT[-1] += tToAppend
@@ -1019,26 +1038,44 @@ def passTwo(archiInter, secciones):
                     # relativityValidations returns(when applyRules flag in False): {'relativePositive': Rpos, 'relativeNegative': Rneg}
                     finalHexStrForCodobj = finalHexStr
                     if (passTwoExpValidation[1] == 'R'):
+
                         finalHexStr += '*R'
                         finalHexStrForCodobj = finalHexStr
+                        regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                            secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)) + '06+'+calc.fillOrCutL(calc.getNameSECT())
+                        regM.append('M')
                     elif (passTwoExpValidation[1] == 'E'):
                         for externComplete in passTwoExpValidation[3]:
                             extern = externComplete.split('|')[2]
                             finalHexStr += '*SE'
                             finalHexStrForCodobj += "*SE|"+externComplete
+                            if ('-' in externComplete):
+                                regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                    secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)) + '06-'+calc.fillOrCutL(extern, 6, ' ')
+                            else:
+                                regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                    secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)) + '06+'+calc.fillOrCutL(extern, 6, ' ')
+                            regM.append('M')
                         if (len(passTwoExpValidation[4]['relativePositive']) > len(passTwoExpValidation[4]['relativeNegative'])):
                             for relPosTerm in passTwoExpValidation[4]['relativePositive']:
                                 finalHexStr += '*R'
                                 finalHexStrForCodobj += "*R|"+relPosTerm
+                                regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                    secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)) + '06+'+calc.fillOrCutL(calc.getNameSECT(), 6, ' ')
+                                regM.append('M')
                         elif (len(passTwoExpValidation[4]['relativeNegative']) > len(passTwoExpValidation[4]['relativePositive'])):
                             for relNegTerm in passTwoExpValidation[4]['relativeNegative']:
                                 finalHexStr += '*R'
                                 finalHexStrForCodobj += "*R|"+relNegTerm
+                                regM[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                                    secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True)) + '06-'+calc.fillOrCutL(calc.getNameSECT(), 6, ' ')
+                                regM.append('M')
                     codObj[line[0]] = finalHexStrForCodobj
                     line[7] = finalHexStr
                     tToAppend = finalHexStr.split('*')[0]
                     if len(regT[-1]) <= 1:
-                        regT[-1] += line[3]+"??"
+                        regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                            secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend
                     elif (len(regT[-1]) + len(tToAppend) > 70):
                         subRegT = regT[-1][regT[-1].index('??')+2:]
@@ -1046,7 +1083,8 @@ def passTwo(archiInter, secciones):
                         lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                         regT[-1] = regT[-1].replace('??', lengthCodObj)
                         regT.append['T']
-                        regT[-1] += line[3]
+                        regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                            secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend
                     else:
                         regT[-1] += tToAppend
@@ -1057,7 +1095,8 @@ def passTwo(archiInter, secciones):
                     line[7] = codObject
                     tToAppend = codObject.split('*')[0]
                     if len(regT[-1]) <= 1:
-                        regT[-1] += line[3]+"??"
+                        regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                            secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend
                     elif (len(regT[-1]) + len(tToAppend) > 70):
                         subRegT = regT[-1][regT[-1].index('??')+2:]
@@ -1065,7 +1104,8 @@ def passTwo(archiInter, secciones):
                         lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                         regT[-1] = regT[-1].replace('??', lengthCodObj)
                         regT.append['T']
-                        regT[-1] += line[3]
+                        regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
+                            secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend
                     else:
                         regT[-1] += tToAppend

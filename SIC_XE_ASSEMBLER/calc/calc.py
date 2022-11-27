@@ -768,9 +768,9 @@ def validateExRelativity_A_R_I(expression, ApplyRules=True):
                 tok.type = 'A'
                 if (not ApplyRules):
                     if (not singnsRulePositive(parentesis)):
-                        for term in extTermsInOperation:
-                            if (tok.value in term):
-                                term += "-"
+                        for termIndex in enumerate(extTermsInOperation):
+                            if (tok.value in extTermsInOperation[termIndex[0]]):
+                                extTermsInOperation[termIndex[0]] += "|-"
                 if (len(operators) > 0):
                     operators.pop()
         lastToken = tok
