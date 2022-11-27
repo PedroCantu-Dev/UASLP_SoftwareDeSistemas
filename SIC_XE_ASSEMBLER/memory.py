@@ -90,6 +90,7 @@ def readAllocation(dir, dirRel=0, medBytes=2):
     else:
         bytes = (medBytes+1)/2
         oddBool = True
+    bytes = int(bytes)
 
     dir = calc.getIntBy_SicXe_HexOrInt(
         dir, True) + calc.getIntBy_SicXe_HexOrInt(dirRel, True)

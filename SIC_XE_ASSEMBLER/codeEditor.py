@@ -775,7 +775,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        self.dirprog = 12309
+        # self.dirprog = 12309
+        self.dirprog = 8210
         #self.dirprog = 16
         # self.dirprog = 64
         #self.dirprog = 21
@@ -835,7 +836,7 @@ class Sicxe_GUI:
                                     break
                             except:
                                 break
-                dirsc += dirsc + lonsc
+                dirsc = dirsc + lonsc
         return not errorFlag
 
     def assemblePassTwo(self):
@@ -856,24 +857,40 @@ class Sicxe_GUI:
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
                     self.updateAllocationView(dir, rowCounter, dirsc)
                 if (reg[0] == 'M'):
+                    remainBit = ''
+                    dirToChange = reg[1:7]
                     dirFromTabse = reg[10:]
                     dirFromTabse = self.getDirFromTabse(dirFromTabse)
                     if (dirFromTabse != False):
                         dirFromTabse = calc.getIntBy_SicXe_HexOrInt(
-                            dirFromTabse)
+                            dirFromTabse, True)
                         sign = reg[9:10]
                         dir = reg[1:7]
                         numMedBytes = reg[7:9]
                         numMedBytes = calc.getIntBy_SicXe_HexOrInt(numMedBytes)
                         allocationValue = mem.readAllocation(
                             dir, dirsc, numMedBytes)
+                        if (numMedBytes % 2 != 0):
+                            remainBit = allocationValue[0]
                         allocationValue = calc.fillOrCutR(
                             allocationValue, numMedBytes)
+
                         if (sign == '+'):
                             newAllocationValue = calc.getIntBy_SicXe_HexOrInt(
-                                allocationValue) + dirFromTabse
+                                allocationValue, True) + dirFromTabse
+                            newAllocationValue = calc.SIC_HEX(
+                                newAllocationValue, numMedBytes)
+                            newAllocationValue = remainBit + newAllocationValue
                         else:
-                            pass
+                            newAllocationValue = calc.getIntBy_SicXe_HexOrInt(
+                                allocationValue, True) - dirFromTabse
+                            newAllocationValue = calc.SIC_HEX(
+                                newAllocationValue, numMedBytes)
+                            newAllocationValue = remainBit + newAllocationValue
+
+                        rowCounter = mem.writeAllocation(
+                            calc.SIC_HEX(newAllocationValue, len(newAllocationValue)), dirToChange, dirsc)
+                        self.updateAllocationView(dir, rowCounter, dirsc)
 
                     else:
                         errorFlag = True

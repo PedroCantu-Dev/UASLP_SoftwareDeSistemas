@@ -1124,10 +1124,6 @@ def passTwo(archiInter, secciones):
                         regRef.pop()
                     if len(regT[-1]) <= 1:
                         regT.pop()
-                        subRegT = regT[-1][regT[-1].index('??')+2:]
-                        lengthCodObj = int(len(subRegT)/2)
-                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
-                        regT[-1] = regT[-1].replace('??', lengthCodObj)
                     else:
                         subRegT = regT[-1][regT[-1].index('??')+2:]
                         lengthCodObj = int(len(subRegT)/2)
@@ -1190,10 +1186,6 @@ def passTwo(archiInter, secciones):
                         regRef.pop()
                     if len(regT[-1]) <= 1:
                         regT.pop()
-                        subRegT = regT[-1][regT[-1].index('??')+2:]
-                        lengthCodObj = int(len(subRegT)/2)
-                        lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
-                        regT[-1] = regT[-1].replace('??', lengthCodObj)
                     else:
                         subRegT = regT[-1][regT[-1].index('??')+2:]
                         lengthCodObj = int(len(subRegT)/2)
