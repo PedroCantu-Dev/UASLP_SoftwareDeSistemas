@@ -728,7 +728,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        self.dirprog = 12309
+        # self.dirprog = 12309
+        self.dirprog = 16
         dirsc = self.dirprog
 
         self.tabse = {}
@@ -791,17 +792,25 @@ class Sicxe_GUI:
                 if (reg[0] == 'E'):
                     break
                 if (reg[0] == 'T'):
-                    pass
+                    dir = reg[1:7]
+                    content = reg[10:]
+                    rowCounter = mem.writeAllocation(content, dir, dirsc)
+                    self.updateAllocationView(dir, rowCounter, dirsc)
                 if (reg[0] == 'M'):
                     pass
 
         return not errorFlag
 
-    def updateAllocationView(self, allocation):
-        index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
-        memRow = mem.getAllocationRow(allocation)
-        self.__thisMemoryTabTree.insert('', index, values=(
-            allocation, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+    def updateAllocationView(self, allocation, rowCounter, dirsc):
+        i = 0
+        allocation = calc.getIntBy_SicXe_HexOrInt(allocation, True)
+        while (i < rowCounter):
+            index = int(calc.getIntBy_SicXe_HexOrInt(allocation, True)/16)
+            memRow = mem.getAllocationRow(allocation, dirsc)
+            self.__thisMemoryTabTree.insert('', index, values=(
+                calc.SIC_HEX(allocation), memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+            allocation += 16
+            i += 1
 
     def cleanMemory(self):
         mem.cleanMemory()
