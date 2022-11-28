@@ -83,7 +83,7 @@ def getAllocationRow(dir, dirRel=0):
     return memory[calc.SIC_HEX(allocation)]
 
 
-def readAllocation(dir, dirRel=0, medBytes=2):
+def readAllocation(dir, dirRel=0, medBytes=2, returnOdd=False):
     oddBool = False
     if (medBytes % 2 == 0):
         bytes = medBytes/2
@@ -111,7 +111,7 @@ def readAllocation(dir, dirRel=0, medBytes=2):
             i += 1
             allocationColumn += 1
         break
-    if (oddBool):
+    if (oddBool and returnOdd):
         return content[1:]
     else:
         return content

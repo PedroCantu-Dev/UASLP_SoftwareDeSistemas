@@ -775,8 +775,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        # self.dirprog = 12309
-        self.dirprog = 8210
+        self.dirprog = 12309
+        # self.dirprog = 8210 #<----- para la revisión
         #self.dirprog = 16
         # self.dirprog = 64
         #self.dirprog = 21
@@ -812,7 +812,7 @@ class Sicxe_GUI:
                 for reg in sectionRegSplited:
                     if (reg[0] == 'E'):
                         break
-                    if (reg[0] == 'D'):
+                    elif (reg[0] == 'D'):
                         index = 1
                         while (True):
                             try:
@@ -842,6 +842,7 @@ class Sicxe_GUI:
     def assemblePassTwo(self):
         dirsc = self.dirprog
         direj = self.dirprog
+        lonsc = 0
         errorFlag = False
         for entry in self.passTwoReturn['registers']:
             if (errorFlag):
@@ -849,14 +850,21 @@ class Sicxe_GUI:
             sectionRegSplited = self.passTwoReturn['registers'][entry]['registers'].split(
                 '\n')
             for reg in sectionRegSplited:
+
                 if (reg[0] == 'E'):
+                    try:
+                        direj = reg[1:]
+                    except:
+                        break
                     break
-                if (reg[0] == 'T'):
+                elif (reg[0] == 'H'):
+                    lonsc = calc.getIntBy_SicXe_HexOrInt(reg[13:], True)
+                elif (reg[0] == 'T'):
                     dir = reg[1:7]
                     content = reg[9:]
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
                     self.updateAllocationView(dir, rowCounter, dirsc)
-                if (reg[0] == 'M'):
+                elif (reg[0] == 'M'):
                     remainBit = ''
                     dirToChange = reg[1:7]
                     dirFromTabse = reg[10:]
@@ -872,6 +880,7 @@ class Sicxe_GUI:
                             dir, dirsc, numMedBytes)
                         if (numMedBytes % 2 != 0):
                             remainBit = allocationValue[0]
+
                         allocationValue = calc.fillOrCutR(
                             allocationValue, numMedBytes)
 
@@ -895,6 +904,7 @@ class Sicxe_GUI:
                     else:
                         errorFlag = True
                         break
+            dirsc = dirsc + lonsc
 
         return not errorFlag
 
@@ -940,8 +950,9 @@ class Sicxe_GUI:
 
     def getDirFromTabse(self, label):
         tabseKeys = list(self.tabse.keys())
-        if (label in tabseKeys):
-            return self.tabse[label]['dir']
+        labelAux = ''.join(label.split())
+        if (labelAux in tabseKeys):
+            return self.tabse[labelAux]['dir']
         else:
             for tabseKey in tabseKeys:
                 symbolsOfSection = list(self.tabse[tabseKey]['sym'].keys())
