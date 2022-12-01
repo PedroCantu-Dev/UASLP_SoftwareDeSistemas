@@ -569,6 +569,16 @@ class Sicxe_GUI:
             self.__thisTabSymFileTree.delete(i)
         for i in self.__thisErrorTableFileTree.get_children():
             self.__thisErrorTableFileTree.delete(i)
+        for i in self.__thisTabBlocksFileTree.get_children():
+            self.__thisTabBlocksFileTree.delete(i)
+        self.__thisRegisterFile.config(state=NORMAL)
+        self.__thisRegisterFile.delete('1.0', END)
+        self.__thisRegisterFile.config(state=DISABLED)
+        for i in self.__thisMemoryTabTree.get_children():
+            self.__thisMemoryTabTree.delete(i)
+        for i in self.__thisTabseTree.get_children():
+            self.__thisTabseTree.delete(i)
+
         self.tableSym = None
 
     def cleanWhenPass2(self):
@@ -713,8 +723,8 @@ class Sicxe_GUI:
             return '0'
 
     def __pass2(self):
-        if (not self.intermediateFile or not self.sections):
-            self.__pass1()
+        # if (not self.intermediateFile or not self.sections):
+        self.__pass1()
         self.cleanWhenPass2()
         self.passTwoReturn = passTwo(self.intermediateFile, self.sections)
 
@@ -775,8 +785,8 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        self.dirprog = 12309
-        # self.dirprog = 8210 #<----- para la revisión
+        #self.dirprog = 12309
+        self.dirprog = 8210  # <----- para la revisión
         #self.dirprog = 16
         # self.dirprog = 64
         #self.dirprog = 21
@@ -921,7 +931,7 @@ class Sicxe_GUI:
             indexOfRow = self.getRowIndexFromTreeView(
                 self.__thisMemoryTabTree, index)
             self.__thisMemoryTabTree.item(indexOfRow, text="", values=(
-                valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+                valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('blue'))
             allocation += 16
             i += 1
 
