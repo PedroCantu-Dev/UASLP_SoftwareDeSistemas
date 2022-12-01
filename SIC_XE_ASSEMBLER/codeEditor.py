@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import sys
 from tkinter import *
 from tkinter import messagebox
 from tkinter.messagebox import *
@@ -780,6 +781,7 @@ class Sicxe_GUI:
 
     def __assemble(self):
         self.__pass2()
+
         self.cleanMemory()
         self.assemblePassOne()
         self.assemblePassTwo()
@@ -930,8 +932,10 @@ class Sicxe_GUI:
                 self.__thisMemoryTabTree, index)
             indexOfRow = self.getRowIndexFromTreeView(
                 self.__thisMemoryTabTree, index)
+            self.__thisMemoryTabTree.tag_configure(
+                'colored', background='#FED049')
             self.__thisMemoryTabTree.item(indexOfRow, text="", values=(
-                valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('blue'))
+                valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('colored'))
             allocation += 16
             i += 1
 
@@ -975,6 +979,12 @@ class Sicxe_GUI:
         pattern = ch + ".*"
         # Remove all characters after the character '-' from string
         return re.sub(pattern, '', strValue)
+
+    def resource_path(relative_path):
+        # Get absolute path to resource, works for dev and for PyInstaller
+        base_path = getattr(sys, '_MEIPASS', os.path.dirname(
+            os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)
 
     def run(self):
         # Run main application
