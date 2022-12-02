@@ -951,7 +951,7 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = int(len(subRegT)/2)
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
-                            regT.append['T']
+                            regT.append('T')
                             regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
                                 secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
@@ -996,7 +996,7 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = int(len(subRegT)/2)
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
-                            regT.append['T']
+                            regT.append('T')
                             regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
                                 secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
@@ -1020,7 +1020,7 @@ def passTwo(archiInter, secciones):
                             lengthCodObj = int(len(subRegT)/2)
                             lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                             regT[-1] = regT[-1].replace('??', lengthCodObj)
-                            regT.append['T']
+                            regT.append('T')
                             regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
                                 secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                             regT[-1] += tToAppend
@@ -1086,7 +1086,7 @@ def passTwo(archiInter, secciones):
                         lengthCodObj = int(len(subRegT)/2)
                         lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                         regT[-1] = regT[-1].replace('??', lengthCodObj)
-                        regT.append['T']
+                        regT.append('T')
                         regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
                             secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend
@@ -1107,7 +1107,7 @@ def passTwo(archiInter, secciones):
                         lengthCodObj = int(len(subRegT)/2)
                         lengthCodObj = calc.SIC_HEX(lengthCodObj, 2)
                         regT[-1] = regT[-1].replace('??', lengthCodObj)
-                        regT.append['T']
+                        regT.append('T')
                         regT[-1] += calc.SIC_HEX(calc.getIntBy_SicXe_HexOrInt(line[3], True) + calc.getIntBy_SicXe_HexOrInt(
                             secciones[calc.getNameSECT()]['tabblock'][calc.getNameBlock()]['dirIniRel'], True))+"??"
                         regT[-1] += tToAppend

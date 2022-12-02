@@ -4,10 +4,11 @@ import calc.calc as calc
 memory = {}
 
 
-def cleanMemory():
+def cleanMemory(dirCounter=0):
     global memory
     memory = {}
-    dirCounter = 0
+    dirCounter = int(dirCounter/16)
+    dirCounter = int(dirCounter * 16)
     for i in range(int((2**20)/16)):
         memoryRow = []
         for j in range(16):

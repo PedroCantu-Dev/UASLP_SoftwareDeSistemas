@@ -41,6 +41,18 @@ class Sicxe_GUI:
     __thisSourceFile.bind('<KeyRelease>', __thisSourceFileKeyPressed)
 
     ######################
+    # Opciones :
+    ####################
+    __thisoptionsFrame = LabelFrame(__root, text="Options")
+    __thisLoadDirFrame = LabelFrame(__thisoptionsFrame, text="Load address")
+    __thisLoadDirEnty = Entry(__thisLoadDirFrame, text='0')
+    __thisLoadDirEnty.insert(0, '2012')
+    __thisLoadDirButton = Button(
+        __thisLoadDirFrame, text="change LoadDir")
+    __thisMemoryViewFrame = LabelFrame(__thisoptionsFrame, text="Memory view")
+    __thisMemoryViewButton = Button(__thisMemoryViewFrame, text="Change view")
+
+    ######################
     # Archivo intermedio
     ####################
     __InterFileLabel = LabelFrame(__root, text="Intermediate File")
@@ -224,6 +236,7 @@ class Sicxe_GUI:
     __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
     __thisRegisterFileScrollBarX = Scrollbar(
         __thisRegisterFile, orient='horizontal')
+    __memoryView = False
 
     def __init__(self, **kwargs):
         # Set icon
@@ -245,6 +258,7 @@ class Sicxe_GUI:
 
         # For top and bottom
         self.__root.geometry('1080x720')
+        self.dirLoad = 0
 
         ###############
         # Menu de opciones:
@@ -253,7 +267,8 @@ class Sicxe_GUI:
         ######################
         # Archivo fuente SICXE:
         ####################
-        self.__sourceFileLabel.place(relx=0, rely=0, relheight=1, relwidth=1/3)
+        self.__sourceFileLabel.place(
+            relx=0, rely=0, relheight=2/3, relwidth=1/3)
         self.__thisSourceFile.place(relx=0, rely=0, relheight=1, relwidth=1)
         # scroll para el archivo fuente
         self.__thisSourceFileScrollBarX.pack(side=BOTTOM, fill='x')
@@ -267,6 +282,30 @@ class Sicxe_GUI:
             command=self.__thisSourceFile.yview)
         self.__thisSourceFile.config(
             yscrollcommand=self.__thisSourceFileScrollBar.set)
+
+        ######################
+        # Opciones:
+        ####################
+        self.__thisoptionsFrame.place(
+            relx=0, rely=2/3, relheight=1/3, relwidth=1/3)
+
+        self.__thisLoadDirButton = Button(
+            self.__thisLoadDirFrame, text="change LoadDir", command=self.__changeLoadDir)
+        self.__changeLoadDir()
+
+        self.__thisLoadDirFrame.place(
+            relx=0, rely=0, relheight=1/5, relwidth=1)
+        self.__thisLoadDirEnty.place(relx=0, rely=0, relheight=1, relwidth=2/3)
+        self.__thisLoadDirButton.place(
+            relx=2/3, rely=0, relheight=1, relwidth=1/3)
+
+        self.__thisMemoryViewButton = Button(
+            self.__thisMemoryViewFrame, text="Change mem view", command=self.__changeMemoryView)
+
+        self.__thisMemoryViewFrame.place(
+            relx=0, rely=1/5, relheight=1/5, relwidth=1)
+        self.__thisMemoryViewButton.place(
+            relx=0, rely=0, relheight=1, relwidth=1/2)
 
         ######################
         # Archivo intermedio
@@ -456,7 +495,20 @@ class Sicxe_GUI:
         self.__thisMenuBar.add_cascade(label="Help",
                                        menu=self.__thisHelpMenu)
 
+        # self.__thisLoadDirButton.add_command(command=self.__changeLoadDir)
+
         self.__root.config(menu=self.__thisMenuBar)
+
+    def __changeLoadDir(self):
+        self.loadDir = self.__thisLoadDirEnty.get()
+        try:
+            self.loadDir = calc.getIntBy_SicXe_HexOrInt(self.loadDir, True)
+        except:
+            self.loadDir = 0
+
+    def __changeMemoryView(self):
+        self.__memoryView = not self.__memoryView
+        self.updateMemoryView()
 
     def __quitApplication(self):
         self.__root.destroy()
@@ -587,6 +639,34 @@ class Sicxe_GUI:
             self.__thisIntermediateFileTree.delete(i)
         calc.setEND()
         calc.setBASES(self.sections)
+
+    def updateMemoryView(self):
+        for i in self.__thisMemoryTabTree.get_children():
+            self.__thisMemoryTabTree.delete(i)
+        try:
+            for i in mem.memory:
+                memRow = mem.memory[i]
+                if (self.__memoryView):
+                    if (memRow[0] + memRow[1] + memRow[2] + memRow[3] + memRow[4] + memRow[5] + memRow[6] +
+                            memRow[7] + memRow[8] + memRow[9] + memRow[10] + memRow[11] + memRow[12] + memRow[13] + memRow[14] + memRow[15] != 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'):
+
+                        self.__thisMemoryTabTree.tag_configure(
+                            'colored', background='#FED049')
+                        self.__thisMemoryTabTree.insert('', END, values=(i, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6],
+                                                        memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('colored'))
+                else:
+                    if (memRow[0] + memRow[1] + memRow[2] + memRow[3] + memRow[4] + memRow[5] + memRow[6] +
+                            memRow[7] + memRow[8] + memRow[9] + memRow[10] + memRow[11] + memRow[12] + memRow[13] + memRow[14] + memRow[15] != 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'):
+
+                        self.__thisMemoryTabTree.tag_configure(
+                            'colored', background='#FED049')
+                        self.__thisMemoryTabTree.insert('', END, values=(i, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6],
+                                                        memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('colored'))
+                    else:
+                        self.__thisMemoryTabTree.insert('', END, values=(i, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6],
+                                                        memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+        except:
+            pass
 
     def refresh(self):
         self.destroy()
@@ -788,10 +868,11 @@ class Sicxe_GUI:
 
     def assemblePassOne(self):
         #self.dirprog = 12309
-        self.dirprog = 8210  # <----- para la revisión
+        # self.dirprog = 8210  # <----- para la revisión
         #self.dirprog = 16
         # self.dirprog = 64
         #self.dirprog = 21
+        self.dirprog = self.loadDir
         dirsc = self.dirprog
 
         self.tabse = {}
@@ -875,7 +956,7 @@ class Sicxe_GUI:
                     dir = reg[1:7]
                     content = reg[9:]
                     rowCounter = mem.writeAllocation(content, dir, dirsc)
-                    self.updateAllocationView(dir, rowCounter, dirsc)
+                    # self.updateAllocationView(dir, rowCounter, dirsc)
                 elif (reg[0] == 'M'):
                     remainBit = ''
                     dirToChange = reg[1:7]
@@ -911,22 +992,26 @@ class Sicxe_GUI:
 
                         rowCounter = mem.writeAllocation(
                             calc.SIC_HEX(newAllocationValue, len(newAllocationValue)), dirToChange, dirsc)
-                        self.updateAllocationView(dir, rowCounter, dirsc)
+                        # self.updateAllocationView(dir, rowCounter, dirsc)
 
                     else:
                         errorFlag = True
                         break
             dirsc = dirsc + lonsc
-
+        self.updateMemoryView()
         return not errorFlag
 
     def updateAllocationView(self, allocation, rowCounter, dirsc):
         i = 0
         allocation = calc.getIntBy_SicXe_HexOrInt(
             allocation, True)
+        allocationForGetAllocationRow = int(allocation/16)
         while (i < rowCounter):
+            # index = int((calc.getIntBy_SicXe_HexOrInt(
+            #     allocation, True)+dirsc)/16)+1
             index = int((calc.getIntBy_SicXe_HexOrInt(
-                allocation, True)+dirsc)/16)+1
+                allocationForGetAllocationRow, True))/16)+1
+            # memRow = mem.getAllocationRow(allocation, dirsc)
             memRow = mem.getAllocationRow(allocation, dirsc)
             valuesOfRow = self.getRowValuesFromTreeView(
                 self.__thisMemoryTabTree, index)
@@ -934,8 +1019,9 @@ class Sicxe_GUI:
                 self.__thisMemoryTabTree, index)
             self.__thisMemoryTabTree.tag_configure(
                 'colored', background='#FED049')
-            self.__thisMemoryTabTree.item(indexOfRow, text="", values=(
+            self.__thisMemoryTabTree.item(indexOfRow,  values=(
                 valuesOfRow[0], memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6], memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]), tags=('colored'))
+            allocationForGetAllocationRow += 16
             allocation += 16
             i += 1
 
@@ -954,7 +1040,7 @@ class Sicxe_GUI:
             return False
 
     def cleanMemory(self):
-        mem.cleanMemory()
+        mem.cleanMemory(self.loadDir)
         for allocation in mem.memory:
             allocationRow = mem.memory[allocation]
             self.__thisMemoryTabTree.insert('', END, values=(
