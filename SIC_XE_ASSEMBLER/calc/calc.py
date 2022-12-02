@@ -403,6 +403,7 @@ def regexMatch(regex, testStr):
 
 
 def bindigit(n, bits):
+    n = int(n)
     s = bin(n & int("1"*bits, 2))[2:]
     return ("{0:0>%s}" % (bits)).format(s)
 

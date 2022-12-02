@@ -1,0 +1,7 @@
+7|PARCIAL1|PARCIAL1|000050| VALOR TIXR A,S |:ERROR:Sintaxis:Operando invalido, los operandos no coinciden con los requeridos para la instrucción
+8|PARCIAL1|PARCIAL1|000050| CICLO SUB @VALOR |:ERROR:Simbolo:simbolo duplicado
+9|PARCIAL1|PARCIAL1|000053| DATO BYTE 3452H |:ERROR:Sintaxis:Operando invalido para BYTE
+14|PARCIAL1|PARCIAL1|000061|  +ADD @ENTRADA,X |:ERROR:Sintaxis:Operando invalido,token: INDEXED
+con valor: ,X
+en la posisión: 8
+16|PARCIAL1|PARCIAL1|000064| SHIFT A,3    |:ERROR:Mnemonic:instruccion no existe

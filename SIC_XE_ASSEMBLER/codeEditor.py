@@ -48,7 +48,7 @@ class Sicxe_GUI:
     __thisLoadDirEnty = Entry(__thisLoadDirFrame, text='0')
     __thisLoadDirEnty.insert(0, '2012')
     __thisLoadDirButton = Button(
-        __thisLoadDirFrame, text="change LoadDir")
+        __thisLoadDirFrame, text="change LoadDir: DIRPROG")
     __thisMemoryViewFrame = LabelFrame(__thisoptionsFrame, text="Memory view")
     __thisMemoryViewButton = Button(__thisMemoryViewFrame, text="Change view")
 
@@ -236,7 +236,7 @@ class Sicxe_GUI:
     __thisRegisterFileScrollBar = Scrollbar(__thisRegisterFile)
     __thisRegisterFileScrollBarX = Scrollbar(
         __thisRegisterFile, orient='horizontal')
-    __memoryView = False
+    __memoryView = True
 
     def __init__(self, **kwargs):
         # Set icon
@@ -550,7 +550,9 @@ class Sicxe_GUI:
             # textColored.tag_config("start", background="black",
             #                        foreground="red")
             file.close()
-            __savedFileFlag = True
+            self.cleanWhenPass1()
+            self.cleanWhenPass2()
+            self.__savedFileFlag = True
 
     def __newFile(self):
         self.__root.title("Untitled - SicXe Assembly")
@@ -665,6 +667,8 @@ class Sicxe_GUI:
                     else:
                         self.__thisMemoryTabTree.insert('', END, values=(i, memRow[0], memRow[1], memRow[2], memRow[3], memRow[4], memRow[5], memRow[6],
                                                         memRow[7], memRow[8], memRow[9], memRow[10], memRow[11], memRow[12], memRow[13], memRow[14], memRow[15]))
+            self.__thisMemoryTabTree.insert('', END, values=(
+                'empty',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',))
         except:
             pass
 

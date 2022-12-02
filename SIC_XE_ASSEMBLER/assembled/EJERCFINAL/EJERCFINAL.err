@@ -1,1 +1,4 @@
-8 8 0x4a SIMBOLO LDD #VALOR !ERROR!,:Mnemonic:,Instruccion no existe 
+8|EJERCFINAL|EJERCFINAL|00004A| SIMBOLO LDD #VALOR    |:ERROR:Mnemonic:instruccion no existe
+20|EJERCFINAL|EJERCFINAL|006FA8|  J CADENA,X+TIXTABLA,X |:ERROR:Sintaxis:Operando invalido,token: PLUS
+con valor: +
+en la posisión: 8
