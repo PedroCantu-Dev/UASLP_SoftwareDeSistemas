@@ -871,17 +871,10 @@ class Sicxe_GUI:
         self.assemblePassTwo()
 
     def assemblePassOne(self):
-        #self.dirprog = 12309
-        # self.dirprog = 8210  # <----- para la revisión
-        #self.dirprog = 16
-        # self.dirprog = 64
-        #self.dirprog = 21
         self.dirprog = self.loadDir
         dirsc = self.dirprog
-
         self.tabse = {}
         errorFlag = False
-
         for entry in self.passTwoReturn['registers']:
             if (errorFlag):
                 break
@@ -893,13 +886,6 @@ class Sicxe_GUI:
                 hreg = sectionRegSplited[0]
                 lonsc = hreg[len(hreg)-6:]
                 lonsc = calc.getIntBy_SicXe_HexOrInt(lonsc, True)
-                # tabBlocks = self.sections[entry]['tabblock']
-                # dirIniFinal = calc.getIntBy_SicXe_HexOrInt(
-                #     list(tabBlocks.values())[-1]['dirIniRel'], True)
-                # tamFinal = calc.getIntBy_SicXe_HexOrInt(
-                #     list(tabBlocks.values())[-1]['len'], True)
-                # lonsc = dirIniFinal + tamFinal
-
                 self.tabse[entry] = {'dir': calc.SIC_HEX(dirsc),
                                      'len': calc.SIC_HEX(lonsc), 'sym': {}}
 
@@ -996,8 +982,6 @@ class Sicxe_GUI:
 
                         rowCounter = mem.writeAllocation(
                             calc.SIC_HEX(newAllocationValue, len(newAllocationValue)), dirToChange, dirsc)
-                        # self.updateAllocationView(dir, rowCounter, dirsc)
-
                     else:
                         errorFlag = True
                         break
